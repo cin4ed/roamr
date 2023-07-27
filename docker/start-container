@@ -9,18 +9,33 @@ if [ ! -d /.composer ]; then
 fi
 
 npm install
-composer install
+composer install --optimize-autoloader --no-dev
+
+# Decrypt env.encrypted file if it exists
+# LARAVEL_ENV_ENCRYPTION_KEY must be set with the encryption key
+if [ -d /.env.encrypted ]; then
+    php artisan env:decrypt
+fi
+
+# Generate app key if it doesn't exist
+cat .env | grep -q APP_KEY=base64
+if [ ! "$?" -eq 0 ]; then
+    php artisan key:generate
+fi
+
+php artisan config:cache
+php artisan event:cache
+php artisan route:cache
+php artisan view:cache
+
 php artisan migrate
+
 chmod -R ugo+rw /.composer
 
 if [ ! -z "$PORT" ]; then
     sed -i -e "s/--port=80/--port=$PORT/g" /etc/supervisor/conf.d/supervisord.conf
 fi
 
-cat .env | grep -q APP_KEY=base64
-if [ ! "$?" -eq 0 ]; then
-    php artisan key:generate
-fi
 
 if [ $# -gt 0 ]; then
     exec gosu $WWWUSER "$@"
