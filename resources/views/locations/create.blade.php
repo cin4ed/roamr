@@ -5,7 +5,7 @@
     </x-slot:head>
 
     <div class="text-neutral-200 min-h-screen flex flex-col">
-        <div class="bg-neutral-800 "><a href="{{ url('/') }}" class="block text-xl text-center font-bold">Roamr</a></div>
+        <div class="bg-neutral-800 py-2"><a href="{{ url('/') }}" class="block text-xl text-center font-bold">Roamr</a></div>
         <div class="p-4 bg-neutral-700 flex-1">
             <a href="{{ url('/') }}" class="text-neutral-400">< back</a>
             <h1 class="text-xl font-bold mt-2 text-neutral-300">Add a new location</h1>
