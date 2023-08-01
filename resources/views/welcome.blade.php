@@ -21,12 +21,14 @@
                 position: absolute;
                 top: 0;
                 bottom: 0;
+                left: 0;
+                right: 0;
                 width: 100%;
             }
         </style>
     </head>
     <body class="antialiased">
-        <div id="map"></div>
+        {{-- <div id="map"></div> --}}
         {{-- <div class="relative sm:flex sm:justify-center sm:items-center min-h-screen bg-dots-darker bg-center bg-gray-100 dark:bg-dots-lighter dark:bg-zinc-900 selection:bg-red-500 selection:text-white">
             @if (Route::has('login'))
                 <div class="sm:fixed sm:top-0 sm:right-0 p-6 text-right z-10">

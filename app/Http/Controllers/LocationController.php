@@ -3,9 +3,18 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class LocationController extends Controller
 {
+    /**
+     * Instantiate a new controller instance.
+     */
+    public function __construct()
+    {
+        $this->middleware('aut')->only('store');
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -17,9 +26,9 @@ class LocationController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(): View
     {
-        //
+        return view('locations.create');
     }
 
     /**
@@ -27,7 +36,6 @@ class LocationController extends Controller
      */
     public function store(Request $request)
     {
-        //
     }
 
     /**
