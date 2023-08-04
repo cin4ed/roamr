@@ -16,35 +16,29 @@
         <!-- Mapbox -->
         <script src='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js'></script>
         <link href='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css' rel='stylesheet' />
-        <style>
-            #map {
-                position: absolute;
-                top: 0;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                width: 100%;
-            }
-        </style>
+        <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
+        <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css" type="text/css">
     </head>
-    <body class="antialiased">
-        {{-- <div id="map"></div> --}}
-        {{-- <div class="relative sm:flex sm:justify-center sm:items-center min-h-screen bg-dots-darker bg-center bg-gray-100 dark:bg-dots-lighter dark:bg-zinc-900 selection:bg-red-500 selection:text-white">
-            @if (Route::has('login'))
-                <div class="sm:fixed sm:top-0 sm:right-0 p-6 text-right z-10">
-                    @auth
-                        <a href="{{ url('/dashboard') }}" class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Dashboard</a>
-                    @else
-                        <a href="{{ route('login') }}" class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Log in</a>
+    <body class="antialiased bg-neutral-800 text-neutral-400">
+        <div class="p-2 h-screen flex flex-col">
+            <div class="flex justify-between items-center h-10 px-1">
+                <h1 class="font-semibold text-lg">Roamr</h1>
+                @if (Route::has('login'))
+                    <div>
+                        @auth
+                            <a href="{{ url('/dashboard') }}" class="font-semibold text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Dashboard</a>
+                        @else
+                            <a href="{{ route('login') }}" class="font-semibold text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Log in</a>
 
-                        @if (Route::has('register'))
-                            <a href="{{ route('register') }}" class="ml-4 font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Register</a>
-                        @endif
-                    @endauth
-                </div>
-            @endif
-        </div> --}}
-        @vite(['resources/js/mapbox.js'])
+                            @if (Route::has('register'))
+                                <a href="{{ route('register') }}" class="ml-4 font-semibold text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Register</a>
+                            @endif
+                        @endauth
+                    </div>
+                @endif
+            </div>
+            <div id="map" class="flex-1 rounded-md  border border-neutral-700"></div>
+        </div>
         <script>
             mapboxgl.accessToken =
                 "pk.eyJ1Ijoia2VubmV0aC1xdWludGVybyIsImEiOiJjbGU1bmlsc2gwOHZvM25wM2NwZXVrZnVhIn0.pWzKCuC-uYwHxJm0vThQFQ";
@@ -56,12 +50,33 @@
                 zoom: 12,
             });
 
+            // Add the control to the map.
+            map.addControl(
+                new MapboxGeocoder({
+                    accessToken: mapboxgl.accessToken,
+                    mapboxgl: mapboxgl
+                })
+            );
+
+            // Add geolocate control to the map.
+            map.addControl(
+                new mapboxgl.GeolocateControl({
+                    positionOptions: {
+                    enableHighAccuracy: true
+                    },
+                    // When active the map will receive updates to the device's location as it changes.
+                    trackUserLocation: true,
+                    // Draw an arrow next to the location dot to indicate which direction the device is heading.
+                    showUserHeading: true
+                })
+            );
+
             // Set map to user's location
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition((data) => {
-                    map.setCenter([data.coords.longitude, data.coords.latitude]);
-                });
-            }
+            // if (navigator.geolocation) {
+            //     navigator.geolocation.getCurrentPosition((data) => {
+            //         map.setCenter([data.coords.longitude, data.coords.latitude]);
+            //     });
+            // }
         </script>
     </body>
 </html>
