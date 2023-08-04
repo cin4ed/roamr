@@ -28,7 +28,7 @@
                             <x-zondicon-search class="h-4 text-neutral-500" />
                         </div> --}}
                         <div class="relative">
-                            <div id="map" class="h-52 mt-2 rounded-md overflow-hidden"></div>
+                            <div id="map" class="h-52 md:h-96 mt-2 rounded-md overflow-hidden"></div>
                             {{-- Fullscreen and current location --}}
                             {{-- <button type="button" class="bg-neutral-600 absolute z-10 top-1 left-1 p-1 rounded-sm">
                                 <x-fluentui-full-screen-maximize-16 class="h-5 text-neutral-400" />

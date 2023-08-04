@@ -37,7 +37,10 @@
                     </div>
                 @endif
             </div>
-            <div id="map" class="flex-1 rounded-md  border border-neutral-700"></div>
+            @if (Auth::check())
+                <a href="{{ url('/locations/create') }}" id="add-btn" class="px-4 py-1 rounded-md text-center bg-neutral-600 text-neutral-300 hover:bg-neutral-700 active:bg-neutral-400 ">Add +</a>
+            @endif
+            <div id="map" class="flex-1 rounded-md  border mt-2 border-neutral-700"></div>
         </div>
         <script>
             mapboxgl.accessToken =
@@ -70,6 +73,10 @@
                     showUserHeading: true
                 })
             );
+
+            document.getElementById("add-btn").addEventListener("click", ()=> {
+                console.log("hell");
+            })
 
             // Set map to user's location
             // if (navigator.geolocation) {
