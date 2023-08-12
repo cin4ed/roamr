@@ -17,7 +17,7 @@ use App\Http\Controllers\LocationController;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('home');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
