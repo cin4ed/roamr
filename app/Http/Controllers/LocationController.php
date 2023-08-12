@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use App\Models\Location;
+use App\Models\Image;
 
 class LocationController extends Controller
 {
@@ -12,15 +14,7 @@ class LocationController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('aut')->only('store');
-    }
-
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
+        $this->middleware('auth')->only('store');
     }
 
     /**
@@ -36,37 +30,34 @@ class LocationController extends Controller
      */
     public function store(Request $request)
     {
-    }
+        // Validate the request
+        $validated = $request->validate([
+            'name' => 'bail|required|string|max:255',
+            'description' => 'bail|required|string|max:255',
+            'longitude' => 'bail|required|numeric',
+            'latitude' => 'bail|required|numeric',
+            'images.*' => 'bail|required|image|mimes:png,jpeg,jpg|max:2048'
+        ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
+        // Create a new location
+        $location = $request->user()->locations()->create($validated);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
+        // Generate a path for each image and store it in the images folder
+        $images = [];
+        foreach ($request->images as $requestImage) {
+            $imageName = time() . '.' . $requestImage->extension();
+            $requestImage->move(public_path('images'), $imageName);
+            $image = new Image(['path' => $imageName]);
+            array_push($images, $image);
+        }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+        // Save the images to the database
+        $location->images()->saveMany($images);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        // Redirect to the home page with coordinates in the URL
+        return redirect()->route('home', [
+            'lng' => $location->longitude,
+            'lat' => $location->latitude,
+        ]);
     }
 }
