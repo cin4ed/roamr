@@ -1,5 +1,6 @@
 import { defineConfig, loadEnv } from 'vite'
 import laravel from 'laravel-vite-plugin'
+import vue from '@vitejs/plugin-vue'
 
 export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
@@ -13,8 +14,13 @@ export default defineConfig(({ command, mode }) => {
           'resources/js/main.js'
         ],
         refresh: true
-      })
-    ]
+      }),
+      vue()
+    ],
+    resolve: name => {
+      const pages = import.meta.glob('./Pages/**/*.vue', { eager: true })
+      return pages[`./Pages/${name}.vue`]
+    }
   }
 
   if (env.USING_SAIL) {
