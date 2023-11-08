@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Location;
-use Illuminate\Support\Facades\File;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\File;
 
 class LocationsSeeder extends Seeder
 {
