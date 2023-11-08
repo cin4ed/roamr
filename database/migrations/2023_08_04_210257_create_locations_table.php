@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->string('name');
-            $table->text('description');
-            $table->double('longitude', 3, 10);
+            $table->text('description')->nullable();
             $table->double('latitude', 3, 10);
-            $table->foreignId('user_id')->constrained();
+            $table->double('longitude', 3, 10);
+            // $table->foreignId('user_id')->constrained(); TODO: Add authentication.
         });
     }
 
