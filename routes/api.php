@@ -1,8 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\LocationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\LocationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,8 +19,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::apiResource('locations', LocationController::class)->only([
-    'index',
-    'store',
-    'show'
-]);
+Route::apiResource('locations', LocationController::class)->except('show');
