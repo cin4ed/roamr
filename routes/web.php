@@ -1,9 +1,8 @@
 <?php
 
+use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\LocationController;
-use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,4 +29,4 @@ Route::inertia('/', 'v-welcome');
 
 //Route::resource('locations', LocationController::class)->only(['index', 'store', 'create']);
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';
