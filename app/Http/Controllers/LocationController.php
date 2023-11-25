@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Image;
+use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use App\Models\Location;
-use App\Models\Image;
 
 class LocationController extends Controller
 {
@@ -14,7 +14,15 @@ class LocationController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth')->only('store');
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        return Location::all();
     }
 
     /**
@@ -36,7 +44,7 @@ class LocationController extends Controller
             'description' => 'bail|required|string|max:255',
             'longitude' => 'bail|required|numeric',
             'latitude' => 'bail|required|numeric',
-            'images.*' => 'bail|required|image|mimes:png,jpeg,jpg|max:2048'
+            'images.*' => 'bail|required|image|mimes:png,jpeg,jpg|max:2048',
         ]);
 
         // Create a new location
@@ -45,7 +53,7 @@ class LocationController extends Controller
         // Generate a path for each image and store it in the images folder
         $images = [];
         foreach ($request->images as $requestImage) {
-            $imageName = time() . '.' . $requestImage->extension();
+            $imageName = time().'.'.$requestImage->extension();
             $requestImage->move(public_path('images'), $imageName);
             $image = new Image(['path' => $imageName]);
             array_push($images, $image);
