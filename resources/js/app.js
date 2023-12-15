@@ -1,15 +1,17 @@
 import './bootstrap'
-import { createApp, h } from 'vue'
-import { createInertiaApp } from '@inertiajs/vue3'
 
-createInertiaApp({
-  resolve: name => {
-    const pages = import.meta.glob('./Pages/**/*.vue', { eager: true })
-    return pages[`./Pages/${name}.vue`]
-  },
-  setup({ el, App, props, plugin }) {
-    createApp({ render: () => h(App, props) })
-      .use(plugin)
-      .mount(el)
-  }
+import Alpine from 'alpinejs'
+
+window.Alpine = Alpine
+
+Alpine.store('darkMode', { on: false })
+
+const darkModePreference = window.matchMedia('(prefers-color-scheme: dark)')
+
+Alpine.store('darkMode').on = darkModePreference.matches
+
+darkModePreference.addEventListener('change', e => {
+  Alpine.store('darkMode').on = e.matches
 })
+
+Alpine.start()

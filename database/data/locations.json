@@ -1,0 +1,45 @@
+
+[
+    {
+        "name": "Hotel la posada",
+        "description": "Hotel abandonado donde el dueño se colgó en el patio central, su hija se murió perdida en los túneles del lugar y tiene una iglesia masónica donde encontraron 40 cadaveres.\nUna belleza arquitectónica escondida en el corazón de la colonia Doctores.",
+        "latitude": 19.420618156736985,
+        "longitude": -99.15043313338039
+    },
+    {
+        "name": "Cine \"Opera\"",
+        "description": "El Cine Ópera fue una sala de cine en la Ciudad de México, usada también para conciertos, qué abrió sus puertas en el año 1949 y cerró sus puertas en el año 1998.",
+        "latitude": 19.440616176509582,
+        "longitude": -99.15889633215183
+    },
+    {
+        "name": "El Patio",
+        "description": "En el número 9 de la calle de Atenas, en la colonia Juárez, hace muchos años existía el que era el mayor centro nocturno de la capital. El Patio estaba lleno de glamour, luces y celebridades de la época del cine de oro mexicano.",
+        "latitude": 19.432295699293714,
+        "longitude": -99.15238176931496
+    },
+    {
+        "name": "Cine \"Orfeón\"",
+        "description": "Fue un cine de lujo donde se veían los estrenos de películas nacionales e internacionales. Sin embargo, con el tiempo eso comenzó a cambiar y se convirtió en un cine de segundas y terceras corridas.",
+        "latitude": 19.43326737517887,
+        "longitude": -99.14507772420711
+    },
+    {
+        "name": "Cine Lírico",
+        "description": "Este teatro abrió sus puertas en 1907 sobre la que era conocida como la Calle del Águila. Fue inaugurado por Justo Sierra, quien fungía como titular de Educación Pública y en esa primera función se disfrutó de la obra Las Vírgenes Locas.",
+        "latitude": 19.437569428811788,
+        "longitude": -99.1371932168094
+    },
+    {
+        "name": "Teatro Blanquita",
+        "description": "Fue un cine de lujo donde se veían los estrenos de películas nacionales e internacionales. Sin embargo, con el tiempo eso comenzó a cambiar y se convirtió en un cine de segundas y terceras corridas.",
+        "latitude": 19.438685571878686,
+        "longitude": -99.14069144722072
+    },
+    {
+        "name": "Centro SCOP",
+        "description": "El Centro SCOP fue crisol de actividades para el desarrollo de la infraestructura en México. Hoy es un ejemplo extraordinario de integración plástica.",
+        "latitude": 19.39454161549675,
+        "longitude": -99.14613293729441
+    }
+]
