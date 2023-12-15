@@ -12,26 +12,16 @@
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
         <script src="https://code.iconify.design/iconify-icon/1.0.8/iconify-icon.min.js"></script>
 
-        <!-- Scripts -->
+        <!-- Scripts and styles -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+        <!-- Extra  -->
+        @if (isset($head))
+            {{ $head }}
+        @endif
     </head>
-    <body class="font-sans antialiased dark:bg-neutral-900 dark:text-neutral-400">
-        <div class="min-h-screen bg-gray-100 dark:bg-neutral-900">
-            @include('layouts.navigation')
-
-            <!-- Page Heading -->
-            @if (isset($header))
-                <header class="bg-white shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
-                    </div>
-                </header>
-           @endif
-
-            <!-- Page Content -->
-            <main>
-                {{ $slot }}
-            </main>
-        </div>
+    <body class="font-sans h-screen flex flex-col antialiased p-2  dark:bg-neutral-900 dark:text-neutral-400">
+    @include('layouts.navigation')
+    {{ $slot }}
     </body>
 </html>
