@@ -19,26 +19,28 @@
         <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
         <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css" type="text/css">
     </head>
-    <body class="antialiased bg-neutral-800 text-neutral-400">
+    <body class="antialiased dark:bg-neutral-900 dark:text-neutral-400">
         <div class="p-2 h-screen flex flex-col">
             <div class="flex justify-between items-center h-10 px-1">
-                <h1 class="font-semibold text-lg">Roamr</h1>
+                <x-primary-link href="{{ url('/') }}">Roamr</x-primary-link>
                 @if (Route::has('login'))
                     <div>
                         @auth
-                            <a href="{{ url('/profile') }}" class="font-semibold text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-neutral-500">Profile</a>
+                            <x-primary-link href="{{ url('/profile') }}">Profile</x-primary-link>
                         @else
-                            <a href="{{ route('login') }}" class="font-semibold text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-neutral-500">Log in</a>
+                            <x-primary-link href="{{ route('login') }}">Log in</x-primary-link>
 
                             @if (Route::has('register'))
-                                <a href="{{ route('register') }}" class="ml-4 font-semibold text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-neutral-500">Register</a>
+                                <x-primary-link href="{{ route('register') }}">Register</x-primary-link>
                             @endif
                         @endauth
                     </div>
                 @endif
             </div>
             @if (Auth::check())
-                <a href="{{ url('/locations/create') }}" id="add-btn" class="px-4 py-1 rounded-md text-center bg-neutral-600 text-neutral-300 hover:bg-neutral-700 active:bg-neutral-400 ">Add +</a>
+                <x-primary-button-link href="{{ url('/locations/create') }}" id="add-btn" class="text-center">
+                    Add +
+                </x-primary-button-link>
             @endif
             <div id="map" class="flex-1 rounded-md  border mt-2 border-neutral-700"></div>
         </div>

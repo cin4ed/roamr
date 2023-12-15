@@ -14,8 +14,7 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="font-sans antialiased">
-<div class="min-h-screen flex flex-col justify-center items-center pt-6 sm:pt-0 dark:bg-neutral-900 dark:text-neutral-400 p-4">
+<body class="font-sans antialiased min-h-screen flex flex-col justify-center items-center p-4 sm:pt-0 dark:bg-neutral-900 dark:text-neutral-400">
     <div>
         <x-primary-link href="/">
             Roamr
@@ -24,6 +23,5 @@
     <div class="px-6 py-4 mt-6 w-full sm:max-w-md">
         {{ $slot }}
     </div>
-</div>
 </body>
 </html>
