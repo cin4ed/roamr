@@ -1,4 +1,4 @@
-<x-guest-layout>
+<x-auth-layout>
     <form method="POST" action="{{ route('register') }}" class="">
         @csrf
 
@@ -49,13 +49,13 @@
         </div>
 
         <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-neutral-400 hover:text-neutral-500 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-500" href="{{ route('login') }}">
+            <x-primary-link href="{{ url('/login') }}" class="underline">
                 {{ __('Already registered?') }}
-            </a>
+            </x-primary-link>
 
             <x-primary-button class="ml-4">
                 {{ __('Register') }}
             </x-primary-button>
         </div>
     </form>
-</x-guest-layout>
+</x-auth-layout>
