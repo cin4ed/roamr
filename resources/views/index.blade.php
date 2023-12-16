@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="head">
-        @include('mapbox-scripts')
+        @include('scripts.mapbox')
     </x-slot>
 
     <!-- Add new location button -->

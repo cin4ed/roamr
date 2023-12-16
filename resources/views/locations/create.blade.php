@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="head">
-        @include('mapbox-scripts')
+        @include('scripts.mapbox')
 
         <style>
             #map {
@@ -24,38 +24,39 @@
         <form class="mt-2" method="POST" enctype="multipart/form-data" action="{{ route('locations.store')}}">
             @csrf
             <div>
-                <x-input-label for="location" :value="__('Location')" />
+                <x-input-label for="location" :value="__('Location')"/>
                 <div class="relative">
                     <div id="map" class="h-52 w-full md:h-96 mt-2 rounded-md overflow-hidden"></div>
                 </div>
                 <div class="mt-2">
-                    <x-input-label for="longitude" :value="__('Longitude')" />
+                    <x-input-label for="longitude" :value="__('Longitude')"/>
                     <x-text-input type="number" name="longitude" id="input-longitude" readonly
-                                  class="block mt-1 w-full" placeholder="xx.xxxxxxxxxx" />
+                                  class="block mt-1 w-full" placeholder="xx.xxxxxxxxxx"/>
                 </div>
                 <div class="mt-2">
-                    <x-input-label for="latitude" :value="__('Latitude')" />
+                    <x-input-label for="latitude" :value="__('Latitude')"/>
                     <x-text-input type="number" name="latitude" id="input-latitude" readonly
-                                  class="block mt-1 w-full" placeholder="xx.xxxxxxxxxx" />
+                                  class="block mt-1 w-full" placeholder="xx.xxxxxxxxxx"/>
                 </div>
                 <hr class="mt-3 opacity-40 border-gray-300 dark:border-neutral-700">
-                <x-primary-button type="button" id="btn-curr-loc" class="flex justify-center items-center gap-4 mt-3 h-9 w-full">
+                <x-primary-button type="button" id="btn-curr-loc"
+                                  class="flex justify-center items-center gap-4 mt-3 h-9 w-full">
                     Use current location
                     <x-fluentui-my-location-16-o class="h-5 text-neutral-300"/>
                 </x-primary-button>
             </div>
             <div class="mt-2">
-                <x-input-label for="name" :value="__('Name')" />
+                <x-input-label for="name" :value="__('Name')"/>
                 <x-text-input type="text" name="name" required
-                              class="block mt-1 w-full" placeholder="Name of the location" />
+                              class="block mt-1 w-full" placeholder="Name of the location"/>
             </div>
             <div class="mt-2">
-                <x-input-label for="description" :value="__('Description')" />
+                <x-input-label for="description" :value="__('Description')"/>
                 <x-text-input type="text" name="description" class="block mt-1 w-full"
-                              placeholder="Some description..." />
+                              placeholder="Some description..."/>
             </div>
             <div class="mt-2">
-                <x-input-label for="images" :value="__('Images')" />
+                <x-input-label for="images" :value="__('Images')"/>
                 <div class="flex items-center justify-center w-full mt-2">
                     <label for="dropzone-file"
                            class="flex flex-col items-center justify-center w-full h-48 border-2 border-neutral-600 border-dashed rounded-lg cursor-pointer bg-neutral-800 hover:bg-neutral-700">
