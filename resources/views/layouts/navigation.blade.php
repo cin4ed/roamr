@@ -11,7 +11,7 @@
                         </x-slot>
                         <x-slot name="content">
                             @if(!request()->routeIs('profile.show'))
-                                <x-dropdown-link :href="route('profile.show')">
+                                <x-dropdown-link href="{{ route('profile.show', auth()->user()->name) }}">
                                     {{ __('Profile') }}
                                 </x-dropdown-link>
                             @else
