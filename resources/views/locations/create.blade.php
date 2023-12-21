@@ -25,6 +25,11 @@
             @csrf
             <div>
                 <x-input-label for="location" :value="__('Location')"/>
+                <x-primary-button type="button" id="btn-curr-loc"
+                                  class="flex justify-center items-center gap-4 mt-3 h-9 w-full">
+                    Use current location
+                    <x-fluentui-my-location-16-o class="h-5 text-neutral-300"/>
+                </x-primary-button>
                 <div class="relative">
                     <div id="map" class="h-52 w-full md:h-96 mt-2 rounded-md overflow-hidden"></div>
                 </div>
@@ -39,21 +44,16 @@
                                   class="block mt-1 w-full" placeholder="xx.xxxxxxxxxx"/>
                 </div>
                 <hr class="mt-3 opacity-40 border-gray-300 dark:border-neutral-700">
-                <x-primary-button type="button" id="btn-curr-loc"
-                                  class="flex justify-center items-center gap-4 mt-3 h-9 w-full">
-                    Use current location
-                    <x-fluentui-my-location-16-o class="h-5 text-neutral-300"/>
-                </x-primary-button>
             </div>
             <div class="mt-2">
-                <x-input-label for="name" :value="__('Name')"/>
+                <x-input-label for="name" :value="__('Name of the location')"/>
                 <x-text-input type="text" name="name" required
-                              class="block mt-1 w-full" placeholder="Name of the location"/>
+                              class="block mt-1 w-full" placeholder="Abandoned Warehouse"/>
             </div>
             <div class="mt-2">
                 <x-input-label for="description" :value="__('Description')"/>
                 <x-text-input type="text" name="description" class="block mt-1 w-full"
-                              placeholder="Some description..."/>
+                              placeholder="Giant abandoned building with endless..."/>
             </div>
             <div class="mt-2">
                 <x-input-label for="images" :value="__('Images')"/>
@@ -95,14 +95,14 @@
       })
 
       // Set marker
-      const marker = new mapboxgl.Marker({ draggable: true })
+      const marker = new mapboxgl.Marker()
         .setLngLat(defaultLocation)
         .addTo(map)
 
-      marker.on('dragend', () => {
-        const lngLat = marker.getLngLat()
-        document.getElementById('input-longitude').value = lngLat.lng
-        document.getElementById('input-latitude').value = lngLat.lat
+      map.on('move', () => {
+        marker.setLngLat(map.getCenter())
+        document.getElementById('input-longitude').value = map.getCenter().lng
+        document.getElementById('input-latitude').value = map.getCenter().lat
       })
 
       // Set map to user's location if allowed
