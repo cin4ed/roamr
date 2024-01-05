@@ -18,14 +18,6 @@ class LocationController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        return Location::all();
-    }
-
-    /**
      * Show the form for creating a new resource.
      */
     public function create(): View

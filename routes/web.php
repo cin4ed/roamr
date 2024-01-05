@@ -21,8 +21,7 @@ Route::get('/', function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile/{username}', [ProfileController::class, 'show'])->name('profile.show');
+    Route::resource('locations', LocationController::class)->only(['store', 'create']);
 });
-
-Route::resource('locations', LocationController::class)->only(['index', 'store', 'create']);
 
 require __DIR__.'/auth.php';
