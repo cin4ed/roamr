@@ -1,4 +1,6 @@
-<img src="public/roamr-logo-classic.jpeg" style="margin: 30 auto; display: block;" width="400"/>
+<p align="center">
+    <img src="public/roamr-logo-classic.jpeg"  width="400"/>
+</p>
 
 Roamr is a platform built for urban exploration (urbex) enthusiasts, offering a trusted, community-driven map of verified locations worldwide. Users can discover, share, and document hidden places while accessing detailed site information, ratings, and safety insights.
 
