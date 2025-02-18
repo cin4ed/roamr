@@ -22,6 +22,7 @@ const geojson: FeatureCollection = {
     {
       type: "Feature",
       geometry: { type: "Point", coordinates: [-122.4, 37.8] },
+      properties: null,
     },
   ],
 };
