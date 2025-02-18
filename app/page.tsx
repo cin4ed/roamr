@@ -1,14 +1,20 @@
 "use client";
 
-import { Map, Source, Layer } from "@vis.gl/react-maplibre";
-import type { CircleLayer } from "@vis.gl/react-maplibre";
+// import { Map, Source, Layer } from "@vis.gl/react-maplibre";
+// import type { CircleLayer } from "@vis.gl/react-maplibre";
+import Map, { Source, Layer } from "react-map-gl/maplibre";
+import type { CircleLayerSpecification as CircleLayer } from "react-map-gl/maplibre";
+
+// import type { CircleLayer } from "react-map-gl/maplibre";
+
 import type { FeatureCollection } from "geojson";
+import "maplibre-gl/dist/maplibre-gl.css";
+
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import "maplibre-gl/dist/maplibre-gl.css";
 
 const geojson: FeatureCollection = {
   type: "FeatureCollection",
@@ -27,6 +33,7 @@ const layerStyle: CircleLayer = {
     "circle-radius": 10,
     "circle-color": "#007cbf",
   },
+  source: "",
 };
 
 export default function Home() {
@@ -49,11 +56,11 @@ export default function Home() {
               latitude: 40,
               zoom: 3.5,
             }}
-            maxZoom={15.9}
+            // maxZoom={15.9}
             style={{ width: "100%", height: "100%" }}
-            mapStyle="https://tiles.openfreemap.org/styles/bright"
+            // mapStyle="https://tiles.openfreemap.org/styles/bright"
             // mapStyle="https://geoserveis.icgc.cat/contextmaps/icgc_orto_estandard.json"
-            // mapStyle="https://raw.githubusercontent.com/go2garret/maps/main/src/assets/json/arcgis_hybrid.json"
+            mapStyle="https://raw.githubusercontent.com/go2garret/maps/main/src/assets/json/arcgis_hybrid.json"
           >
             <Source id="my-data" type="geojson" data={geojson}>
               <Layer {...layerStyle} />
