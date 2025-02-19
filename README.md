@@ -4,6 +4,8 @@
 
 Roamr is a platform built for urban exploration (urbex) enthusiasts, offering a trusted, community-driven map of verified locations worldwide. Users can discover, share, and document hidden places while accessing detailed site information, ratings, and safety insights.
 
+Get a quick look at the project by visiting the [Roamr website](https://roamr.vercel.app/).
+
 ## 💻 Project Overview
 
 This repository contains the frontend code for Roamr, built using Next.js. The goal is to create a fast, scalable, and user-friendly experience for exploring urbex locations. The backend and other infrastructure are managed separately.
