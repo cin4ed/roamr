@@ -8,6 +8,12 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { useRef } from "react";
 import AppSidebar from "@/components/app-sidebar";
 import Image from "next/image";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { latestLocations } from "@/data/latest-locations";
+import type { Location } from "@/data/latest-locations";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { MapPin, Star } from "lucide-react";
 
 import {
   ResizableHandle,
@@ -16,6 +22,7 @@ import {
 } from "@/components/ui/resizable";
 
 import SearchBar from "@/components/SearchBar";
+import { Separator } from "@/components/ui/separator";
 
 const geojson: FeatureCollection = {
   type: "FeatureCollection",
@@ -49,20 +56,40 @@ export default function Home() {
           direction="horizontal"
           className="h-full w-full font-[family-name:var(--font-geist-sans)]"
         >
-          <ResizablePanel defaultSize={30} className="min-w-[350px]">
-            <div className="p-6 space-y-5">
-              <div>
-                <SearchBar
-                  onResultSelect={(f) => {
-                    mapRef.current?.flyTo({
-                      center: (f.geometry as Point).coordinates as LngLatLike,
-                      zoom: 13,
-                    });
-                  }}
-                />
-              </div>
+          <ResizablePanel defaultSize={50} className="min-w-[550px]">
+            <ScrollArea className="h-screen p-6">
               <div className="space-y-5">
-                <h2 className="text-xl font-bold">Latest Additions</h2>
+                <div>
+                  <SearchBar
+                    onResultSelect={(f) => {
+                      mapRef.current?.flyTo({
+                        center: (f.geometry as Point).coordinates as LngLatLike,
+                        zoom: 13,
+                      });
+                    }}
+                  />
+                </div>
+                <div>
+                  <div>
+                    <h2 className="text-xl font-bold">Latest Additions</h2>
+                    <p className="text-sm text-zinc-400">
+                      Explore the latest additions to our map.
+                    </p>
+                    <Separator className="mt-2" />
+                  </div>
+                  <div className="flex">
+                    <ScrollArea type="always" className="w-1 flex-1">
+                      <div className="flex gap-5 mt-4 mb-5">
+                        {latestLocations.map((location) => (
+                          <LocationCard location={location} />
+                        ))}
+                      </div>
+                      <ScrollBar className="w-full" orientation="horizontal" />
+                    </ScrollArea>
+                  </div>
+                </div>
+              </div>
+              {/* <h2 className="text-xl font-bold">Latest Additions</h2>
                 <div className="flex gap-5 overflow-x-auto">
                   <div className="border rounded-lg overflow-hidden w-56">
                     <img
@@ -79,38 +106,37 @@ export default function Home() {
                     </div>
                   </div>
                   <div className="border rounded-lg overflow-hidden w-56 bg-zinc-900"></div>
-                </div>
-              </div>
-              <div className="space-y-5">
-                <h2 className="text-xl font-bold">
-                  Connect with Other Explorers
-                </h2>
-                <div className="flex flex-col gap-5 overflow-x-auto">
-                  <div className="border h-16 flex gap-3 rounded-lg overflow-hidden w-full max-w-[450px]">
-                    <Image
-                      src="https://xsgames.co/randomusers/avatar.php?g=male"
-                      alt="Avatar"
-                      className="h-full object-cover"
-                      width={64}
-                      height={64}
-                    />
-                    <div className="p-2">
-                      <div className="text-lg font-bold">John Doe</div>
-                      <div className="text-sm text-zinc-400">
-                        I'm an explorer looking for new places to discover.
+                </div> */}
+              {/* <div className="space-y-5">
+                  <h2 className="text-xl font-bold">
+                    Connect with Other Explorers
+                  </h2>
+                  <div className="flex flex-col gap-5 overflow-x-auto">
+                    <div className="border h-16 flex gap-3 rounded-lg overflow-hidden w-full max-w-[450px]">
+                      <Image
+                        src="https://xsgames.co/randomusers/avatar.php?g=male"
+                        alt="Avatar"
+                        className="h-full object-cover"
+                        width={64}
+                        height={64}
+                      />
+                      <div className="p-2">
+                        <div className="text-lg font-bold">John Doe</div>
+                        <div className="text-sm text-zinc-400">
+                          I'm an explorer looking for new places to discover.
+                        </div>
                       </div>
                     </div>
+                    <div className="border h-16 flex gap-3 rounded-lg overflow-hidden w-full bg-zinc-900 max-w-[450px]"></div>
+                    <div className="border h-16 flex gap-3 rounded-lg overflow-hidden w-full bg-zinc-900 max-w-[450px]"></div>
+                    <div className="border h-16 flex gap-3 rounded-lg overflow-hidden w-full bg-zinc-900 max-w-[450px]"></div>
+                    <div className="border h-16 flex gap-3 rounded-lg overflow-hidden w-full bg-zinc-900 max-w-[450px]"></div>
                   </div>
-                  <div className="border h-16 flex gap-3 rounded-lg overflow-hidden w-full bg-zinc-900 max-w-[450px]"></div>
-                  <div className="border h-16 flex gap-3 rounded-lg overflow-hidden w-full bg-zinc-900 max-w-[450px]"></div>
-                  <div className="border h-16 flex gap-3 rounded-lg overflow-hidden w-full bg-zinc-900 max-w-[450px]"></div>
-                  <div className="border h-16 flex gap-3 rounded-lg overflow-hidden w-full bg-zinc-900 max-w-[450px]"></div>
-                </div>
-              </div>
-            </div>
+                </div> */}
+            </ScrollArea>
           </ResizablePanel>
           <ResizableHandle withHandle />
-          <ResizablePanel defaultSize={70}>
+          <ResizablePanel defaultSize={50}>
             <div className="h-full">
               <Map
                 ref={mapRef}
@@ -132,6 +158,51 @@ export default function Home() {
             </div>
           </ResizablePanel>
         </ResizablePanelGroup>
+      </div>
+    </div>
+  );
+}
+
+function LocationCard({ location }: { location: Location }) {
+  return (
+    <div
+      className="border rounded-lg overflow-hidden w-52 flex flex-col relative hover:bg-zinc-900 cursor-pointer"
+      key={location.id}
+    >
+      <Badge className="absolute top-1 left-1" variant={location.status == "verified" ? "success" : "destructive"}>
+        {location.status == "verified" ? "Verified" : "In Review"}
+      </Badge>
+      <Badge className="absolute top-1 right-1 flex items-center gap-1" variant="secondary">
+        {location.rating}
+        <span className="inline-block">⭐️</span>
+        {/* <Star className="h-3 w-3" /> */}
+      </Badge>
+      <img
+        src={location.images[0]}
+        alt={location.name}
+        className="w-full h-32 object-cover"
+      />
+      <div className="px-2 py-3 flex-1 flex flex-col gap-3 justify-between">
+        <div className="space-y-1.5">
+          <div className="text-sm font-bold">{location.name}</div>
+          <div className="text-xs text-zinc-400">{location.description}</div>
+        </div>
+        <div className="flex items-center justify-between">
+          <div className="flex gap-2 items-center">
+            <p className="text-xs text-zinc-400">Added by</p>
+            <Avatar className="w-6 h-6">
+              <AvatarImage
+                src={location.addedBy.profileImage}
+                alt={location.addedBy.name}
+              />
+              <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
+          </div>
+          <div className="flex gap-1 items-center text-muted-foreground">
+            <p className="text-xs">{location.country}</p>
+            <MapPin className="w-3 h-3" />
+          </div>
+        </div>
       </div>
     </div>
   );
