@@ -18,16 +18,16 @@ interface Place {
     location: Location;
     rating: number;
     user_id: number;
-    createdAt: string;
-    updatedAt: string;
+    created_at: string;
+    updated_at: string;
 }
 
 interface User {
     id: number;
     first_name: string;
     last_name: string;
-    createdAt: string;
-    updatedAt: string;
+    created_at: string;
+    updated_at: string;
 }
 
 interface Review {
@@ -37,6 +37,6 @@ interface Review {
     rating: number;
     body: string;
     images: Images[];
-    createdAt: string;
-    updatedAt: string;
+    created_at: string;
+    updated_at: string;
 }
