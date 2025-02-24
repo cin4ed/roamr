@@ -4,6 +4,7 @@ import { Telescope, MapPinPlus, Bell } from "lucide-react";
 import { Button } from "./ui/button";
 import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
+import { redirect } from "next/navigation";
 
 enum Tab {
   Explore,
@@ -37,19 +38,20 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ className, ...props }) => {
         <Button variant="outline" size="icon" className={cn("h-10 w-10")}>
           <Bell className={cn("h-10 w-10")} />
         </Button>
-        <div
-          className={cn(
-            "aspect-square border rounded-full overflow-hidden h-10 w-10"
-          )}
+        <Button
+          variant="outline"
+          size="icon"
+          className={cn("h-10 w-10 rounded-full overflow-hidden p-0 border")}
+          onClick={() => redirect("/profile")}
         >
           <Image
-            className="overflow-hidden"
-            alt="sldkfj"
-            width={100}
-            height={100}
+            className="rounded-full"
+            alt="profilePicture"
+            width={40}
+            height={40}
             src="https://xsgames.co/randomusers/avatar.php?g=male"
           />
-        </div>
+        </Button>
       </div>
     </div>
   );
