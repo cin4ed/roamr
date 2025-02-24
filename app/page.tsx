@@ -5,7 +5,7 @@ import type { LngLatLike, MapRef } from "react-map-gl/maplibre";
 import type { CircleLayerSpecification as CircleLayer } from "react-map-gl/maplibre";
 import type { FeatureCollection, Point } from "geojson";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import AppSidebar from "@/components/app-sidebar";
 import Image from "next/image";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
@@ -14,6 +14,8 @@ import type { Location } from "@/data/latest-locations";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MapPin, Star } from "lucide-react";
+import AuthButton from "@/components/auth-button";
+import { useSession } from "next-auth/react";
 
 import {
   ResizableHandle,
@@ -46,7 +48,14 @@ const layerStyle: CircleLayer = {
 };
 
 export default function Home() {
+  const { data: session } = useSession();
   const mapRef = useRef<MapRef>(null);
+
+  useEffect(() => {
+    if (session) {
+      console.log(session);
+    }
+  });
 
   return (
     <div className="min-h-screen font-[family-name:var(--font-geist-sans)] flex">
@@ -58,17 +67,18 @@ export default function Home() {
         >
           <ResizablePanel defaultSize={50} className="min-w-[550px]">
             <ScrollArea className="h-screen p-6">
-              <div className="space-y-5">
-                <div>
-                  <SearchBar
-                    onResultSelect={(f) => {
-                      mapRef.current?.flyTo({
-                        center: (f.geometry as Point).coordinates as LngLatLike,
-                        zoom: 13,
-                      });
-                    }}
-                  />
-                </div>
+              <div>
+                <SearchBar
+                  onResultSelect={(f) => {
+                    mapRef.current?.flyTo({
+                      center: (f.geometry as Point).coordinates as LngLatLike,
+                      zoom: 13,
+                    });
+                  }}
+                />
+              </div>
+              <div className="space-y-10 mt-5">
+                {!session && <CreateAccountSection />}
                 <div>
                   <div>
                     <h2 className="text-xl font-bold">Latest Additions</h2>
@@ -81,7 +91,7 @@ export default function Home() {
                     <ScrollArea type="always" className="w-1 flex-1">
                       <div className="flex gap-5 mt-4 mb-5">
                         {latestLocations.map((location) => (
-                          <LocationCard location={location} />
+                          <LocationCard location={location} key={location.id} />
                         ))}
                       </div>
                       <ScrollBar className="w-full" orientation="horizontal" />
@@ -89,24 +99,6 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-              {/* <h2 className="text-xl font-bold">Latest Additions</h2>
-                <div className="flex gap-5 overflow-x-auto">
-                  <div className="border rounded-lg overflow-hidden w-56">
-                    <img
-                      src="https://www.diarioelindependiente.mx/uploads/2023/11/16998640951cc2a.jpg"
-                      alt="Hotel Los Arcos"
-                      className="w-full h-32 object-cover"
-                    />
-                    <div className="p-4 space-y-2">
-                      <div className="text-lg font-bold">Hotel Los Arcos</div>
-                      <div className="text-sm text-zinc-400">
-                        Abandoned hotel in the middle of La Paz Malecon with a
-                        beautiful view of the sea.
-                      </div>
-                    </div>
-                  </div>
-                  <div className="border rounded-lg overflow-hidden w-56 bg-zinc-900"></div>
-                </div> */}
               {/* <div className="space-y-5">
                   <h2 className="text-xl font-bold">
                     Connect with Other Explorers
@@ -169,10 +161,16 @@ function LocationCard({ location }: { location: Location }) {
       className="border rounded-lg overflow-hidden w-52 flex flex-col relative hover:bg-zinc-900 cursor-pointer"
       key={location.id}
     >
-      <Badge className="absolute top-1 left-1" variant={location.status == "verified" ? "success" : "destructive"}>
+      <Badge
+        className="absolute top-1 left-1"
+        variant={location.status == "verified" ? "success" : "destructive"}
+      >
         {location.status == "verified" ? "Verified" : "In Review"}
       </Badge>
-      <Badge className="absolute top-1 right-1 flex items-center gap-1" variant="secondary">
+      <Badge
+        className="absolute top-1 right-1 flex items-center gap-1"
+        variant="secondary"
+      >
         {location.rating}
         <span className="inline-block">⭐️</span>
         {/* <Star className="h-3 w-3" /> */}
@@ -203,6 +201,35 @@ function LocationCard({ location }: { location: Location }) {
             <MapPin className="w-3 h-3" />
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function CreateAccountSection() {
+  return (
+    <div>
+      <div>
+        <h2 className="text-xl font-bold">
+          Create an Account to Explore & Contribute!
+        </h2>
+        <p className="text-sm text-zinc-400">
+          Join the Roamr urbex community and unlock exclusive features.{" "}
+        </p>
+        <Separator className="mt-2" />
+      </div>
+      <div className="mt-2 space-y-4">
+        <p>With an account, you can:</p>
+        <ul className="list-disc list-inside">
+          <li>📍 Contribute to the map by adding new locations.</li>
+          <li>⭐️ Rate, review, and leave comments on urbex spots.</li>
+          <li>👥 Connect with fellow explorers and plan trips together</li>
+          <li>
+            💬 Join our exclusive Discord to share experiences, get tips, and
+            stay updated on new features!
+          </li>
+        </ul>
+        <AuthButton />
       </div>
     </div>
   );
