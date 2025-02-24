@@ -4,6 +4,7 @@ import { Telescope, MapPinPlus, Bell } from "lucide-react";
 import { Button } from "./ui/button";
 import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
+import { redirect } from "next/navigation";
 
 enum Tab {
   Explore,
@@ -41,7 +42,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ className, ...props }) => {
           variant="outline"
           size="icon"
           className={cn("h-10 w-10 rounded-full overflow-hidden p-0 border")}
-          onClick={redirectToProfilePage}
+          onClick={() => redirect("/profile")}
         >
           <Image
             className="rounded-full"
@@ -55,9 +56,5 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ className, ...props }) => {
     </div>
   );
 };
-
-function redirectToProfilePage() {
-  window.location.href = "/profile";
-}
 
 export default AppSidebar;

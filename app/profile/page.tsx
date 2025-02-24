@@ -1,11 +1,15 @@
 import React from 'react';
 import { NextPage } from 'next';
+import Profile from "../../components/profile";
+import { userInformation } from "@/data/user-information";
 
 const ProfilePage: NextPage = () => {
+
     return (
-        <div>
-            <h1>Profile Page</h1>
-            <p>Welcome to the profile page!</p>
+        <div className="w-full flex justify-center items-center h-screen">
+            <div className="border-2 rounded-lg">
+                <Profile user={userInformation} />
+            </div>
         </div>
     );
 };
