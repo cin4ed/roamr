@@ -36,20 +36,18 @@ const formSchema = z.object({
   }),
 });
 
+// Once we got the session from NextAuth, we can use it to get the user data from our database.
+// For now, we'll just use a mock user data.
 function getUserData(session: Session) {
   return {
     id: 1,
-    first_name: "Kenneth",
-    last_name: "Quintero",
-    bio: "I'm a cool guy.",
+    name: "Kenneth Quintero",
+    bio: "Just write something about yourself.",
     username: session.user?.name || "",
     email: session.user?.email || "",
-    profile_image: session.user?.image || "",
+    profile_image_url: session.user?.image || "avatar.png",
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
-    get fullName() {
-      return `${this.first_name} ${this.last_name}`;
-    },
   };
 }
 
@@ -62,13 +60,16 @@ export function UserProfileForm({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      profile_image: undefined,
       username: user.username,
       bio: user.bio,
-      profile_image: undefined,
     },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {}
+
+  // old code
+
   const [username, setUsername] = useState(user.username);
   const [bio, setBio] = useState(user.bio);
   const [isChanged, setIsChanged] = useState(false);
@@ -129,11 +130,10 @@ export function UserProfileForm({
                   alt="profilePicture"
                   width={81}
                   height={81}
-                  src={user.profile_image || "/avatar.png"}
+                  src={user.profile_image_url}
                 />
                 <button
-                  className="absolute -bottom-1 -right-0 bg-white rounded-full py-1 px-2 text-sm text-black
-                                hover:bg-gray-200 duration-200"
+                  className="absolute -bottom-1 -right-0 bg-white rounded-full py-1 px-2 text-xs shadow text-black hover:bg-gray-200 duration-200"
                   onClick={() => document.getElementById("fileInput")?.click()}
                 >
                   Edit

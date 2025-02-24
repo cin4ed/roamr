@@ -28,8 +28,8 @@ interface User {
   username: string;
   bio: string;
   email: string;
-  location: string?;
-  profile_image: string?;
+  location: string;
+  profile_image_url: string;
   created_at: string;
   updated_at: string;
 }
