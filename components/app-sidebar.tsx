@@ -3,22 +3,21 @@ import { cn } from "@/lib/utils";
 import { Telescope, MapPinPlus } from "lucide-react";
 import { Button } from "./ui/button";
 import { Separator } from "@/components/ui/separator";
-import { redirect } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { NotificationButton } from "@/components/notification-button";
-import { ProfileButton } from "@/components/profile-button";
+import { ProfileButtonLink } from "@/components/profile-button-link";
 
 enum Tab {
   Explore,
   Create,
+  UserProfile,
 }
 
-// interface AppSidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
+type AppSidebarProps = React.HTMLAttributes<HTMLDivElement> & {
+  onTabChange?: (tab: Tab) => void;
+};
 
-const AppSidebar: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
-  className,
-  ...props
-}) => {
+export function AppSidebar({ className, ...props }: AppSidebarProps) {
   const { data: session } = useSession();
   const [activeTab, setActiveTab] = useState<Tab>(Tab.Explore);
 
@@ -53,11 +52,9 @@ const AppSidebar: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
       {session && (
         <div className="flex flex-col gap-3">
           <NotificationButton />
-          <ProfileButton user={session.user!} />
+          <ProfileButtonLink user={session.user!} />
         </div>
       )}
     </div>
   );
-};
-
-export default AppSidebar;
+}

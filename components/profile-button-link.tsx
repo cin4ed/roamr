@@ -2,13 +2,13 @@ import Link from "next/link";
 import Image from "next/image";
 import type { DefaultSession } from "next-auth";
 
-type ProfileButtonProps = {
+type ProfileButtonLinkProps = {
   user: NonNullable<DefaultSession["user"]>;
 };
 
-export function ProfileButton({ user }: ProfileButtonProps) {
+export function ProfileButtonLink({ user }: ProfileButtonLinkProps) {
   return (
-    <Link href="/user">
+    <Link href="/profile">
       <div
         className={
           "aspect-square border rounded-full overflow-hidden h-10 w-10 cursor-pointer hover:ring-1 ring-zinc-400"

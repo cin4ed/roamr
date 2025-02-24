@@ -6,14 +6,14 @@ import type { CircleLayerSpecification as CircleLayer } from "react-map-gl/mapli
 import type { FeatureCollection, Point } from "geojson";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useRef } from "react";
-import AppSidebar from "@/components/app-sidebar";
-import Image from "next/image";
+import { AppSidebar } from "@/components/app-sidebar";
+// import Image from "next/image";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { latestLocations } from "@/data/latest-locations";
 import type { Location } from "@/data/latest-locations";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MapPin, Star } from "lucide-react";
+import { MapPin } from "lucide-react";
 import AuthButton from "@/components/auth-button";
 import { useSession } from "next-auth/react";
 
