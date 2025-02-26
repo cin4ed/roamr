@@ -7,6 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Pencil } from "lucide-react";
+import { SignOutButton } from "@/components/sign-out-button";
 
 export default function ProfilePage() {
   const { session, loading } = useAuth();
@@ -48,6 +49,9 @@ export default function ProfilePage() {
               </Button>
             </div>
             <Separator />
+            <div className="flex justify-end">
+              <SignOutButton />
+            </div>
             <div>
               <h2 className="text-muted-foreground">📊 Statistics</h2>
               <div className="coming-soon">
