@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
-import { Telescope, MapPinPlus } from "lucide-react";
+import { Telescope, MapPinPlus, Home } from "lucide-react";
 import { Button } from "./ui/button";
 import { Separator } from "@/components/ui/separator";
-import { useSession } from "next-auth/react";
-import { NotificationButton } from "@/components/notification-button";
 import { ProfileButtonLink } from "@/components/profile-button-link";
+import { Session } from "@supabase/supabase-js";
+import Link from "next/link";
 
 enum Tab {
   Explore,
@@ -14,47 +14,86 @@ enum Tab {
 }
 
 type AppSidebarProps = React.HTMLAttributes<HTMLDivElement> & {
+  session: Session | null;
   onTabChange?: (tab: Tab) => void;
 };
 
-export function AppSidebar({ className, ...props }: AppSidebarProps) {
-  const { data: session } = useSession();
+export function AppSidebar({ session, className, ...props }: AppSidebarProps) {
   const [activeTab, setActiveTab] = useState<Tab>(Tab.Explore);
 
   return (
     <div
       className={cn(
-        "flex flex-col py-6 justify-between items-center border-r",
+        "flex flex-col py-6 justify-between items-center border-r bg-zinc-900",
         className
       )}
       {...props}
     >
       <div className="flex flex-col gap-3">
-        <div className="text-center font-black text-xl font-serif">R</div>
+        <HomeLink />
         <Separator />
-        <Button
-          variant="outline"
-          size="icon"
-          className={cn("h-10 w-10", activeTab == Tab.Explore && "bg-zinc-900")}
+        <ExploreButton
+          active={activeTab == Tab.Explore}
           onClick={() => setActiveTab(Tab.Explore)}
-        >
-          <Telescope className={cn("h-10 w-10")} />
-        </Button>
-        <Button
-          variant="outline"
-          size="icon"
-          className={cn("h-10 w-10", activeTab == Tab.Create && "bg-zinc-900")}
+        />
+        <CreateButton
+          active={activeTab == Tab.Create}
           onClick={() => setActiveTab(Tab.Create)}
-        >
-          <MapPinPlus className={cn("h-10 w-10")} />
-        </Button>
+        />
       </div>
       {session && (
         <div className="flex flex-col gap-3">
-          <NotificationButton />
-          <ProfileButtonLink user={session.user!} />
+          <ProfileButtonLink session={session} />
         </div>
       )}
     </div>
+  );
+}
+
+function HomeLink() {
+  return (
+    <Link href="/">
+      <Button variant="ghost" size="icon" className="h-10 w-10">
+        <Home className="h-10 w-10" />
+      </Button>
+    </Link>
+  );
+}
+
+function ExploreButton({
+  active,
+  onClick,
+}: {
+  active: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <Button
+      variant="ghost"
+      size="icon"
+      className={cn("h-10 w-10", active && "bg-zinc-800")}
+      onClick={() => onClick()}
+    >
+      <Telescope className={cn("h-10 w-10")} />
+    </Button>
+  );
+}
+
+function CreateButton({
+  active,
+  onClick,
+}: {
+  active: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <Button
+      variant="ghost"
+      size="icon"
+      className={cn("h-10 w-10", active && "bg-zinc-800")}
+      onClick={() => onClick()}
+    >
+      <MapPinPlus className={cn("h-10 w-10")} />
+    </Button>
   );
 }

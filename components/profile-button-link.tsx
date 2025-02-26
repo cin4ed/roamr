@@ -1,12 +1,12 @@
 import Link from "next/link";
 import Image from "next/image";
-import type { DefaultSession } from "next-auth";
+import { Session } from "@supabase/supabase-js";
 
 type ProfileButtonLinkProps = {
-  user: NonNullable<DefaultSession["user"]>;
+  session: Session;
 };
 
-export function ProfileButtonLink({ user }: ProfileButtonLinkProps) {
+export function ProfileButtonLink({ session }: ProfileButtonLinkProps) {
   return (
     <Link href="/profile">
       <div
@@ -19,7 +19,7 @@ export function ProfileButtonLink({ user }: ProfileButtonLinkProps) {
           alt="User Avatar"
           width={40}
           height={40}
-          src={user.image || "/avatar.png"}
+          src={session.user.user_metadata.picture || "/avatar.png"}
         />
       </div>
     </Link>

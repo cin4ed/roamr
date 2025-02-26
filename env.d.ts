@@ -4,5 +4,7 @@ declare namespace NodeJS {
     DISCORD_CLIENT_SECRET: string;
     NEXTAUTH_URL: string;
     NEXTAUTH_SECRET: string;
+    NEXT_PUBLIC_SUPABASE_URL: string;
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: string;
   }
 }

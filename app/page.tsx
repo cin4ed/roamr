@@ -48,18 +48,11 @@ const layerStyle: CircleLayer = {
 };
 
 export default function Home() {
-  const { data: session } = useSession();
   const mapRef = useRef<MapRef>(null);
-
-  useEffect(() => {
-    if (session) {
-      console.log(session);
-    }
-  });
 
   return (
     <div className="min-h-screen font-[family-name:var(--font-geist-sans)] flex">
-      <AppSidebar className="w-16" />
+      {/* <AppSidebar className="w-16" />
       <div className="flex-1">
         <ResizablePanelGroup
           direction="horizontal"
@@ -99,32 +92,6 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-              {/* <div className="space-y-5">
-                  <h2 className="text-xl font-bold">
-                    Connect with Other Explorers
-                  </h2>
-                  <div className="flex flex-col gap-5 overflow-x-auto">
-                    <div className="border h-16 flex gap-3 rounded-lg overflow-hidden w-full max-w-[450px]">
-                      <Image
-                        src="https://xsgames.co/randomusers/avatar.php?g=male"
-                        alt="Avatar"
-                        className="h-full object-cover"
-                        width={64}
-                        height={64}
-                      />
-                      <div className="p-2">
-                        <div className="text-lg font-bold">John Doe</div>
-                        <div className="text-sm text-zinc-400">
-                          I'm an explorer looking for new places to discover.
-                        </div>
-                      </div>
-                    </div>
-                    <div className="border h-16 flex gap-3 rounded-lg overflow-hidden w-full bg-zinc-900 max-w-[450px]"></div>
-                    <div className="border h-16 flex gap-3 rounded-lg overflow-hidden w-full bg-zinc-900 max-w-[450px]"></div>
-                    <div className="border h-16 flex gap-3 rounded-lg overflow-hidden w-full bg-zinc-900 max-w-[450px]"></div>
-                    <div className="border h-16 flex gap-3 rounded-lg overflow-hidden w-full bg-zinc-900 max-w-[450px]"></div>
-                  </div>
-                </div> */}
             </ScrollArea>
           </ResizablePanel>
           <ResizableHandle withHandle />
@@ -150,7 +117,7 @@ export default function Home() {
             </div>
           </ResizablePanel>
         </ResizablePanelGroup>
-      </div>
+      </div> */}
     </div>
   );
 }
