@@ -7,7 +7,7 @@ import { ProfileButtonLink } from "@/components/profile-button-link";
 import { Session } from "@supabase/supabase-js";
 import Link from "next/link";
 
-enum Tab {
+export enum Tab {
   Explore,
   Create,
   UserProfile,
@@ -15,10 +15,15 @@ enum Tab {
 
 type AppSidebarProps = React.HTMLAttributes<HTMLDivElement> & {
   session: Session | null;
-  onTabChange?: (tab: Tab) => void;
+  onTabChange: (tab: Tab) => void;
 };
 
-export function AppSidebar({ session, className, ...props }: AppSidebarProps) {
+export function AppSidebar({
+  session,
+  onTabChange,
+  className,
+  ...props
+}: AppSidebarProps) {
   const [activeTab, setActiveTab] = useState<Tab>(Tab.Explore);
 
   return (
@@ -34,11 +39,17 @@ export function AppSidebar({ session, className, ...props }: AppSidebarProps) {
         <Separator />
         <ExploreButton
           active={activeTab == Tab.Explore}
-          onClick={() => setActiveTab(Tab.Explore)}
+          onClick={() => {
+            setActiveTab(Tab.Explore);
+            onTabChange(Tab.Explore);
+          }}
         />
         <CreateButton
           active={activeTab == Tab.Create}
-          onClick={() => setActiveTab(Tab.Create)}
+          onClick={() => {
+            setActiveTab(Tab.Create);
+            onTabChange(Tab.Create);
+          }}
         />
       </div>
       {session && (
