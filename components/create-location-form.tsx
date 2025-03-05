@@ -68,11 +68,25 @@ export const CreateLocationForm = ({
   // Add the dropzone configuration here
   const dropzone = useDropzone({
     onDropFile: async (file: File) => {
-      setImages(dropzone.fileStatuses.map((f) => f.file));
-      return {
-        status: "success",
+      // First create the URL for preview
+      const result = {
+        status: "success" as const,
         result: URL.createObjectURL(file),
       };
+
+      // Update images state AFTER the file is successfully processed
+      setTimeout(() => {
+        setImages((current) => [...current, file]);
+      }, 0);
+
+      return result;
+    },
+    onRemoveFile: async (id: string) => {
+      // Find the file being removed and remove it from images state
+      const fileToRemove = dropzone.fileStatuses.find((f) => f.id === id);
+      if (fileToRemove) {
+        setImages((current) => current.filter((f) => f !== fileToRemove.file));
+      }
     },
     validation: {
       accept: {
@@ -113,12 +127,19 @@ export const CreateLocationForm = ({
 
     // Upload images using FormData after successful location creation
     const formData = new FormData();
+    console.log("Images to upload:", images); // Debug log
+
     images.forEach((image) => {
       formData.append("images", image);
     });
 
+    // Log the FormData contents
+    for (const pair of formData.entries()) {
+      console.log("FormData entry:", pair[0], pair[1]);
+    }
+
     const uploadImagesResponse = await axios.post(
-      `/api/locations/${createLocationResponse.data.id}/images`,
+      `/api/locations/${createLocationResponse.data.locationId}/images`,
       formData,
       {
         headers: {
@@ -134,6 +155,12 @@ export const CreateLocationForm = ({
 
     if (uploadImagesResponse.status === 401) {
       toast.error("Unauthorized");
+      return;
+    }
+
+    if (uploadImagesResponse.data.errors.length > 0) {
+      toast.error("Failed to upload images");
+      console.error(uploadImagesResponse.data.errors);
       return;
     }
 

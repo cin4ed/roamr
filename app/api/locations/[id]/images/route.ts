@@ -9,10 +9,12 @@ const imageFileSchema = z.object({
   type: z.string().refine((type) => type.startsWith("image/"), {
     message: "File must be an image",
   }),
-  size: z.number().max(5 * 1024 * 1024, { message: "File size must be less than 5MB" }),
+  size: z
+    .number()
+    .max(5 * 1024 * 1024, { message: "File size must be less than 5MB" }),
 });
 
-export async function GET(
+export async function POST(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
@@ -20,13 +22,13 @@ export async function GET(
 
   // Initialize Supabase client and authenticate user
   const supabase = await createClient();
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
 
   if (authError || !user) {
-    return NextResponse.json(
-      { error: "Unauthorized" },
-      { status: 401 }
-    );
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   // Check if the location exists
@@ -41,14 +43,19 @@ export async function GET(
 
   // Parse FormData and extract all image files
   const formData = await request.formData();
-  const files = formData.getAll("images").filter((file): file is File => file instanceof File);
+  const files = formData
+    .getAll("images")
+    .filter((file): file is File => file instanceof File);
 
   if (files.length === 0) {
     return NextResponse.json({ error: "No images provided" }, { status: 400 });
   }
 
   if (files.length > 10) {
-    return NextResponse.json({ error: "Maximum 10 images allowed" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Maximum 10 images allowed" },
+      { status: 400 }
+    );
   }
 
   // Initialize arrays to collect successes and errors
@@ -65,7 +72,10 @@ export async function GET(
     });
 
     if (!validation.success) {
-      errors.push({ file: file.name, error: validation.error.flatten().fieldErrors });
+      errors.push({
+        file: file.name,
+        error: validation.error.flatten().fieldErrors,
+      });
       continue;
     }
 
