@@ -1,0 +1,245 @@
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[];
+
+export type Database = {
+  public: {
+    Tables: {
+      images: {
+        Row: {
+          created_at: string | null;
+          id: string;
+          image_path: string;
+          location_id: string;
+          uploaded_by: string;
+        };
+        Insert: {
+          created_at?: string | null;
+          id?: string;
+          image_path: string;
+          location_id: string;
+          uploaded_by: string;
+        };
+        Update: {
+          created_at?: string | null;
+          id?: string;
+          image_path?: string;
+          location_id?: string;
+          uploaded_by?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "images_location_id_fkey";
+            columns: ["location_id"];
+            isOneToOne: false;
+            referencedRelation: "locations";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      locations: {
+        Row: {
+          accessibility: string | null;
+          address: string | null;
+          city: string | null;
+          coordinates: unknown;
+          country: string | null;
+          created_at: string | null;
+          creator_id: string;
+          description: string | null;
+          id: string;
+          name: string;
+          safety_info: string | null;
+          tags: string[] | null;
+          updated_at: string | null;
+          verification_status:
+            | Database["public"]["Enums"]["verification_status"]
+            | null;
+        };
+        Insert: {
+          accessibility?: string | null;
+          address?: string | null;
+          city?: string | null;
+          coordinates: unknown;
+          country?: string | null;
+          created_at?: string | null;
+          creator_id: string;
+          description?: string | null;
+          id?: string;
+          name: string;
+          safety_info?: string | null;
+          tags?: string[] | null;
+          updated_at?: string | null;
+          verification_status?:
+            | Database["public"]["Enums"]["verification_status"]
+            | null;
+        };
+        Update: {
+          accessibility?: string | null;
+          address?: string | null;
+          city?: string | null;
+          coordinates?: unknown;
+          country?: string | null;
+          created_at?: string | null;
+          creator_id?: string;
+          description?: string | null;
+          id?: string;
+          name?: string;
+          safety_info?: string | null;
+          tags?: string[] | null;
+          updated_at?: string | null;
+          verification_status?:
+            | Database["public"]["Enums"]["verification_status"]
+            | null;
+        };
+        Relationships: [];
+      };
+      users: {
+        Row: {
+          bio: string;
+          created_at: string;
+          discord_id: string;
+          email: string;
+          id: string;
+          image: string;
+          name: string;
+          updated_at: string;
+        };
+        Insert: {
+          bio?: string;
+          created_at?: string;
+          discord_id?: string;
+          email?: string;
+          id?: string;
+          image?: string;
+          name?: string;
+          updated_at?: string;
+        };
+        Update: {
+          bio?: string;
+          created_at?: string;
+          discord_id?: string;
+          email?: string;
+          id?: string;
+          image?: string;
+          name?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+    };
+    Views: {
+      [_ in never]: never;
+    };
+    Functions: {
+      [_ in never]: never;
+    };
+    Enums: {
+      verification_status: "pending" | "verified" | "rejected";
+    };
+    CompositeTypes: {
+      [_ in never]: never;
+    };
+  };
+};
+
+type PublicSchema = Database[Extract<keyof Database, "public">];
+
+export type Tables<
+  PublicTableNameOrOptions extends
+    | keyof (PublicSchema["Tables"] & PublicSchema["Views"])
+    | { schema: keyof Database },
+  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
+    ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
+        Database[PublicTableNameOrOptions["schema"]]["Views"])
+    : never = never
+> = PublicTableNameOrOptions extends { schema: keyof Database }
+  ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
+      Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      Row: infer R;
+    }
+    ? R
+    : never
+  : PublicTableNameOrOptions extends keyof (PublicSchema["Tables"] &
+      PublicSchema["Views"])
+  ? (PublicSchema["Tables"] &
+      PublicSchema["Views"])[PublicTableNameOrOptions] extends {
+      Row: infer R;
+    }
+    ? R
+    : never
+  : never;
+
+export type TablesInsert<
+  PublicTableNameOrOptions extends
+    | keyof PublicSchema["Tables"]
+    | { schema: keyof Database },
+  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
+    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
+    : never = never
+> = PublicTableNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Insert: infer I;
+    }
+    ? I
+    : never
+  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
+  ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+      Insert: infer I;
+    }
+    ? I
+    : never
+  : never;
+
+export type TablesUpdate<
+  PublicTableNameOrOptions extends
+    | keyof PublicSchema["Tables"]
+    | { schema: keyof Database },
+  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
+    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
+    : never = never
+> = PublicTableNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Update: infer U;
+    }
+    ? U
+    : never
+  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
+  ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+      Update: infer U;
+    }
+    ? U
+    : never
+  : never;
+
+export type Enums<
+  PublicEnumNameOrOptions extends
+    | keyof PublicSchema["Enums"]
+    | { schema: keyof Database },
+  EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
+    ? keyof Database[PublicEnumNameOrOptions["schema"]]["Enums"]
+    : never = never
+> = PublicEnumNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
+  ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+  : never;
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof PublicSchema["CompositeTypes"]
+    | { schema: keyof Database },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof Database;
+  }
+    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never
+> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
+  ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+  : never;
