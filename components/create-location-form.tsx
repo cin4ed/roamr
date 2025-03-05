@@ -132,7 +132,13 @@ export const CreateLocationForm = ({
       return;
     }
 
+    if (uploadImagesResponse.status === 401) {
+      toast.error("Unauthorized");
+      return;
+    }
+
     toast.success("Location created successfully");
+    console.log(uploadImagesResponse.data);
   };
 
   return (
