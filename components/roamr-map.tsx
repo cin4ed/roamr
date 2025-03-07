@@ -2,18 +2,38 @@
 
 import Map, { Source, Marker, StyleSpecification } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Map as MapIcon, Satellite } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
+import type { Database } from "@/types/supabase";
+import { LocationMarker } from "@/components/location-marker";
+
+type Location = Database["public"]["Tables"]["locations"]["Row"];
 
 type RoamrMapProps = {
   onLocationSelect?: (coordinates: {latitude: number; longitude: number}) => void;
   selectedLocation?: {latitude: number; longitude: number} | null;
+  isSelectingLocation?: boolean;
 }
 
-export function RoamrMap({ onLocationSelect, selectedLocation }: RoamrMapProps) {
+export function RoamrMap({ onLocationSelect, selectedLocation, isSelectingLocation }: RoamrMapProps) {
     const [isVectorStyle, setIsVectorStyle] = useState(true);
-    
+    const [locations, setLocations] = useState<Location[]>([]);
+    async function loadLocations() {
+        const supabase = await createClient();
+        const { data, error } = await supabase.from('locations').select('*');
+        if (error) {
+            console.error(error);
+        } else {
+            setLocations(data);
+        }
+    }
+
+    useEffect(() => {
+        loadLocations();
+    }, []);
+
     const mapStyle: StyleSpecification | string = isVectorStyle 
         ? "https://tiles.openfreemap.org/styles/liberty"
         : {
@@ -44,7 +64,7 @@ export function RoamrMap({ onLocationSelect, selectedLocation }: RoamrMapProps) 
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleMapClick = (event: any) => {
-        if (onLocationSelect) {
+        if (onLocationSelect && isSelectingLocation) {
             const { lng, lat } = event.lngLat;
             onLocationSelect({
                 longitude: lng,
@@ -73,7 +93,7 @@ export function RoamrMap({ onLocationSelect, selectedLocation }: RoamrMapProps) 
                 style={{ width: "100%", height: "100%" }}
                 mapStyle={mapStyle}
                 onClick={handleMapClick}
-                cursor={onLocationSelect ? 'crosshair' : 'grab'}
+                cursor={isSelectingLocation ? 'crosshair' : 'grab'}
             >
                 <Source
                     id="world-imagery"
@@ -91,6 +111,10 @@ export function RoamrMap({ onLocationSelect, selectedLocation }: RoamrMapProps) 
                         color="#ff0000"
                     />
                 )}
+
+                {locations.map((location) => (
+                    <LocationMarker key={location.id} location={location} />
+                ))}
             </Map>
         </>
     );

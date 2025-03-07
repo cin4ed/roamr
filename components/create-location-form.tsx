@@ -37,11 +37,16 @@ type FormFields = z.infer<typeof formSchema>;
 type CreateLocationFormProps = {
   selectedLocation?: { latitude: number; longitude: number } | null;
   onRequestLocationSelect?: () => void;
+  isSelectingLocation?: boolean;
+  setIsSelectingLocation?: (isSelecting: boolean) => void;
 };
 
 export const CreateLocationForm = ({
   selectedLocation,
   onRequestLocationSelect,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  isSelectingLocation,
+  setIsSelectingLocation,
 }: CreateLocationFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -144,7 +149,14 @@ export const CreateLocationForm = ({
           <Button
             type="button"
             variant="outline"
-            onClick={onRequestLocationSelect}
+            onClick={() => {
+              if (onRequestLocationSelect) {
+                onRequestLocationSelect();
+              }
+              if (setIsSelectingLocation) {
+                setIsSelectingLocation(true);
+              }
+            }}
             className="flex w-full h-20 items-center gap-2"
           >
             <svg

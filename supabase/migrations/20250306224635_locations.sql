@@ -23,6 +23,11 @@ create table public.locations (
   constraint locations_creator_id_fkey foreign KEY (creator_id) references auth.users (id)
 ) TABLESPACE pg_default;
 
+-- Add longitude and latitude columns
+ALTER TABLE locations
+ADD COLUMN longitude numeric GENERATED ALWAYS AS (ST_X(coordinates::geometry)) STORED,
+ADD COLUMN latitude numeric GENERATED ALWAYS AS (ST_Y(coordinates::geometry)) STORED;
+
 alter table public.locations enable row level security;
 
 create policy "Authenticated users can create locations"
