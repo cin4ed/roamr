@@ -23,3 +23,10 @@ values (
     'This location is accessible for all users',
     '0a1ff718-a54b-483d-b4fd-e9b2f4fc7611'::uuid
 );
+
+insert into public.location_images (location_id, image_url, uploaded_by)
+values (
+    (select id from public.locations where name = 'Test Location'),
+    'https://images.unsplash.com/photo-1631197344782-e66f0c665ba9',
+    '0a1ff718-a54b-483d-b4fd-e9b2f4fc7611'::uuid
+);

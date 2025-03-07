@@ -22,10 +22,11 @@ export function RoamrMap({ onLocationSelect, selectedLocation, isSelectingLocati
     const [locations, setLocations] = useState<Location[]>([]);
     async function loadLocations() {
         const supabase = await createClient();
-        const { data, error } = await supabase.from('locations').select('*');
+        const { data, error } = await supabase.from('locations').select('*, location_images(*)');
         if (error) {
             console.error(error);
         } else {
+            console.log(data);
             setLocations(data);
         }
     }

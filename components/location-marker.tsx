@@ -38,14 +38,20 @@ export function LocationMarker({ location }: LocationMarkerProps) {
                         {/* Placeholder gradient background when no image is available */}
                         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/40 rounded-full" />
 
-                        {/* Location preview image - we'll replace the src when we add images */}
+                        {/* Location preview image */}
                         <div className="relative w-full h-full opacity-80 hover:opacity-100 transition-opacity">
-                            <Image
-                                src="/placeholder-location.jpg"
-                                alt={location.name}
-                                fill
-                                className="object-cover"
-                            />
+                            {location.location_images && location.location_images.length > 0 ? (
+                                <Image
+                                    src={location.location_images[0].image_url}
+                                    alt={location.name}
+                                    width={48}
+                                    height={48}
+                                    className="object-cover w-full h-full"
+                                />
+                            ) : (
+                                // Fallback gradient background when no image is available
+                                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/40" />
+                            )}
                         </div>
                     </div>
 
@@ -64,12 +70,17 @@ export function LocationMarker({ location }: LocationMarkerProps) {
                     <div className="absolute bottom-[calc(100%+12px)] left-1/2 -translate-x-1/2 w-64 bg-background border rounded-lg shadow-lg p-3 z-10">
                         <div className="relative aspect-video w-full rounded-md overflow-hidden bg-muted mb-2">
                             {/* We'll use the same placeholder for now */}
-                            <Image
-                                src="/placeholder-location.jpg"
-                                alt={location.name}
-                                fill
-                                className="object-cover"
-                            />
+                            {location.location_images && location.location_images.length > 0 ? (
+                                <Image
+                                    src={location.location_images[0].image_url}
+                                    alt={location.name}
+                                    className="object-cover w-full h-full"
+                                    width={230}
+                                    height={129}
+                                />
+                            ) : (
+                                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/40" />
+                            )}
                         </div>
                         <h3 className="font-semibold truncate mb-1">{location.name}</h3>
                         <p className="text-sm text-muted-foreground line-clamp-2 mb-2">

@@ -36,6 +36,11 @@ export type Database = {
     Tables: {
       locations: {
         Row: {
+          location_images?: {
+            id: string;
+            image_url: string;
+            created_at: string;
+          }[],
           accessibility: string | null
           address: string | null
           city: string | null
