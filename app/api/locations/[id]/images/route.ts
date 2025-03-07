@@ -16,9 +16,9 @@ const imageFileSchema = z.object({
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const locationId = params.id;
+  const { id: locationId } = await params;
 
   // Initialize Supabase client and authenticate user
   const supabase = await createClient();
@@ -59,7 +59,9 @@ export async function POST(
   }
 
   // Initialize arrays to collect successes and errors
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const successes: any[] = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const errors: { file: string; error: any }[] = [];
 
   // Process each file

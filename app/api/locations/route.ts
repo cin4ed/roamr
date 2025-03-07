@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 // Schema for a single image file
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const imageFileSchema = z.object({
   name: z.string(),
   type: z.string().refine((type) => type.startsWith("image/"), {
@@ -112,7 +113,7 @@ function buildLocationData(
     city: data.city,
     country: data.country,
     tags: data.tags,
-    safetyInfo: data.safetyInfo,
+    safety_info: data.safety_info,
     creator_id: userId,
   };
 }

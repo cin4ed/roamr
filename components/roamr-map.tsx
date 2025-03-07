@@ -1,8 +1,7 @@
 "use client";
 
-import Map, { Source, Layer, Marker } from "react-map-gl/maplibre";
+import Map, { Source, Marker } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { useState } from "react";
 
 type RoamrMapProps = {
   onLocationSelect?: (coordinates: {latitude: number; longitude: number}) => void;
@@ -10,6 +9,7 @@ type RoamrMapProps = {
 }
 
 export function RoamrMap({ onLocationSelect, selectedLocation }: RoamrMapProps) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleMapClick = (event: any) => {
         if (onLocationSelect) {
             const { lng, lat } = event.lngLat;

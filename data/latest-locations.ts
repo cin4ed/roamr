@@ -16,7 +16,7 @@ export interface Location {
   images: string[];
 }
 
-export const latestLocations: [Location] = [
+export const latestLocations = [
   {
     id: 1,
     name: "Hotel Los Arcos",

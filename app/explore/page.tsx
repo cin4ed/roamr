@@ -14,7 +14,6 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Session } from "@supabase/supabase-js";
 import { CreateLocationForm } from "@/components/create-location-form";
 
 export default function Explore() {

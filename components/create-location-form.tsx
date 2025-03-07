@@ -12,9 +12,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import * as Dropzone from "@/components/dropzone";
-import { useDropzone } from "@/components/dropzone";
-import { CloudUploadIcon, Trash2Icon } from "lucide-react";
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "Location name is required" }),
@@ -63,39 +60,9 @@ export const CreateLocationForm = ({
   });
 
   const [tagInput, setTagInput] = useState("");
-  const [images, setImages] = useState<File[]>([]);
 
   // Add the dropzone configuration here
-  const dropzone = useDropzone({
-    onDropFile: async (file: File) => {
-      // First create the URL for preview
-      const result = {
-        status: "success" as const,
-        result: URL.createObjectURL(file),
-      };
-
-      // Update images state AFTER the file is successfully processed
-      setTimeout(() => {
-        setImages((current) => [...current, file]);
-      }, 0);
-
-      return result;
-    },
-    onRemoveFile: async (id: string) => {
-      // Find the file being removed and remove it from images state
-      const fileToRemove = dropzone.fileStatuses.find((f) => f.id === id);
-      if (fileToRemove) {
-        setImages((current) => current.filter((f) => f !== fileToRemove.file));
-      }
-    },
-    validation: {
-      accept: {
-        "image/*": [".png", ".jpg", ".jpeg"],
-      },
-      maxSize: 5 * 1024 * 1024, // 5MB
-      maxFiles: 10,
-    },
-  });
+  
 
   // Update form coordinates when selectedLocation changes
   useEffect(() => {
@@ -127,11 +94,11 @@ export const CreateLocationForm = ({
 
     // Upload images using FormData after successful location creation
     const formData = new FormData();
-    console.log("Images to upload:", images); // Debug log
+    // console.log("Images to upload:", images); // Debug log
 
-    images.forEach((image) => {
-      formData.append("images", image);
-    });
+    // images.forEach((image) => {
+    //   formData.append("images", image);
+    // });
 
     // Log the FormData contents
     for (const pair of formData.entries()) {
@@ -279,63 +246,7 @@ export const CreateLocationForm = ({
 
         <div className="not-prose flex flex-col gap-4">
           <Form.FormLabel>Images</Form.FormLabel>
-          <Dropzone.Dropzone {...dropzone}>
-            <div>
-              <div className="flex justify-between">
-                <Dropzone.DropzoneDescription>
-                  Please select up to 10 images
-                </Dropzone.DropzoneDescription>
-                <Dropzone.DropzoneMessage />
-              </div>
-              <Dropzone.DropZoneArea>
-                <Dropzone.DropzoneTrigger className="flex flex-col items-center gap-4 bg-transparent p-10 text-center text-sm">
-                  <CloudUploadIcon className="size-8" />
-                  <div>
-                    <p className="font-semibold">Upload listing images</p>
-                    <p className="text-sm text-muted-foreground">
-                      Click here or drag and drop to upload
-                    </p>
-                  </div>
-                </Dropzone.DropzoneTrigger>
-              </Dropzone.DropZoneArea>
-            </div>
-
-            <Dropzone.DropzoneFileList className="grid grid-cols-3 gap-3 p-0">
-              {dropzone.fileStatuses.map((file) => (
-                <Dropzone.DropzoneFileListItem
-                  className="overflow-hidden rounded-md bg-secondary p-0 shadow-sm"
-                  key={file.id}
-                  file={file}
-                >
-                  {file.status === "pending" && (
-                    <div className="aspect-video animate-pulse bg-black/20" />
-                  )}
-                  {file.status === "success" && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={file.result}
-                      alt={`uploaded-${file.fileName}`}
-                      className="aspect-video object-cover"
-                    />
-                  )}
-                  <div className="flex items-center justify-between p-2 pl-4">
-                    <div className="min-w-0">
-                      <p className="truncate text-sm">{file.fileName}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {(file.file.size / (1024 * 1024)).toFixed(2)} MB
-                      </p>
-                    </div>
-                    <Dropzone.DropzoneRemoveFile
-                      variant="ghost"
-                      className="shrink-0 hover:outline"
-                    >
-                      <Trash2Icon className="size-4" />
-                    </Dropzone.DropzoneRemoveFile>
-                  </div>
-                </Dropzone.DropzoneFileListItem>
-              ))}
-            </Dropzone.DropzoneFileList>
-          </Dropzone.Dropzone>
+          
         </div>
 
         <div>
