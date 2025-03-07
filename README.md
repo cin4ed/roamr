@@ -63,3 +63,19 @@ Contributions are always welcome and appreciated! At this moment I don't have a 
 ## 📝 License
 
 This project is licensed under the GNU General Public License v3.0. See the [LICENSE](LICENSE) file for more details.
+
+## About Prisma
+
+1. Installed Prisma with the `pnpm add prisma --save-dev` command.
+2. Ran the `pnpm exec prisma init` command.
+  1. Prisma schema was created at `prisma/shcmea.prisma`.
+  2. A new line with `DATABASE_URL="xxxx"` was added to the `.env` file.
+
+- Prototyping: Use `prisma db push` to synchorize your database schema with your Prisma schema file (`schema.prisma`) without generating migrations.
+- Production: Use `prisma migrate` to generate migrations.
+- `prisma generate` this creates a type-safe client in node_modules.
+
+Prisma gets environment variables from `.env` file, while Next.js get them from `.env.local` when executed with `pnpm run dev`, for prisma to get env vars from `.env.local` we're going to use a tool called
+
+
+callback supabase discord https://sduopvydpiutfkwveivm.supabase.co/auth/v1/callback
