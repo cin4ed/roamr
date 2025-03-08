@@ -11,9 +11,11 @@ type Location = Database["public"]["Tables"]["locations"]["Row"];
 
 interface LocationMarkerProps {
     location: Location;
+    onLocationClick?: (location: Location) => void;
+    onLocationDoubleClick?: (location: Location) => void;
 }
 
-export function LocationMarker({ location }: LocationMarkerProps) {
+export function LocationMarker({ location, onLocationClick, onLocationDoubleClick }: LocationMarkerProps) {
     const [isHovered, setIsHovered] = useState(false);
 
     // Temporary rating for demo - we'll add this to the database later
@@ -34,7 +36,17 @@ export function LocationMarker({ location }: LocationMarkerProps) {
             >
                 {/* Marker with Preview Image */}
                 <div className="relative flex flex-col items-center">
-                    <div className="w-12 h-12 rounded-full border-2 border-background shadow-lg overflow-hidden hover:scale-110 transition-transform cursor-pointer bg-background">
+                    <div 
+                        className="w-12 h-12 rounded-full border-2 border-background shadow-lg overflow-hidden hover:scale-110 transition-transform cursor-pointer bg-background"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onLocationClick?.(location);
+                        }}
+                        onDoubleClick={(e) => {
+                            e.stopPropagation();
+                            onLocationDoubleClick?.(location);
+                        }}
+                    >
                         {/* Placeholder gradient background when no image is available */}
                         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/40 rounded-full" />
 

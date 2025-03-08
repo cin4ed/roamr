@@ -1,108 +1,167 @@
 "use client";
 
-import { RoamrMap } from "@/components/roamr-map";
-import { useState } from "react";
+import Map, { Source, StyleSpecification, useMap } from "react-map-gl/maplibre";
+import "maplibre-gl/dist/maplibre-gl.css";
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Map as MapIcon, Satellite, MapPinPlus, Maximize2 } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
+import type { Database } from "@/types/supabase";
+import { LocationMarker } from "@/components/location-marker";
+import { useAuth } from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
 
-export default function Explore() {
-  const [isSelectingLocation, setIsSelectingLocation] = useState(false);
-  const [selectedLocation, setSelectedLocation] = useState<{latitude: number; longitude: number} | null>(null);
+type Location = Database["public"]["Tables"]["locations"]["Row"];
 
-  const handleLocationSelect = (coordinates: {latitude: number; longitude: number}) => {
-    setSelectedLocation(coordinates);
-    setIsSelectingLocation(true);
+function MapContent({ locations }: {
+  locations: Location[];
+}) {
+  const { current: map } = useMap();
+
+  const handleLocationClick = (location: Location) => {
+    if (!map) return;
+    map.panTo([Number(location.longitude), Number(location.latitude)], {
+      duration: 1000,
+      essential: true
+    });
+  };
+
+  const handleLocationDoubleClick = (location: Location) => {
+    if (!map) return;
+    map.flyTo({
+      center: [Number(location.longitude), Number(location.latitude)],
+      zoom: 14,
+      duration: 1500,
+      essential: true
+    });
   };
 
   return (
+    <>
+      <Source
+        id="world-imagery"
+        type="raster"
+        tiles={[
+          "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        ]}
+        tileSize={256}
+      />
+
+      {locations.map((location) => (
+        <LocationMarker 
+          key={location.id} 
+          location={location} 
+          onLocationClick={handleLocationClick}
+          onLocationDoubleClick={handleLocationDoubleClick}
+        />
+      ))}
+    </>
+  );
+}
+
+export default function Explore() {
+  const router = useRouter();
+  const [isVectorStyle, setIsVectorStyle] = useState(true);
+  const [locations, setLocations] = useState<Location[]>([]);
+  const { session } = useAuth();
+
+  async function loadLocations() {
+    const supabase = await createClient();
+    const { data, error } = await supabase.from('locations').select('*, location_images(*)');
+    if (error) {
+      console.error(error);
+    } else {
+      console.log(data);
+      setLocations(data);
+    }
+  }
+
+  useEffect(() => {
+    loadLocations();
+  }, []);
+
+  const mapStyle: StyleSpecification | string = isVectorStyle 
+    ? "https://tiles.openfreemap.org/styles/liberty"
+    : {
+      version: 8,
+      sources: {
+        "raster-tiles": {
+          type: "raster",
+          tiles: [
+            "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+          ],
+          tileSize: 256,
+        },
+      },
+      layers: [
+        {
+          id: "simple-tiles",
+          type: "raster",
+          source: "raster-tiles",
+          minzoom: 0,
+          maxzoom: 20,
+        },
+      ],
+    };
+
+  function enterFullscreen() {
+    const el = document.documentElement;
+    if (el.requestFullscreen) {
+      void el.requestFullscreen();
+    } else if ('webkitRequestFullscreen' in el) { // Safari
+      void (el as { webkitRequestFullscreen(): Promise<void> }).webkitRequestFullscreen();
+    } else if ('msRequestFullscreen' in el) { // IE11
+      void (el as { msRequestFullscreen(): Promise<void> }).msRequestFullscreen();
+    }
+  }
+
+  return (
     <div className="h-screen w-screen font-[family-name:var(--font-geist-sans)] flex">
-      <div className={`w-full h-full relative ${isSelectingLocation ? 'ring-2 ring-blue-500' : ''}`}>
-        <RoamrMap onLocationSelect={handleLocationSelect} selectedLocation={selectedLocation} />
-        {isSelectingLocation && (
-          <div className="absolute top-4 left-0 right-0 mx-auto w-max bg-black/70 text-white px-4 py-2 rounded-md z-10">
-            Click anywhere on the map to select a location
-          </div>
-        )}
+      <div className="w-full h-full relative">
+        <div className="absolute top-4 right-4 z-10 flex gap-2">
+          <Button 
+            variant="outline"
+            onClick={enterFullscreen}
+            className="p-2 aspect-square rounded-md shadow-md"
+          >
+            <Maximize2 />
+          </Button>
+          <Button 
+            variant="outline"
+            onClick={() => setIsVectorStyle(!isVectorStyle)}
+            className="p-2 aspect-square rounded-md shadow-md"
+          >
+            {isVectorStyle ? <Satellite /> : <MapIcon />}
+          </Button>
+        </div>
+        
+        <Map
+          id="main"
+          initialViewState={{
+            longitude: -100,
+            latitude: 40,
+            zoom: 3.5,
+          }}
+          maxZoom={15.9}
+          style={{ width: "100%", height: "100%" }}
+          mapStyle={mapStyle}
+          cursor="grab"
+        >
+          <MapContent 
+            locations={locations}
+          />
+        </Map>
+
+        <Button
+          className="fixed h-[80px] text-md left-1/2 -translate-x-1/2 z-10 shadow-lg flex gap-2 w-[calc(100%-32px)] max-w-xl mx-auto"
+          variant="outline"
+          style={{ bottom: `max(20px, env(safe-area-inset-bottom, 24px))` }}
+          onClick={() => session ? router.push('/create') : router.push('/login')}
+        >
+          <MapPinPlus className="w-5 h-5" />
+          {session ? 'Add a new location' : 'Sign in to add location'}
+        </Button>
       </div>
     </div>
   );
 }
-// "use client";
-
-// import { AppSidebar } from "@/components/app-sidebar";
-// import { UrbexCommunityInviteCard } from "@/components/urbex-community-invite-card";
-// import { useAuth } from "@/hooks/useAuth";
-// import { useEffect, useState } from "react";
-// import { Tab } from "@/components/app-sidebar";
-// import { RoamrMap } from "@/components/roamr-map";
-// import { toast } from "sonner";
-
-// import {
-//   ResizableHandle,
-//   ResizablePanel,
-//   ResizablePanelGroup,
-// } from "@/components/ui/resizable";
-// import { ScrollArea } from "@/components/ui/scroll-area";
-// import { CreateLocationForm } from "@/components/create-location-form";
-
-// export default function Explore() {
-//   const { session } = useAuth();
-//   const [activeTab, setActiveTab] = useState(Tab.Explore);
-//   const [selectedLocation, setSelectedLocation] = useState<{latitude: number; longitude: number} | null>(null);
-//   const [isSelectingLocation, setIsSelectingLocation] = useState(false);
-
-//   useEffect(() => {
-//     console.log("Session in Explore:", session);
-//   }, [session]);
-
-//   const handleLocationSelect = (coordinates: {latitude: number; longitude: number}) => {
-//     setSelectedLocation(coordinates);
-//     if (isSelectingLocation) {
-//       setIsSelectingLocation(false);
-//       toast(`Latitude: ${coordinates.latitude.toFixed(6)}, Longitude: ${coordinates.longitude.toFixed(6)}`, {
-//         description: "Location selected successfully",
-//       });
-//     }
-//   };
-
-//   const handleRequestLocationSelect = () => {
-//     setIsSelectingLocation(true);
-//     toast("Click anywhere on the map to select coordinates", {
-//       description: "Selection mode enabled",
-//     });
-//   };
-
-//   return (
-//     <div className="min-h-screen font-[family-name:var(--font-geist-sans)] flex">
-//       <AppSidebar className="w-16" session={session} onTabChange={(tab) => setActiveTab(tab)} />
-//       <div className="flex-1">
-//         <ResizablePanelGroup direction="horizontal" className="h-full w-full">
-//           <ResizablePanel defaultSize={40} className="min-w-[550px]">
-//             <ScrollArea className="h-screen p-6">
-//               {activeTab === Tab.Explore && (
-//                 <>
-//                   {!session && <UrbexCommunityInviteCard />}
-//                 </>
-//               )}
-//               {activeTab === Tab.Create && (
-//                 <CreateLocationForm 
-//                   selectedLocation={selectedLocation} 
-//                   onRequestLocationSelect={handleRequestLocationSelect}
-//                 />
-//               )}
-//             </ScrollArea>
-//           </ResizablePanel>
-//           <ResizableHandle withHandle />
-//           <ResizablePanel defaultSize={60}>
-//             <div className={`h-full relative ${isSelectingLocation ? 'ring-2 ring-blue-500' : ''}`}>
-//               <RoamrMap onLocationSelect={handleLocationSelect} selectedLocation={selectedLocation} />
-//               {isSelectingLocation && (
-//                 <div className="absolute top-4 left-0 right-0 mx-auto w-max bg-black/70 text-white px-4 py-2 rounded-md">
-//                   Click anywhere on the map to select a location
-//                 </div>
-//               )}
-//             </div>
-//           </ResizablePanel>
-//         </ResizablePanelGroup>
-//       </div>
-//     </div>
-//   );
-// }
