@@ -4,22 +4,27 @@ import Map, { Source, StyleSpecification, useMap } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Map as MapIcon, Satellite, MapPinPlus, Maximize2 } from "lucide-react";
+import { Map as MapIcon, Satellite, MapPinPlus, Maximize2, Star } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/types/supabase";
 import { LocationMarker } from "@/components/location-marker";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
+import { Drawer } from "vaul";
+import Image from "next/image";
+import { Badge } from "@/components/ui/badge";
 
 type Location = Database["public"]["Tables"]["locations"]["Row"];
 
-function MapContent({ locations }: {
+function MapContent({ locations, onLocationSelect }: {
   locations: Location[];
+  onLocationSelect: (location: Location) => void;
 }) {
   const { current: map } = useMap();
 
   const handleLocationClick = (location: Location) => {
     if (!map) return;
+    onLocationSelect(location);
     map.panTo([Number(location.longitude), Number(location.latitude)], {
       duration: 1000,
       essential: true
@@ -63,6 +68,7 @@ export default function Explore() {
   const router = useRouter();
   const [isVectorStyle, setIsVectorStyle] = useState(true);
   const [locations, setLocations] = useState<Location[]>([]);
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
   const { session } = useAuth();
 
   async function loadLocations() {
@@ -149,6 +155,7 @@ export default function Explore() {
         >
           <MapContent 
             locations={locations}
+            onLocationSelect={setSelectedLocation}
           />
         </Map>
 
@@ -161,6 +168,92 @@ export default function Explore() {
           <MapPinPlus className="w-5 h-5" />
           {session ? 'Add a new location' : 'Sign in to add location'}
         </Button>
+
+        <Drawer.Root open={!!selectedLocation} onOpenChange={(open) => !open && setSelectedLocation(null)}>
+          <Drawer.Portal>
+            <Drawer.Overlay className="fixed inset-0 bg-black/40" />
+            <Drawer.Content className="bg-background flex flex-col rounded-t-[10px] h-[96vh] mt-24 fixed bottom-0 left-0 right-0">
+              <div className="p-4 rounded-t-[10px] flex-1 overflow-auto">
+                <div className="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-muted mb-8" />
+                <div className="max-w-md mx-auto">
+                  {selectedLocation && (
+                    <>
+                      <Drawer.Title className="sr-only">
+                        {selectedLocation.name}
+                      </Drawer.Title>
+                      <Drawer.Description className="sr-only">
+                        Location details for {selectedLocation.name} in {selectedLocation.city}, {selectedLocation.country}
+                      </Drawer.Description>
+                      <div className="relative aspect-video w-full rounded-lg overflow-hidden bg-muted mb-4">
+                        {selectedLocation.location_images && selectedLocation.location_images.length > 0 ? (
+                          <Image
+                            src={selectedLocation.location_images[0].image_url}
+                            alt={selectedLocation.name}
+                            className="object-cover"
+                            fill
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            priority
+                          />
+                        ) : (
+                          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/40" />
+                        )}
+                      </div>
+                      
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <h2 className="text-2xl font-bold">{selectedLocation.name}</h2>
+                          <div className="flex items-center gap-1">
+                            <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+                            <span className="font-medium">4.5</span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 text-muted-foreground">
+                          <span>{selectedLocation.city}</span>
+                          {selectedLocation.city && selectedLocation.country && <span>•</span>}
+                          <span>{selectedLocation.country}</span>
+                        </div>
+
+                        <p className="text-muted-foreground">{selectedLocation.description}</p>
+
+                        {selectedLocation.tags && selectedLocation.tags.length > 0 && (
+                          <div className="flex flex-wrap gap-2">
+                            {selectedLocation.tags.map((tag) => (
+                              <Badge key={tag} variant="secondary">
+                                {tag}
+                              </Badge>
+                            ))}
+                          </div>
+                        )}
+
+                        {selectedLocation.safety_info && (
+                          <div className="space-y-2">
+                            <h3 className="font-semibold">Safety Information</h3>
+                            <p className="text-muted-foreground">{selectedLocation.safety_info}</p>
+                          </div>
+                        )}
+
+                        {selectedLocation.accessibility && (
+                          <div className="space-y-2">
+                            <h3 className="font-semibold">Accessibility</h3>
+                            <p className="text-muted-foreground">{selectedLocation.accessibility}</p>
+                          </div>
+                        )}
+
+                        {selectedLocation.address && (
+                          <div className="space-y-2">
+                            <h3 className="font-semibold">Address</h3>
+                            <p className="text-muted-foreground">{selectedLocation.address}</p>
+                          </div>
+                        )}
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+            </Drawer.Content>
+          </Drawer.Portal>
+        </Drawer.Root>
       </div>
     </div>
   );

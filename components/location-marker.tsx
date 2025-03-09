@@ -6,6 +6,7 @@ import type { Database } from "@/types/supabase";
 import { Badge } from "@/components/ui/badge";
 import { Star } from "lucide-react";
 import Image from "next/image";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 type Location = Database["public"]["Tables"]["locations"]["Row"];
 
@@ -17,6 +18,7 @@ interface LocationMarkerProps {
 
 export function LocationMarker({ location, onLocationClick, onLocationDoubleClick }: LocationMarkerProps) {
     const [isHovered, setIsHovered] = useState(false);
+    const isMobile = useIsMobile();
 
     // Temporary rating for demo - we'll add this to the database later
     const rating = 4.5;
@@ -31,8 +33,8 @@ export function LocationMarker({ location, onLocationClick, onLocationDoubleClic
         >
             <div
                 className="relative"
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
+                onMouseEnter={() => !isMobile && setIsHovered(true)}
+                onMouseLeave={() => !isMobile && setIsHovered(false)}
             >
                 {/* Marker with Preview Image */}
                 <div className="relative flex flex-col items-center">
@@ -78,7 +80,7 @@ export function LocationMarker({ location, onLocationClick, onLocationDoubleClic
                 </div>
 
                 {/* Preview Card */}
-                {isHovered && (
+                {isHovered && !isMobile && (
                     <div className="absolute bottom-[calc(100%+12px)] left-1/2 -translate-x-1/2 w-64 bg-background border rounded-lg shadow-lg p-3 z-10">
                         <div className="relative aspect-video w-full rounded-md overflow-hidden bg-muted mb-2">
                             {/* We'll use the same placeholder for now */}
