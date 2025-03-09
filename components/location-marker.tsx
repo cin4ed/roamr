@@ -32,14 +32,14 @@ export function LocationMarker({ location, onLocationClick, onLocationDoubleClic
             anchor="bottom"
         >
             <div
-                className="relative"
+                className="relative opacity-80 hover:opacity-100 transition-opacity"
                 onMouseEnter={() => !isMobile && setIsHovered(true)}
                 onMouseLeave={() => !isMobile && setIsHovered(false)}
             >
                 {/* Marker with Preview Image */}
                 <div className="relative flex flex-col items-center">
                     <div 
-                        className="w-12 h-12 rounded-full border-2 border-background shadow-lg overflow-hidden hover:scale-110 transition-transform cursor-pointer bg-background"
+                        className="w-12 h-12 rounded-full border-2 border-black shadow-lg overflow-hidden hover:scale-110 transition-transform cursor-pointer bg-background"
                         onClick={(e) => {
                             e.stopPropagation();
                             onLocationClick?.(location);
@@ -49,11 +49,8 @@ export function LocationMarker({ location, onLocationClick, onLocationDoubleClic
                             onLocationDoubleClick?.(location);
                         }}
                     >
-                        {/* Placeholder gradient background when no image is available */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/40 rounded-full" />
-
                         {/* Location preview image */}
-                        <div className="relative w-full h-full opacity-80 hover:opacity-100 transition-opacity">
+                        <div className="relative w-full h-full transition-opacity">
                             {location.location_images && location.location_images.length > 0 ? (
                                 <Image
                                     src={location.location_images[0].image_url}
@@ -75,15 +72,13 @@ export function LocationMarker({ location, onLocationClick, onLocationDoubleClic
                         <span>{rating}</span>
                     </div>
 
-                    {/* Triangle pointer
-                    <div className="w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-t-[8px] border-black -mt-0.5" /> */}
+                    {/* <div className="w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-t-[8px] border-black -mt-0.5" /> */}
                 </div>
 
                 {/* Preview Card */}
                 {isHovered && !isMobile && (
                     <div className="absolute bottom-[calc(100%+12px)] left-1/2 -translate-x-1/2 w-64 bg-background border rounded-lg shadow-lg p-3 z-10">
                         <div className="relative aspect-video w-full rounded-md overflow-hidden bg-muted mb-2">
-                            {/* We'll use the same placeholder for now */}
                             {location.location_images && location.location_images.length > 0 ? (
                                 <Image
                                     src={location.location_images[0].image_url}

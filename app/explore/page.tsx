@@ -13,7 +13,7 @@ import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 
 type Location = Database["public"]["Tables"]["locations"]["Row"];
-const snapPoints = [0.2,0.5,1];
+const snapPoints = [0.2, 0.5, 1];
 
 export default function Explore() {
   const [isVectorStyle, setIsVectorStyle] = useState(true);
@@ -79,7 +79,7 @@ export default function Explore() {
   return (
     <div className="h-screen w-screen font-[family-name:var(--font-geist-sans)] flex">
       <div className="w-full h-full relative">
-        {/* <div className="absolute top-4 right-4 z-[60] flex gap-2">
+        <div className="absolute top-4 right-4 z-[60] flex flex-col gap-2">
           <Button
             variant="outline"
             onClick={enterFullscreen}
@@ -94,9 +94,8 @@ export default function Explore() {
           >
             {isVectorStyle ? <Satellite /> : <MapIcon />}
           </Button>
-        </div> */}
+        </div>
 
-        {/* <div className="absolute inset-0"> */}
         <Map
           id="main"
           initialViewState={{
@@ -114,47 +113,104 @@ export default function Explore() {
             onLocationSelect={handleLocationSelect}
           />
         </Map>
-        {/* </div> */}
-
-        {/* <Button
-          className="fixed h-[80px] text-md left-1/2 -translate-x-1/2 z-[60] shadow-lg flex gap-2 w-[calc(100%-32px)] max-w-xl mx-auto"
-          variant="outline"
-          style={{ bottom: `max(20px, env(safe-area-inset-bottom, 24px))` }}
-          onClick={() => session ? router.push('/create') : router.push('/login')}
-        >
-          <MapPinPlus className="w-5 h-5" />
-          {session ? 'Add a new location' : 'Sign in to add location'}
-        </Button> */}
-
-        <Drawer.Root
-          open={!!selectedLocation}
-          onOpenChange={(open) => {
-            if (!open) {
-              setSelectedLocation(null);
-              // setSnap(null);
-            }
-          }}
-          snapPoints={snapPoints}
-          activeSnapPoint={snap}
-          setActiveSnapPoint={setSnap}
-          modal={false}
-        >
-          <Drawer.Portal>
-            <Drawer.Overlay className="bg-black/10 pointer-events-none" />
-            <Drawer.Content className="bg-background flex flex-col rounded-t-[10px] mt-24 fixed bottom-0 left-0 right-0 z-50">
-              <div className="max-w-md mx-auto p-4" data-scrollable="true">
-                <Drawer.Handle />
-                <Drawer.Title>
-                  {selectedLocation?.name}
-                </Drawer.Title>
-                <Drawer.Description>
-                  Location details for {selectedLocation?.name} in {selectedLocation?.city}, {selectedLocation?.country}
-                </Drawer.Description>
-              </div>
-            </Drawer.Content>
-          </Drawer.Portal>
-        </Drawer.Root>
       </div>
+      {/* Drawer */}
+      <Drawer.Root
+        open={!!selectedLocation}
+        onOpenChange={(open) => {
+          if (!open) {
+            setSelectedLocation(null);
+          }
+        }}
+        snapPoints={snapPoints}
+        activeSnapPoint={snap}
+        setActiveSnapPoint={setSnap}
+        modal={false}
+      >
+        <Drawer.Portal>
+          <Drawer.Overlay className="bg-black/10" />
+          <Drawer.Content className="fixed flex flex-col bg-background border rounded-t-[10px] bottom-0 left-0 right-0 h-full max-h-[97%] mx-[-1px]">
+            <div>
+            <div className="max-w-md mx-auto p-4" data-scrollable="true">
+              {selectedLocation && (
+                <>
+                  <Drawer.Handle />
+                  <div className="space-y-4">
+                    {/* Title and Rating */}
+                    <div className="flex justify-between mt-2">
+                      <Drawer.Title className="text-2xl font-bold">{selectedLocation.name}</Drawer.Title>
+                      <div className="flex items-center gap-1">
+                        <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+                        <span className="font-medium">4.5</span>
+                      </div>
+                    </div>
+                    {/* Image */}
+                    <div className="relative aspect-video w-full rounded-lg overflow-hidden bg-muted mb-4">
+                      {selectedLocation.location_images && selectedLocation.location_images.length > 0 ? (
+                        <Image
+                          src={selectedLocation.location_images[0].image_url}
+                          alt={selectedLocation.name}
+                          className="object-cover"
+                          fill
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          priority
+                        />
+                      ) : (
+                        <div className=" inset-0 bg-gradient-to-br from-primary/20 to-primary/40" />
+
+                      )}
+                    </div>
+
+                    {/* Location */}
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <span>{selectedLocation.city}</span>
+                      {selectedLocation.city && selectedLocation.country && <span>•</span>}
+                      <span>{selectedLocation.country}</span>
+                    </div>
+
+                    {/* Description */}
+                    <Drawer.Description className="text-muted-foreground">
+                      {selectedLocation.description}
+                    </Drawer.Description>
+
+                    {selectedLocation.tags && selectedLocation.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {selectedLocation.tags.map((tag) => (
+                          <Badge key={tag} variant="secondary">
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+
+                    {selectedLocation.safety_info && (
+                      <div className="space-y-2">
+                        <h3 className="font-semibold">Safety Information</h3>
+                        <p className="text-muted-foreground">{selectedLocation.safety_info}</p>
+                      </div>
+                    )}
+
+                    {selectedLocation.accessibility && (
+                      <div className="space-y-2">
+                        <h3 className="font-semibold">Accessibility</h3>
+                        <p className="text-muted-foreground">{selectedLocation.accessibility}</p>
+                      </div>
+                    )}
+
+                    {selectedLocation.address && (
+                      <div className="space-y-2">
+                        <h3 className="font-semibold">Address</h3>
+                        <p className="text-muted-foreground">{selectedLocation.address}</p>
+                      </div>
+                    )}
+                  </div>
+                </>
+                )}
+              </div>
+            </div>
+          </Drawer.Content>
+        </Drawer.Portal>
+      </Drawer.Root>
     </div>
   );
 }
