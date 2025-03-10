@@ -29,11 +29,13 @@ export function LocationMarker({ location, onLocationClick, onLocationDoubleClic
             longitude={Number(location.longitude)}
             latitude={Number(location.latitude)}
             anchor="bottom"
+            style={{ zIndex: isHovered ? 999 : 1 }}
         >
             <div
                 className="relative opacity-80 hover:opacity-100 transition-opacity"
                 onMouseEnter={() => !isMobile && setIsHovered(true)}
                 onMouseLeave={() => !isMobile && setIsHovered(false)}
+                style={{ zIndex: isHovered ? 999 : 1 }}
             >
                 {/* Marker with Preview Image */}
                 <div className="relative flex flex-col items-center">
@@ -74,7 +76,7 @@ export function LocationMarker({ location, onLocationClick, onLocationDoubleClic
 
                 {/* Preview Card */}
                 {isHovered && !isMobile && (
-                    <div className="absolute bottom-[calc(100%+12px)] left-1/2 -translate-x-1/2 w-64 bg-background border rounded-lg shadow-lg p-3 z-10">
+                    <div className="fixed bottom-[calc(100%+12px)] left-1/2 -translate-x-1/2 w-64 bg-background border rounded-lg shadow-lg p-3" style={{ zIndex: 1000 }}>
                         <div className="relative aspect-video w-full rounded-md overflow-hidden bg-muted mb-2">
                             {location.location_images && location.location_images.length > 0 ? (
                                 <Image
