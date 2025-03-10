@@ -10,11 +10,24 @@ values (
     current_timestamp, current_timestamp, '', '', '', ''
 );
 
-insert into public.locations (name, description, coordinates, address, city, country, tags, safety_info, accessibility, creator_id)
+insert into public.locations (
+    name, 
+    description, 
+    longitude,
+    latitude,
+    address, 
+    city, 
+    country, 
+    tags, 
+    safety_info, 
+    accessibility, 
+    creator_id
+)
 values (
     'Test Location',
     'This is a test location',
-    ST_GeogFromText('SRID=4326;POINT(-122.4194 37.7749)'),
+    -122.4194,
+    37.7749,
     '123 Main St',
     'San Francisco',
     'United States',
@@ -29,4 +42,17 @@ values (
     (select id from public.locations where name = 'Test Location'),
     'https://images.unsplash.com/photo-1631197344782-e66f0c665ba9',
     '0a1ff718-a54b-483d-b4fd-e9b2f4fc7611'::uuid
+);
+
+insert into public.location_ratings (
+    location_id,
+    user_id,
+    rating,
+    comment
+)
+values (
+    (select id from public.locations where name = 'Test Location'),
+    '0a1ff718-a54b-483d-b4fd-e9b2f4fc7611'::uuid,
+    '5',
+    'Great location!'
 );

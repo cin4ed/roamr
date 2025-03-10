@@ -23,7 +23,13 @@ export default function Explore() {
 
   async function loadLocations() {
     const supabase = await createClient();
-    const { data, error } = await supabase.from('locations').select('*, location_images(*)');
+    const { data, error } = await supabase
+      .from('locations')
+      .select(`
+        *,
+        location_images(*),
+        rating_stats:location_rating_stats(average_rating, total_ratings)
+      `);
     if (error) {
       console.error(error);
     } else {
@@ -133,80 +139,86 @@ export default function Explore() {
           <Drawer.Overlay className="bg-black/10" />
           <Drawer.Content className="fixed flex flex-col bg-background border rounded-t-[10px] bottom-0 left-0 right-0 h-full max-h-[97%] mx-[-1px]">
             <div>
-            <div className="max-w-md mx-auto p-4" data-scrollable="true">
-              {selectedLocation && (
-                <>
-                  <Drawer.Handle />
-                  <div className="space-y-4">
-                    {/* Title and Rating */}
-                    <div className="flex justify-between mt-2">
-                      <Drawer.Title className="text-2xl font-bold">{selectedLocation.name}</Drawer.Title>
-                      <div className="flex items-center gap-1">
-                        <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-                        <span className="font-medium">4.5</span>
+              <div className="max-w-md mx-auto p-4" data-scrollable="true">
+                {selectedLocation && (
+                  <>
+                    <Drawer.Handle />
+                    <div className="space-y-4">
+                      {/* Title and Rating */}
+                      <div className="flex justify-between mt-2">
+                        <Drawer.Title className="text-2xl font-bold">{selectedLocation.name}</Drawer.Title>
+                        <div className="flex items-center gap-1">
+                          {selectedLocation.rating_stats && selectedLocation.rating_stats.length > 0 ? (
+                            <>
+                              <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+                              <span className="font-medium">{selectedLocation.rating_stats[0].average_rating}</span>
+                            </>
+                          ) : (
+                            <span className="text-muted-foreground text-sm">No ratings yet</span>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                    {/* Image */}
-                    <div className="relative aspect-video w-full rounded-lg overflow-hidden bg-muted mb-4">
-                      {selectedLocation.location_images && selectedLocation.location_images.length > 0 ? (
-                        <Image
-                          src={selectedLocation.location_images[0].image_url}
-                          alt={selectedLocation.name}
-                          className="object-cover"
-                          fill
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                          priority
-                        />
-                      ) : (
-                        <div className=" inset-0 bg-gradient-to-br from-primary/20 to-primary/40" />
+                      {/* Image */}
+                      <div className="relative aspect-video w-full rounded-lg overflow-hidden bg-muted mb-4">
+                        {selectedLocation.location_images && selectedLocation.location_images.length > 0 ? (
+                          <Image
+                            src={selectedLocation.location_images[0].image_url}
+                            alt={selectedLocation.name}
+                            className="object-cover"
+                            fill
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            priority
+                          />
+                        ) : (
+                          <div className=" inset-0 bg-gradient-to-br from-primary/20 to-primary/40" />
 
+                        )}
+                      </div>
+
+                      {/* Location */}
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <span>{selectedLocation.city}</span>
+                        {selectedLocation.city && selectedLocation.country && <span>•</span>}
+                        <span>{selectedLocation.country}</span>
+                      </div>
+
+                      {/* Description */}
+                      <Drawer.Description className="text-muted-foreground">
+                        {selectedLocation.description}
+                      </Drawer.Description>
+
+                      {selectedLocation.tags && selectedLocation.tags.length > 0 && (
+                        <div className="flex flex-wrap gap-2">
+                          {selectedLocation.tags.map((tag) => (
+                            <Badge key={tag} variant="secondary">
+                              {tag}
+                            </Badge>
+                          ))}
+                        </div>
+                      )}
+
+                      {selectedLocation.safety_info && (
+                        <div className="space-y-2">
+                          <h3 className="font-semibold">Safety Information</h3>
+                          <p className="text-muted-foreground">{selectedLocation.safety_info}</p>
+                        </div>
+                      )}
+
+                      {selectedLocation.accessibility && (
+                        <div className="space-y-2">
+                          <h3 className="font-semibold">Accessibility</h3>
+                          <p className="text-muted-foreground">{selectedLocation.accessibility}</p>
+                        </div>
+                      )}
+
+                      {selectedLocation.address && (
+                        <div className="space-y-2">
+                          <h3 className="font-semibold">Address</h3>
+                          <p className="text-muted-foreground">{selectedLocation.address}</p>
+                        </div>
                       )}
                     </div>
-
-                    {/* Location */}
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <span>{selectedLocation.city}</span>
-                      {selectedLocation.city && selectedLocation.country && <span>•</span>}
-                      <span>{selectedLocation.country}</span>
-                    </div>
-
-                    {/* Description */}
-                    <Drawer.Description className="text-muted-foreground">
-                      {selectedLocation.description}
-                    </Drawer.Description>
-
-                    {selectedLocation.tags && selectedLocation.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-2">
-                        {selectedLocation.tags.map((tag) => (
-                          <Badge key={tag} variant="secondary">
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                    )}
-
-                    {selectedLocation.safety_info && (
-                      <div className="space-y-2">
-                        <h3 className="font-semibold">Safety Information</h3>
-                        <p className="text-muted-foreground">{selectedLocation.safety_info}</p>
-                      </div>
-                    )}
-
-                    {selectedLocation.accessibility && (
-                      <div className="space-y-2">
-                        <h3 className="font-semibold">Accessibility</h3>
-                        <p className="text-muted-foreground">{selectedLocation.accessibility}</p>
-                      </div>
-                    )}
-
-                    {selectedLocation.address && (
-                      <div className="space-y-2">
-                        <h3 className="font-semibold">Address</h3>
-                        <p className="text-muted-foreground">{selectedLocation.address}</p>
-                      </div>
-                    )}
-                  </div>
-                </>
+                  </>
                 )}
               </div>
             </div>

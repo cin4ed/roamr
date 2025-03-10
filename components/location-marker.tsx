@@ -20,8 +20,7 @@ export function LocationMarker({ location, onLocationClick, onLocationDoubleClic
     const [isHovered, setIsHovered] = useState(false);
     const isMobile = useIsMobile();
 
-    // Temporary rating for demo - we'll add this to the database later
-    const rating = 4.5;
+    const rating = location.rating_stats && location.rating_stats.length > 0 ? location.rating_stats[0].average_rating : 0;
 
     if (!location.longitude || !location.latitude) return null;
 
@@ -67,12 +66,10 @@ export function LocationMarker({ location, onLocationClick, onLocationDoubleClic
                     </div>
 
                     {/* Rating Badge */}
-                    <div className="absolute -bottom-6 right-0.5 bg-background text-xs font-medium px-1.5 py-0.5 rounded-full shadow-sm flex items-center gap-0.5">
+                    <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-background text-xs font-medium px-1.5 py-0.5 rounded-full shadow-sm flex items-center gap-0.5">
                         <Star className="w-3 h-3" />
                         <span>{rating}</span>
                     </div>
-
-                    {/* <div className="w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-t-[8px] border-black -mt-0.5" /> */}
                 </div>
 
                 {/* Preview Card */}
