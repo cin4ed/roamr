@@ -136,8 +136,8 @@ export default function Explore() {
         modal={false}
       >
         <Drawer.Portal>
-          <Drawer.Overlay className="bg-black/10" />
-          <Drawer.Content className="fixed flex flex-col bg-background border rounded-t-[10px] bottom-0 left-0 right-0 h-full max-h-[97%] mx-[-1px]">
+          <Drawer.Overlay className="bg-black/10 z-[100]" />
+          <Drawer.Content className="fixed flex flex-col bg-background border rounded-t-[10px] bottom-0 left-0 right-0 h-full max-h-[97%] mx-[-1px] z-[101]">
             <div>
               <div className="max-w-md mx-auto p-4" data-scrollable="true">
                 {selectedLocation && (
