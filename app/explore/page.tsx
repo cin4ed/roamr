@@ -107,6 +107,8 @@ export default function Explore() {
           style={{ width: "100%", height: "100%" }}
           mapStyle={mapStyle}
           cursor="grab"
+          onDragStart={() => setSnap(snapPoints[0])}
+          onClick={() => setSnap(snapPoints[0])}
         >
           <MapContent
             locations={locations}
