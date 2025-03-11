@@ -4,28 +4,37 @@ import Map, { Source, StyleSpecification, useMap } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Map as MapIcon, Satellite, Maximize2, Star } from "lucide-react";
+import {
+  Map as MapIcon,
+  Satellite,
+  Maximize2,
+  Star,
+  Compass,
+  User,
+  PlusCircle,
+} from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/types/supabase";
 import { LocationMarker } from "@/components/location-marker";
 import { Drawer } from "vaul";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 type Location = Database["public"]["Tables"]["locations"]["Row"];
-const snapPoints = [0.2, 0.5, 1];
+const snapPoints = ["100px", 0.5, 1];
 
 export default function Explore() {
   const [isVectorStyle, setIsVectorStyle] = useState(true);
   const [locations, setLocations] = useState<Location[]>([]);
-  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(
+    null
+  );
   const [snap, setSnap] = useState<number | string | null>(snapPoints[1]);
 
   async function loadLocations() {
     const supabase = await createClient();
-    const { data, error } = await supabase
-      .from('locations')
-      .select(`
+    const { data, error } = await supabase.from("locations").select(`
         *,
         location_images(*),
         rating_stats:location_rating_stats(average_rating, total_ratings)
@@ -45,35 +54,41 @@ export default function Explore() {
   const mapStyle: StyleSpecification | string = isVectorStyle
     ? "https://tiles.openfreemap.org/styles/liberty"
     : {
-      version: 8,
-      sources: {
-        "raster-tiles": {
-          type: "raster",
-          tiles: [
-            "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-          ],
-          tileSize: 256,
+        version: 8,
+        sources: {
+          "raster-tiles": {
+            type: "raster",
+            tiles: [
+              "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+            ],
+            tileSize: 256,
+          },
         },
-      },
-      layers: [
-        {
-          id: "simple-tiles",
-          type: "raster",
-          source: "raster-tiles",
-          minzoom: 0,
-          maxzoom: 20,
-        },
-      ],
-    };
+        layers: [
+          {
+            id: "simple-tiles",
+            type: "raster",
+            source: "raster-tiles",
+            minzoom: 0,
+            maxzoom: 20,
+          },
+        ],
+      };
 
   function enterFullscreen() {
     const el = document.documentElement;
     if (el.requestFullscreen) {
       void el.requestFullscreen();
-    } else if ('webkitRequestFullscreen' in el) { // Safari
-      void (el as { webkitRequestFullscreen(): Promise<void> }).webkitRequestFullscreen();
-    } else if ('msRequestFullscreen' in el) { // IE11
-      void (el as { msRequestFullscreen(): Promise<void> }).msRequestFullscreen();
+    } else if ("webkitRequestFullscreen" in el) {
+      // Safari
+      void (
+        el as { webkitRequestFullscreen(): Promise<void> }
+      ).webkitRequestFullscreen();
+    } else if ("msRequestFullscreen" in el) {
+      // IE11
+      void (
+        el as { msRequestFullscreen(): Promise<void> }
+      ).msRequestFullscreen();
     }
   }
 
@@ -121,7 +136,24 @@ export default function Explore() {
             onLocationSelect={handleLocationSelect}
           />
         </Map>
+
+        {/* Bottom Navigation Bar */}
+        <div className="fixed bottom-0 left-0 right-0 bg-background border-t flex justify-around items-center h-24 px-4 z-[102]">
+          <button className="flex flex-col items-center gap-1 text-primary">
+            <Compass className="w-6 h-6" />
+            <span className="text-xs">Explore</span>
+          </button>
+          <button className="flex flex-col items-center gap-1 text-muted-foreground">
+            <User className="w-6 h-6" />
+            <span className="text-xs">You</span>
+          </button>
+          <button className="flex flex-col items-center gap-1 text-muted-foreground">
+            <PlusCircle className="w-6 h-6" />
+            <span className="text-xs">Contribute</span>
+          </button>
+        </div>
       </div>
+
       {/* Drawer */}
       <Drawer.Root
         open={!!selectedLocation}
@@ -136,58 +168,74 @@ export default function Explore() {
         modal={false}
       >
         <Drawer.Portal>
-          <Drawer.Overlay className="bg-black/10 z-[100]" />
-          <Drawer.Content className="fixed flex flex-col bg-background border rounded-t-[10px] bottom-0 left-0 right-0 h-full max-h-[97%] mx-[-1px] z-[101]">
-            <div>
-              <div className="max-w-md mx-auto p-4" data-scrollable="true">
-                {selectedLocation && (
-                  <>
-                    <Drawer.Handle />
-                    <div className="space-y-4">
-                      {/* Title and Rating */}
-                      <div className="flex justify-between mt-2">
-                        <Drawer.Title className="text-2xl font-bold">{selectedLocation.name}</Drawer.Title>
-                        <div className="flex items-center gap-1">
-                          {selectedLocation.rating_stats && selectedLocation.rating_stats.length > 0 ? (
-                            <>
-                              <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-                              <span className="font-medium">{selectedLocation.rating_stats[0].average_rating}</span>
-                            </>
-                          ) : (
-                            <span className="text-muted-foreground text-sm">No ratings yet</span>
-                          )}
-                        </div>
-                      </div>
-                      {/* Image */}
-                      <div className="relative aspect-video w-full rounded-lg overflow-hidden bg-muted mb-4">
-                        {selectedLocation.location_images && selectedLocation.location_images.length > 0 ? (
-                          <Image
-                            src={selectedLocation.location_images[0].image_url}
-                            alt={selectedLocation.name}
-                            className="object-cover"
-                            fill
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                            priority
-                          />
+          {/* <Drawer.Overlay className="bg-black/10 z-[99]" /> */}
+          <Drawer.Overlay className="fixed inset-0 bg-black/10 z-[99]" />
+          <Drawer.Content className="fixed flex flex-col bg-background border rounded-t-[10px] bottom-24 left-0 right-0 h-full max-h-[calc(100%-96px)] mx-[-1px] z-[100]">
+            <div
+              className={cn("max-w-md mx-auto p-4", {
+                "overflow-y-auto": snap === 1,
+                "overflow-hidden": snap !== 1,
+              })}
+            >
+              {selectedLocation && (
+                <>
+                  <Drawer.Handle />
+                  <div className="space-y-4">
+                    {/* Title and Rating */}
+                    <div className="flex justify-between mt-2">
+                      <Drawer.Title className="text-2xl font-bold">
+                        {selectedLocation.name}
+                      </Drawer.Title>
+                      <div className="flex items-center gap-1">
+                        {selectedLocation.rating_stats &&
+                        Array.isArray(selectedLocation.rating_stats) &&
+                        selectedLocation.rating_stats.length > 0 ? (
+                          <>
+                            <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+                            <span className="font-medium">
+                              {selectedLocation.rating_stats[0].average_rating}
+                            </span>
+                          </>
                         ) : (
-                          <div className=" inset-0 bg-gradient-to-br from-primary/20 to-primary/40" />
-
+                          <span className="text-muted-foreground text-sm">
+                            No ratings yet
+                          </span>
                         )}
                       </div>
+                    </div>
+                    {/* Image */}
+                    <div className="relative aspect-video w-full rounded-lg overflow-hidden bg-muted mb-4">
+                      {selectedLocation.location_images &&
+                      selectedLocation.location_images.length > 0 ? (
+                        <Image
+                          src={selectedLocation.location_images[0].image_url}
+                          alt={selectedLocation.name}
+                          className="object-cover"
+                          fill
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          priority
+                        />
+                      ) : (
+                        <div className=" inset-0 bg-gradient-to-br from-primary/20 to-primary/40" />
+                      )}
+                    </div>
 
-                      {/* Location */}
-                      <div className="flex items-center gap-2 text-muted-foreground">
-                        <span>{selectedLocation.city}</span>
-                        {selectedLocation.city && selectedLocation.country && <span>•</span>}
-                        <span>{selectedLocation.country}</span>
-                      </div>
+                    {/* Location */}
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <span>{selectedLocation.city}</span>
+                      {selectedLocation.city && selectedLocation.country && (
+                        <span>•</span>
+                      )}
+                      <span>{selectedLocation.country}</span>
+                    </div>
 
-                      {/* Description */}
-                      <Drawer.Description className="text-muted-foreground">
-                        {selectedLocation.description}
-                      </Drawer.Description>
+                    {/* Description */}
+                    <Drawer.Description className="text-muted-foreground">
+                      {selectedLocation.description}
+                    </Drawer.Description>
 
-                      {selectedLocation.tags && selectedLocation.tags.length > 0 && (
+                    {selectedLocation.tags &&
+                      selectedLocation.tags.length > 0 && (
                         <div className="flex flex-wrap gap-2">
                           {selectedLocation.tags.map((tag) => (
                             <Badge key={tag} variant="secondary">
@@ -197,30 +245,35 @@ export default function Explore() {
                         </div>
                       )}
 
-                      {selectedLocation.safety_info && (
-                        <div className="space-y-2">
-                          <h3 className="font-semibold">Safety Information</h3>
-                          <p className="text-muted-foreground">{selectedLocation.safety_info}</p>
-                        </div>
-                      )}
+                    {selectedLocation.safety_info && (
+                      <div className="space-y-2">
+                        <h3 className="font-semibold">Safety Information</h3>
+                        <p className="text-muted-foreground">
+                          {selectedLocation.safety_info}
+                        </p>
+                      </div>
+                    )}
 
-                      {selectedLocation.accessibility && (
-                        <div className="space-y-2">
-                          <h3 className="font-semibold">Accessibility</h3>
-                          <p className="text-muted-foreground">{selectedLocation.accessibility}</p>
-                        </div>
-                      )}
+                    {selectedLocation.accessibility && (
+                      <div className="space-y-2">
+                        <h3 className="font-semibold">Accessibility</h3>
+                        <p className="text-muted-foreground">
+                          {selectedLocation.accessibility}
+                        </p>
+                      </div>
+                    )}
 
-                      {selectedLocation.address && (
-                        <div className="space-y-2">
-                          <h3 className="font-semibold">Address</h3>
-                          <p className="text-muted-foreground">{selectedLocation.address}</p>
-                        </div>
-                      )}
-                    </div>
-                  </>
-                )}
-              </div>
+                    {selectedLocation.address && (
+                      <div className="space-y-2">
+                        <h3 className="font-semibold">Address</h3>
+                        <p className="text-muted-foreground">
+                          {selectedLocation.address}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
             </div>
           </Drawer.Content>
         </Drawer.Portal>
@@ -229,7 +282,10 @@ export default function Explore() {
   );
 }
 
-function MapContent({ locations, onLocationSelect }: {
+function MapContent({
+  locations,
+  onLocationSelect,
+}: {
   locations: Location[];
   onLocationSelect: (location: Location) => void;
 }) {
@@ -240,7 +296,7 @@ function MapContent({ locations, onLocationSelect }: {
     onLocationSelect(location);
     map.panTo([Number(location.longitude), Number(location.latitude)], {
       duration: 1000,
-      essential: true
+      essential: true,
     });
   };
 
@@ -250,7 +306,7 @@ function MapContent({ locations, onLocationSelect }: {
       center: [Number(location.longitude), Number(location.latitude)],
       zoom: 14,
       duration: 1500,
-      essential: true
+      essential: true,
     });
   };
 

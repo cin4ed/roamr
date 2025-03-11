@@ -36,6 +36,7 @@ export type Database = {
     Tables: {
       locations: {
         Row: {
+          rating_stats: boolean
           location_images?: {
             id: string;
             image_url: string;
