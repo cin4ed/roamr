@@ -100,7 +100,7 @@ export default function Explore() {
   return (
     <div className="h-screen w-screen font-[family-name:var(--font-geist-sans)] flex">
       <div className="w-full h-full relative">
-        <div className="absolute top-4 right-4 z-[60] flex flex-col gap-2">
+        <div className="fixed top-4 right-4 z-[60] flex flex-col gap-2">
           <Button
             variant="outline"
             onClick={enterFullscreen}
@@ -117,25 +117,27 @@ export default function Explore() {
           </Button>
         </div>
 
-        <Map
-          id="main"
-          initialViewState={{
-            longitude: -100,
-            latitude: 40,
-            zoom: 3.5,
-          }}
-          maxZoom={15.9}
-          style={{ width: "100%", height: "100%" }}
-          mapStyle={mapStyle}
-          cursor="grab"
-          onDragStart={() => setSnap(snapPoints[0])}
-          onClick={() => setSnap(snapPoints[0])}
-        >
-          <MapContent
-            locations={locations}
-            onLocationSelect={handleLocationSelect}
-          />
-        </Map>
+        <div className="fixed inset-0">
+          <Map
+            id="main"
+            initialViewState={{
+              longitude: -100,
+              latitude: 40,
+              zoom: 3.5,
+            }}
+            maxZoom={15.9}
+            style={{ width: "100%", height: "100%" }}
+            mapStyle={mapStyle}
+            cursor="grab"
+            onDragStart={() => setSnap(snapPoints[0])}
+            onClick={() => setSnap(snapPoints[0])}
+          >
+            <MapContent
+              locations={locations}
+              onLocationSelect={handleLocationSelect}
+            />
+          </Map>
+        </div>
 
         {/* Bottom Navigation Bar */}
         <div className="fixed bottom-0 left-0 right-0 bg-background border-t flex justify-around items-center h-24 px-4 z-[102]">
@@ -207,6 +209,7 @@ export default function Explore() {
                         )}
                       </div>
                     </div>
+
                     {/* Image */}
                     <div className="relative aspect-video w-full rounded-lg overflow-hidden bg-muted mb-4">
                       {selectedLocation.location_images &&
