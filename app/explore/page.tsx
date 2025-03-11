@@ -172,15 +172,19 @@ export default function Explore() {
           <Drawer.Overlay className="fixed inset-0 bg-black/10 z-[99]" />
           <Drawer.Content className="fixed flex flex-col bg-background border rounded-t-[10px] bottom-24 left-0 right-0 h-full max-h-[calc(100%-96px)] mx-[-1px] z-[100]">
             <div
-              className={cn("max-w-md mx-auto p-4", {
-                "overflow-y-auto": snap === 1,
+              className={cn("max-w-md mx-auto p-4 h-full", {
+                "overflow-y-scroll overscroll-none": snap === 1,
                 "overflow-hidden": snap !== 1,
               })}
+              style={{
+                WebkitOverflowScrolling: "touch",
+                overscrollBehavior: "none",
+              }}
             >
               {selectedLocation && (
                 <>
-                  <Drawer.Handle />
-                  <div className="space-y-4">
+                  <Drawer.Handle className="mb-2" />
+                  <div className="space-y-4 pb-24">
                     {/* Title and Rating */}
                     <div className="flex justify-between mt-2">
                       <Drawer.Title className="text-2xl font-bold">
