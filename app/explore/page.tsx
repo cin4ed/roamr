@@ -168,24 +168,45 @@ export default function Explore() {
         activeSnapPoint={snap}
         setActiveSnapPoint={setSnap}
         modal={false}
+        dismissible
       >
         <Drawer.Portal>
-          {/* <Drawer.Overlay className="bg-black/10 z-[99]" /> */}
           <Drawer.Overlay className="fixed inset-0 bg-black/10 z-[99]" />
           <Drawer.Content className="fixed flex flex-col bg-background border rounded-t-[10px] bottom-24 left-0 right-0 h-full max-h-[calc(100%-96px)] mx-[-1px] z-[100]">
+            {/* Fixed non-scrollable handle area */}
+            <div className="flex items-center justify-center pt-4 pb-2 bg-background sticky top-0 z-20">
+              <div className="w-full max-w-md flex items-center">
+                <Drawer.Handle className="mx-auto" />
+                {snap === 1 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-4"
+                    onClick={() => setSnap(snapPoints[1])}
+                  >
+                    ↓
+                  </Button>
+                )}
+              </div>
+            </div>
+
+            {/* Content area */}
             <div
-              className={cn("max-w-md mx-auto p-4 h-full", {
-                "overflow-y-scroll overscroll-none": snap === 1,
-                "overflow-hidden": snap !== 1,
-              })}
+              className="w-full overscroll-none"
               style={{
-                WebkitOverflowScrolling: "touch",
                 overscrollBehavior: "none",
               }}
             >
               {selectedLocation && (
-                <>
-                  <Drawer.Handle className="mb-2" />
+                <div
+                  className={cn("max-w-md mx-auto px-4 w-full", {
+                    "overflow-y-auto": snap === 1,
+                    "overflow-hidden": snap !== 1,
+                  })}
+                  style={{
+                    height: snap === 1 ? "calc(100vh - 180px)" : "auto",
+                  }}
+                >
                   <div className="space-y-4 pb-24">
                     {/* Title and Rating */}
                     <div className="flex justify-between mt-2">
@@ -279,7 +300,7 @@ export default function Explore() {
                       </div>
                     )}
                   </div>
-                </>
+                </div>
               )}
             </div>
           </Drawer.Content>
