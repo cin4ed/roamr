@@ -1,23 +1,18 @@
-import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
-import { z } from "zod";
-import { v4 as uuidv4 } from "uuid";
+import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/lib/supabase/server';
+import { z } from 'zod';
+import { v4 as uuidv4 } from 'uuid';
 
 // Define schema for image file validation
 const imageFileSchema = z.object({
   name: z.string(),
-  type: z.string().refine((type) => type.startsWith("image/"), {
-    message: "File must be an image",
+  type: z.string().refine(type => type.startsWith('image/'), {
+    message: 'File must be an image',
   }),
-  size: z
-    .number()
-    .max(5 * 1024 * 1024, { message: "File size must be less than 5MB" }),
+  size: z.number().max(5 * 1024 * 1024, { message: 'File size must be less than 5MB' }),
 });
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id: locationId } = await params;
 
   // Initialize Supabase client and authenticate user
@@ -28,34 +23,29 @@ export async function POST(
   } = await supabase.auth.getUser();
 
   if (authError || !user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   // Check if the location exists
   const { data: locations, error: locationError } = await supabase
-    .from("locations")
-    .select("id")
-    .eq("id", locationId);
+    .from('locations')
+    .select('id')
+    .eq('id', locationId);
 
   if (locationError || locations.length === 0) {
-    return NextResponse.json({ error: "Location not found" }, { status: 404 });
+    return NextResponse.json({ error: 'Location not found' }, { status: 404 });
   }
 
   // Parse FormData and extract all image files
   const formData = await request.formData();
-  const files = formData
-    .getAll("images")
-    .filter((file): file is File => file instanceof File);
+  const files = formData.getAll('images').filter((file): file is File => file instanceof File);
 
   if (files.length === 0) {
-    return NextResponse.json({ error: "No images provided" }, { status: 400 });
+    return NextResponse.json({ error: 'No images provided' }, { status: 400 });
   }
 
   if (files.length > 10) {
-    return NextResponse.json(
-      { error: "Maximum 10 images allowed" },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: 'Maximum 10 images allowed' }, { status: 400 });
   }
 
   // Initialize arrays to collect successes and errors
@@ -82,7 +72,7 @@ export async function POST(
     }
 
     // Generate a unique filename and construct the storage path
-    const extension = file.name.split(".").pop() || "jpg";
+    const extension = file.name.split('.').pop() || 'jpg';
     const uniqueFilename = `${uuidv4()}.${extension}`;
     const path = `${locationId}/${uniqueFilename}`;
 
@@ -92,7 +82,7 @@ export async function POST(
 
     // Upload the image to the "location-images" bucket
     const { error: uploadError } = await supabase.storage
-      .from("location-images")
+      .from('location-images')
       .upload(path, buffer, {
         contentType: file.type,
       });
@@ -104,7 +94,7 @@ export async function POST(
 
     // Insert the image metadata into the "images" table
     const { data, error: insertError } = await supabase
-      .from("images")
+      .from('images')
       .insert({
         location_id: locationId,
         image_path: path,
@@ -115,7 +105,7 @@ export async function POST(
 
     if (insertError) {
       // Clean up: Remove the uploaded file if database insert fails
-      await supabase.storage.from("location-images").remove([path]);
+      await supabase.storage.from('location-images').remove([path]);
       errors.push({ file: file.name, error: insertError.message });
     } else {
       successes.push(data);

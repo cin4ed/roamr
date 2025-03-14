@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import Map, { Source, StyleSpecification, useMap } from "react-map-gl/maplibre";
-import "maplibre-gl/dist/maplibre-gl.css";
-import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
+import Map, { Source, StyleSpecification, useMap } from 'react-map-gl/maplibre';
+import 'maplibre-gl/dist/maplibre-gl.css';
+import { useEffect, useState } from 'react';
+import { Button } from '@/components/ui/button';
 import {
   Map as MapIcon,
   Satellite,
@@ -12,29 +12,27 @@ import {
   Compass,
   User,
   PlusCircle,
-} from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
-import type { Database } from "@/types/supabase";
-import { LocationMarker } from "@/components/location-marker";
-import { Drawer } from "vaul";
-import Image from "next/image";
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+} from 'lucide-react';
+import { createClient } from '@/lib/supabase/client';
+import type { Database } from '@/types/supabase';
+import { LocationMarker } from '@/components/location-marker';
+import { Drawer } from 'vaul';
+import Image from 'next/image';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 
-type Location = Database["public"]["Tables"]["locations"]["Row"];
-const snapPoints = ["100px", 0.5, 1];
+type Location = Database['public']['Tables']['locations']['Row'];
+const snapPoints = ['100px', 0.5, 1];
 
 export default function Explore() {
   const [isVectorStyle, setIsVectorStyle] = useState(true);
   const [locations, setLocations] = useState<Location[]>([]);
-  const [selectedLocation, setSelectedLocation] = useState<Location | null>(
-    null
-  );
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
   const [snap, setSnap] = useState<number | string | null>(snapPoints[1]);
 
   async function loadLocations() {
     const supabase = await createClient();
-    const { data, error } = await supabase.from("locations").select(`
+    const { data, error } = await supabase.from('locations').select(`
         *,
         location_images(*),
         rating_stats:location_rating_stats(average_rating, total_ratings)
@@ -52,23 +50,23 @@ export default function Explore() {
   }, []);
 
   const mapStyle: StyleSpecification | string = isVectorStyle
-    ? "https://tiles.openfreemap.org/styles/liberty"
+    ? 'https://tiles.openfreemap.org/styles/liberty'
     : {
         version: 8,
         sources: {
-          "raster-tiles": {
-            type: "raster",
+          'raster-tiles': {
+            type: 'raster',
             tiles: [
-              "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+              'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
             ],
             tileSize: 256,
           },
         },
         layers: [
           {
-            id: "simple-tiles",
-            type: "raster",
-            source: "raster-tiles",
+            id: 'simple-tiles',
+            type: 'raster',
+            source: 'raster-tiles',
             minzoom: 0,
             maxzoom: 20,
           },
@@ -79,16 +77,12 @@ export default function Explore() {
     const el = document.documentElement;
     if (el.requestFullscreen) {
       void el.requestFullscreen();
-    } else if ("webkitRequestFullscreen" in el) {
+    } else if ('webkitRequestFullscreen' in el) {
       // Safari
-      void (
-        el as { webkitRequestFullscreen(): Promise<void> }
-      ).webkitRequestFullscreen();
-    } else if ("msRequestFullscreen" in el) {
+      void (el as { webkitRequestFullscreen(): Promise<void> }).webkitRequestFullscreen();
+    } else if ('msRequestFullscreen' in el) {
       // IE11
-      void (
-        el as { msRequestFullscreen(): Promise<void> }
-      ).msRequestFullscreen();
+      void (el as { msRequestFullscreen(): Promise<void> }).msRequestFullscreen();
     }
   }
 
@@ -126,16 +120,13 @@ export default function Explore() {
               zoom: 3.5,
             }}
             maxZoom={15.9}
-            style={{ width: "100%", height: "100%" }}
+            style={{ width: '100%', height: '100%' }}
             mapStyle={mapStyle}
             cursor="grab"
             onDragStart={() => setSnap(snapPoints[0])}
             onClick={() => setSnap(snapPoints[0])}
           >
-            <MapContent
-              locations={locations}
-              onLocationSelect={handleLocationSelect}
-            />
+            <MapContent locations={locations} onLocationSelect={handleLocationSelect} />
           </Map>
         </div>
 
@@ -159,7 +150,7 @@ export default function Explore() {
       {/* Drawer */}
       <Drawer.Root
         open={!!selectedLocation}
-        onOpenChange={(open) => {
+        onOpenChange={open => {
           if (!open) {
             setSelectedLocation(null);
           }
@@ -194,17 +185,17 @@ export default function Explore() {
             <div
               className="w-full overscroll-none"
               style={{
-                overscrollBehavior: "none",
+                overscrollBehavior: 'none',
               }}
             >
               {selectedLocation && (
                 <div
-                  className={cn("max-w-md mx-auto px-4 w-full", {
-                    "overflow-y-auto": snap === 1,
-                    "overflow-hidden": snap !== 1,
+                  className={cn('max-w-md mx-auto px-4 w-full', {
+                    'overflow-y-auto': snap === 1,
+                    'overflow-hidden': snap !== 1,
                   })}
                   style={{
-                    height: snap === 1 ? "calc(100vh - 180px)" : "auto",
+                    height: snap === 1 ? 'calc(100vh - 180px)' : 'auto',
                   }}
                 >
                   <div className="space-y-4 pb-24">
@@ -224,9 +215,7 @@ export default function Explore() {
                             </span>
                           </>
                         ) : (
-                          <span className="text-muted-foreground text-sm">
-                            No ratings yet
-                          </span>
+                          <span className="text-muted-foreground text-sm">No ratings yet</span>
                         )}
                       </div>
                     </div>
@@ -251,9 +240,7 @@ export default function Explore() {
                     {/* Location */}
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <span>{selectedLocation.city}</span>
-                      {selectedLocation.city && selectedLocation.country && (
-                        <span>•</span>
-                      )}
+                      {selectedLocation.city && selectedLocation.country && <span>•</span>}
                       <span>{selectedLocation.country}</span>
                     </div>
 
@@ -262,41 +249,34 @@ export default function Explore() {
                       {selectedLocation.description}
                     </Drawer.Description>
 
-                    {selectedLocation.tags &&
-                      selectedLocation.tags.length > 0 && (
-                        <div className="flex flex-wrap gap-2">
-                          {selectedLocation.tags.map((tag) => (
-                            <Badge key={tag} variant="secondary">
-                              {tag}
-                            </Badge>
-                          ))}
-                        </div>
-                      )}
+                    {selectedLocation.tags && selectedLocation.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {selectedLocation.tags.map(tag => (
+                          <Badge key={tag} variant="secondary">
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
 
                     {selectedLocation.safety_info && (
                       <div className="space-y-2">
                         <h3 className="font-semibold">Safety Information</h3>
-                        <p className="text-muted-foreground">
-                          {selectedLocation.safety_info}
-                        </p>
+                        <p className="text-muted-foreground">{selectedLocation.safety_info}</p>
                       </div>
                     )}
 
                     {selectedLocation.accessibility && (
                       <div className="space-y-2">
                         <h3 className="font-semibold">Accessibility</h3>
-                        <p className="text-muted-foreground">
-                          {selectedLocation.accessibility}
-                        </p>
+                        <p className="text-muted-foreground">{selectedLocation.accessibility}</p>
                       </div>
                     )}
 
                     {selectedLocation.address && (
                       <div className="space-y-2">
                         <h3 className="font-semibold">Address</h3>
-                        <p className="text-muted-foreground">
-                          {selectedLocation.address}
-                        </p>
+                        <p className="text-muted-foreground">{selectedLocation.address}</p>
                       </div>
                     )}
                   </div>
@@ -344,12 +324,12 @@ function MapContent({
         id="world-imagery"
         type="raster"
         tiles={[
-          "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+          'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
         ]}
         tileSize={256}
       />
 
-      {locations.map((location) => (
+      {locations.map(location => (
         <LocationMarker
           key={location.id}
           location={location}

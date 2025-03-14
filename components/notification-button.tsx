@@ -1,11 +1,6 @@
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Button } from "./ui/button";
-import { Bell } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Button } from './ui/button';
+import { Bell } from 'lucide-react';
 
 export function NotificationButton() {
   return (
@@ -13,13 +8,8 @@ export function NotificationButton() {
       <Tooltip>
         <TooltipTrigger asChild>
           <span>
-            <Button
-              variant="outline"
-              size="icon"
-              className={"h-10 w-10"}
-              disabled
-            >
-              <Bell className={"h-10 w-10"} />
+            <Button variant="outline" size="icon" className={'h-10 w-10'} disabled>
+              <Bell className={'h-10 w-10'} />
             </Button>
           </span>
         </TooltipTrigger>

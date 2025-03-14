@@ -1,17 +1,11 @@
-"use client";
+'use client';
 
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
 import {
   Form,
   FormControl,
@@ -19,26 +13,21 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { signInWithDiscord } from "@/app/login/actions";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { signInWithDiscord } from '@/app/login/actions';
 
 const formSchema = z.object({
-  email: z.string().email("This is not a valid email."),
-  password: z
-    .string()
-    .min(8, { message: "Password must be at least 8 characters long." }),
+  email: z.string().email('This is not a valid email.'),
+  password: z.string().min(8, { message: 'Password must be at least 8 characters long.' }),
 });
 
-export function LoginForm({
-  className,
-  ...props
-}: React.ComponentPropsWithoutRef<"div">) {
+export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      email: '',
+      password: '',
     },
   });
 
@@ -47,13 +36,11 @@ export function LoginForm({
   }
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl">Login</CardTitle>
-          <CardDescription>
-            Enter your email below to login to your account
-          </CardDescription>
+          <CardDescription>Enter your email below to login to your account</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -67,11 +54,7 @@ export function LoginForm({
                       <FormItem>
                         <FormLabel>Email</FormLabel>
                         <FormControl>
-                          <Input
-                            placeholder="m@example.com"
-                            type="email"
-                            {...field}
-                          />
+                          <Input placeholder="m@example.com" type="email" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -94,11 +77,7 @@ export function LoginForm({
                           </a>
                         </div>
                         <FormControl>
-                          <Input
-                            placeholder="***********"
-                            type="password"
-                            {...field}
-                          />
+                          <Input placeholder="***********" type="password" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -118,7 +97,7 @@ export function LoginForm({
                 </Button>
               </div>
               <div className="mt-4 text-center text-sm">
-                Don&apos;t have an account?{" "}
+                Don&apos;t have an account?{' '}
                 <a href="#" className="underline underline-offset-4">
                   Sign up
                 </a>

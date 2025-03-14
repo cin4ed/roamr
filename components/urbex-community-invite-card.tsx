@@ -1,27 +1,25 @@
-import Link from "next/link";
-import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import Link from 'next/link';
+import { Separator } from '@/components/ui/separator';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 export function UrbexCommunityInviteCard({
   className,
   ...props
-}: React.ComponentPropsWithoutRef<"div">) {
+}: React.ComponentPropsWithoutRef<'div'>) {
   return (
     <div
       className={cn(
-        "space-y-10 border p-4 rounded-md bg-zinc-900 xl:text-sm 2xl:text-base",
-        className,
+        'space-y-10 border p-4 rounded-md bg-zinc-900 xl:text-sm 2xl:text-base',
+        className
       )}
       {...props}
     >
       <div>
         <div>
-          <h2 className="text-xl font-bold">
-            Create an Account to Explore & Contribute!
-          </h2>
+          <h2 className="text-xl font-bold">Create an Account to Explore & Contribute!</h2>
           <p className="text-sm text-zinc-400">
-            Join the Roamr urbex community and unlock exclusive features.{" "}
+            Join the Roamr urbex community and unlock exclusive features.{' '}
           </p>
           <Separator className="mt-2" />
         </div>

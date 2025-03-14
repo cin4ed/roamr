@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Marker } from "react-map-gl/maplibre";
-import type { Database } from "@/types/supabase";
-import { Badge } from "@/components/ui/badge";
-import { Star } from "lucide-react";
-import Image from "next/image";
-import { useIsMobile } from "@/hooks/useIsMobile";
+import { useState } from 'react';
+import { Marker } from 'react-map-gl/maplibre';
+import type { Database } from '@/types/supabase';
+import { Badge } from '@/components/ui/badge';
+import { Star } from 'lucide-react';
+import Image from 'next/image';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
-type Location = Database["public"]["Tables"]["locations"]["Row"];
+type Location = Database['public']['Tables']['locations']['Row'];
 
 interface LocationMarkerProps {
   location: Location;
@@ -48,19 +48,18 @@ export function LocationMarker({
         <div className="relative flex flex-col items-center">
           <div
             className="w-12 h-12 rounded-full border-2 border-black shadow-lg overflow-hidden hover:scale-110 transition-transform cursor-pointer bg-background"
-            onClick={(e) => {
+            onClick={e => {
               e.stopPropagation();
               onLocationClick?.(location);
             }}
-            onDoubleClick={(e) => {
+            onDoubleClick={e => {
               e.stopPropagation();
               onLocationDoubleClick?.(location);
             }}
           >
             {/* Location preview image */}
             <div className="relative w-full h-full transition-opacity">
-              {location.location_images &&
-              location.location_images.length > 0 ? (
+              {location.location_images && location.location_images.length > 0 ? (
                 <Image
                   src={location.location_images[0].image_url}
                   alt={location.name}
@@ -91,8 +90,7 @@ export function LocationMarker({
             style={{ zIndex: 1000 }}
           >
             <div className="relative aspect-video w-full rounded-md overflow-hidden bg-muted mb-2">
-              {location.location_images &&
-              location.location_images.length > 0 ? (
+              {location.location_images && location.location_images.length > 0 ? (
                 <Image
                   src={location.location_images[0].image_url}
                   alt={location.name}
@@ -109,7 +107,7 @@ export function LocationMarker({
               {location.description}
             </p>
             <div className="flex items-center gap-2 flex-wrap">
-              {location.tags?.map((tag) => (
+              {location.tags?.map(tag => (
                 <Badge key={tag} variant="secondary" className="text-xs">
                   {tag}
                 </Badge>

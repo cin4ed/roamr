@@ -1,18 +1,16 @@
-import { createClient } from "@/lib/supabase/server";
-import { SupabaseClient } from "@supabase/supabase-js";
-import { NextResponse } from "next/server";
-import { z } from "zod";
+import { createClient } from '@/lib/supabase/server';
+import { SupabaseClient } from '@supabase/supabase-js';
+import { NextResponse } from 'next/server';
+import { z } from 'zod';
 
 // Schema for a single image file
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const imageFileSchema = z.object({
   name: z.string(),
-  type: z.string().refine((type) => type.startsWith("image/"), {
-    message: "File must be an image",
+  type: z.string().refine(type => type.startsWith('image/'), {
+    message: 'File must be an image',
   }),
-  size: z
-    .number()
-    .max(5 * 1024 * 1024, { message: "File size must be less than 5MB" }),
+  size: z.number().max(5 * 1024 * 1024, { message: 'File size must be less than 5MB' }),
 });
 
 const createLocationSchema = z.object({
@@ -39,26 +37,19 @@ export async function POST(request: Request) {
     const body = await request.json();
     const validation = createLocationSchema.safeParse(body);
     if (!validation.success) {
-      return NextResponse.json(
-        { error: validation.error.flatten().fieldErrors },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: validation.error.flatten().fieldErrors }, { status: 400 });
     }
 
     // Authenticate user
     const supabase = await createClient();
     const user = await getAuthenticatedUser(supabase);
     if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Prepare and insert location data
     const locationData = buildLocationData(validation.data, user.id);
-    const { data, error } = await supabase
-      .from("locations")
-      .insert(locationData)
-      .select()
-      .single();
+    const { data, error } = await supabase.from('locations').insert(locationData).select().single();
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
@@ -66,21 +57,18 @@ export async function POST(request: Request) {
 
     if (!data) {
       return NextResponse.json(
-        { error: "Failed to create location: no data returned" },
+        { error: 'Failed to create location: no data returned' },
         { status: 500 }
       );
     }
 
     return NextResponse.json({
-      message: "Location created",
+      message: 'Location created',
       locationId: data.id,
     });
   } catch (error) {
-    console.error("Error creating location:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    console.error('Error creating location:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
 
@@ -100,10 +88,7 @@ async function getAuthenticatedUser(supabase: SupabaseClient) {
  * @param userId ID of the authenticated user
  * @returns Object formatted for Supabase insertion
  */
-function buildLocationData(
-  data: z.infer<typeof createLocationSchema>,
-  userId: string
-) {
+function buildLocationData(data: z.infer<typeof createLocationSchema>, userId: string) {
   return {
     name: data.name,
     description: data.description,

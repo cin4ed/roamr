@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { createClient } from "@/lib/supabase/client";
-import { Session } from "@supabase/supabase-js";
+import { useState, useEffect } from 'react';
+import { createClient } from '@/lib/supabase/client';
+import { Session } from '@supabase/supabase-js';
 
 export function useAuth() {
   const [session, setSession] = useState<Session | null>(null);
@@ -22,12 +22,10 @@ export function useAuth() {
     getSession();
 
     // Listen for auth state changes
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setLoading(false);
-      },
-    );
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      setSession(session);
+      setLoading(false);
+    });
 
     // Cleanup subscription
     return () => {
