@@ -64,6 +64,8 @@ export function LocationMarker({
                 <Image
                   src={location.location_images[0].image_url}
                   alt={location.name}
+                  loading="eager"
+                  priority
                   width={48}
                   height={48}
                   className="object-cover w-full h-full"
