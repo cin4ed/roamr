@@ -1,381 +1,307 @@
-insert into auth.users (
-    instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, recovery_sent_at, 
-    last_sign_in_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at, confirmation_token, 
-    email_change, email_change_token_new, recovery_token
-)
-values (
-    '00000000-0000-0000-0000-000000000000', '0a1ff718-a54b-483d-b4fd-e9b2f4fc7611', 'authenticated',
-    'authenticated', 'john@example.com', crypt ('johnpassword', gen_salt ('bf')), current_timestamp,
-    current_timestamp, current_timestamp, '{"provider":"email","providers":["email"]}', '{}', 
-    current_timestamp, current_timestamp, '', '', '', ''
-);
+-- Seed data for Roamr App
+-- This seeder populates the database with sample data
 
-insert into public.locations (
-    name, 
-    description, 
-    longitude,
-    latitude,
-    address, 
-    city, 
-    country, 
-    tags, 
-    safety_info, 
-    accessibility, 
-    creator_id
-)
-values (
-    'Golden Gate Bridge Welcome Center',
-    'Iconic viewpoint of San Francisco''s most famous landmark. This spot offers stunning views of the Golden Gate Bridge, San Francisco Bay, and Marin Headlands. Perfect for photography, especially during sunset or when the fog rolls in.',
-    -122.4785,
-    37.8077,
-    '210 Lincoln Boulevard',
-    'San Francisco',
-    'United States',
-    ARRAY['landmark', 'viewpoint', 'photography', 'tourist-attraction', 'hiking'],
-    'Well-maintained area with regular park ranger patrols. Can be windy and foggy; bring appropriate clothing. Parking available but fills up quickly during peak hours.',
-    'Accessible viewing areas and paved paths available. Visitor center has wheelchair access and accessible restrooms.',
-    '0a1ff718-a54b-483d-b4fd-e9b2f4fc7611'::uuid
-);
+-- ------------------------------------------------------------------------------------------------
+-- First, insert some test users
+-- Note: In a real Supabase project, you would typically create these users through the auth API
+-- These are placeholder UUIDs for test users
+INSERT INTO auth.users (id, email, raw_user_meta_data)
+VALUES
+  ('d0d54cc1-32f7-4eaa-9e3b-b27cde9f3b18', 'alice@example.com', '{"name": "Alice Smith"}'),
+  ('27dfe806-85e5-492c-8f3c-1b8be9301d3c', 'bob@example.com', '{"name": "Bob Johnson"}'),
+  ('6bc9148f-c74d-429e-afb5-62c0f9b08de4', 'charlie@example.com', '{"name": "Charlie Brown"}'),
+  ('0c31d49c-5cb3-4cfa-a7b0-9dbcb8d89e68', 'diana@example.com', '{"name": "Diana Prince"}')
+ON CONFLICT DO NOTHING;
 
-insert into public.location_images (location_id, image_url, uploaded_by)
-values (
-    (select id from public.locations where name = 'Golden Gate Bridge Welcome Center'),
-    'https://images.unsplash.com/photo-1501594907352-04cda38ebc29',
-    '0a1ff718-a54b-483d-b4fd-e9b2f4fc7611'::uuid
-);
-
-insert into public.location_ratings (
-    location_id,
-    user_id,
-    rating,
-    comment
+-- ------------------------------------------------------------------------------------------------
+-- Insert sample locations
+INSERT INTO public.locations (
+  id, name, description, longitude, latitude, 
+  address, city, country, tags, safety_info, 
+  accessibility, creator_id, verification_status
 )
-values (
-    (select id from public.locations where name = 'Golden Gate Bridge Welcome Center'),
-    '0a1ff718-a54b-483d-b4fd-e9b2f4fc7611'::uuid,
+VALUES
+  (
+    'a4d345b9-caf4-4d4f-8d2d-64c89d2c3fff', 
+    'Golden Gate Park', 
+    'A large urban park with beautiful gardens, museums, and recreational areas.',
+    -122.4869, 37.7695,
+    '501 Stanyan St', 'San Francisco', 'United States',
+    ARRAY['park', 'nature', 'museums', 'recreation'],
+    'Well-lit paths, regular park ranger patrols, emergency phones available.',
+    'Most areas wheelchair accessible, ADA compliant restrooms, accessible parking spots.',
+    'd0d54cc1-32f7-4eaa-9e3b-b27cde9f3b18',
+    'verified'
+  ),
+  (
+    'bce78991-d7c0-4243-8424-af16dcbaca1b',
+    'Mount Tamalpais',
+    'Scenic mountain with hiking trails offering stunning views of the Bay Area.',
+    -122.5964, 37.9246,
+    NULL, 'Mill Valley', 'United States',
+    ARRAY['mountain', 'hiking', 'nature', 'views'],
+    'Limited cell reception in some areas, bring sufficient water and sun protection.',
+    'Most trails not wheelchair accessible, some accessible viewpoints available at visitor centers.',
+    '27dfe806-85e5-492c-8f3c-1b8be9301d3c',
+    'verified'
+  ),
+  (
+    'c0e9b198-8ca2-4a0d-9703-836e84f3a82b',
+    'Fisherman''s Wharf',
+    'Popular waterfront area with seafood restaurants, shops, and sea lion viewing.',
+    -122.4169, 37.8083,
+    'Beach Street & The Embarcadero', 'San Francisco', 'United States',
+    ARRAY['waterfront', 'tourist', 'shopping', 'food'],
+    'Crowded area, keep belongings secure and be aware of surroundings.',
+    'Wheelchair accessible boardwalk and most restaurants and shops are accessible.',
+    '6bc9148f-c74d-429e-afb5-62c0f9b08de4',
+    'verified'
+  ),
+  (
+    'd1f0c339-9d71-4f2b-a8e5-94bcf9427d12',
+    'Muir Woods',
+    'Ancient redwood forest with towering trees and serene hiking trails.',
+    -122.5717, 37.8912,
+    '1 Muir Woods Rd', 'Mill Valley', 'United States',
+    ARRAY['forest', 'hiking', 'nature', 'redwoods'],
+    'Stay on designated trails, check park hours as gates close at sunset.',
+    'Main trail loop is wheelchair accessible and boardwalked.',
+    '0c31d49c-5cb3-4cfa-a7b0-9dbcb8d89e68',
+    'verified'
+  ),
+  (
+    'e2f1d440-ae82-4b53-9f69-05ab7cef3b23',
+    'Hidden Beach Cove',
+    'A secluded beach with unique rock formations and tide pools.',
+    -122.5129, 37.7925,
+    NULL, 'Pacifica', 'United States',
+    ARRAY['beach', 'ocean', 'secluded', 'tidepools'],
+    'Watch for high tides, rocky terrain can be slippery.',
+    'Difficult access via steep trail, not wheelchair accessible.',
+    'd0d54cc1-32f7-4eaa-9e3b-b27cde9f3b18',
+    'pending'
+  );
+
+-- ------------------------------------------------------------------------------------------------
+-- Insert sample media
+INSERT INTO public.media (
+  id, media_type, media_url, caption, uploaded_by
+)
+VALUES
+  (
+    'f3d2e541-bf93-4564-98a6-ac7eb590ef24',
+    'photo',
+    'https://example.com/images/golden_gate_park1.jpg',
+    'Conservatory of Flowers in full bloom',
+    'd0d54cc1-32f7-4eaa-9e3b-b27cde9f3b18'
+  ),
+  (
+    '44e3f652-ca04-5675-09b7-bd8fc691f435',
+    'photo',
+    'https://example.com/images/golden_gate_park2.jpg',
+    'Japanese Tea Garden bridge',
+    'd0d54cc1-32f7-4eaa-9e3b-b27cde9f3b18'
+  ),
+  (
+    '55f4a763-db15-6786-10c8-ce94d702a446',
+    'video',
+    'https://example.com/videos/mount_tam_summit.mp4',
+    'Panoramic view from East Peak',
+    '27dfe806-85e5-492c-8f3c-1b8be9301d3c'
+  ),
+  (
+    '66a5b874-ec26-7897-21d9-df05e813b557',
+    'photo',
+    'https://example.com/images/fishermans_wharf.jpg',
+    'Sea lions at Pier 39',
+    '6bc9148f-c74d-429e-afb5-62c0f9b08de4'
+  ),
+  (
+    '77b6c985-fd37-8908-32e0-ea16f924c668',
+    'photo',
+    'https://example.com/images/muir_woods1.jpg',
+    'Cathedral Grove redwoods',
+    '0c31d49c-5cb3-4cfa-a7b0-9dbcb8d89e68'
+  ),
+  (
+    '88c7d096-ae48-9019-43f1-fb27a035d779',
+    'photo',
+    'https://example.com/images/muir_woods2.jpg',
+    'Redwood Creek',
+    '0c31d49c-5cb3-4cfa-a7b0-9dbcb8d89e68'
+  ),
+  (
+    '99d8e107-bf59-0120-54a2-ac38b146e880',
+    'photo',
+    'https://example.com/images/hidden_beach.jpg',
+    'Sunset at Hidden Beach Cove',
+    'd0d54cc1-32f7-4eaa-9e3b-b27cde9f3b18'
+  );
+
+-- ------------------------------------------------------------------------------------------------
+-- Insert sample location reviews
+INSERT INTO public.location_reviews (
+  id, location_id, user_id, title, rating, comment, helpful_votes, visit_date
+)
+VALUES
+  (
+    'a0e9f218-ca60-1231-65b3-bd4fc257fa91',
+    'a4d345b9-caf4-4d4f-8d2d-64c89d2c3fff', -- Golden Gate Park
+    '27dfe806-85e5-492c-8f3c-1b8be9301d3c', -- Bob
+    'Perfect Day at the Park',
     '5',
-    'One of the best spots to photograph the bridge! The visitor center is informative and the views are spectacular at any time of day.'
-);
+    'Spent the whole day exploring Golden Gate Park. The Conservatory of Flowers was spectacular and the Japanese Tea Garden was peaceful and beautiful. Highly recommend renting bikes to see everything!',
+    5,
+    '2023-06-15'
+  ),
+  (
+    'b1f0a329-db71-2342-76c4-ce5ad368ab02',
+    'a4d345b9-caf4-4d4f-8d2d-64c89d2c3fff', -- Golden Gate Park
+    '6bc9148f-c74d-429e-afb5-62c0f9b08de4', -- Charlie
+    'Great for Families',
+    '4',
+    'Lots of activities for kids and adults alike. The de Young Museum was excellent. Would have given 5 stars but some areas were closed for maintenance.',
+    2,
+    '2023-07-22'
+  ),
+  (
+    'c2a1b430-ec82-3453-87d5-df6be479bc13',
+    'bce78991-d7c0-4243-8424-af16dcbaca1b', -- Mount Tamalpais
+    'd0d54cc1-32f7-4eaa-9e3b-b27cde9f3b18', -- Alice
+    'Breathtaking Views',
+    '5',
+    'The hike was challenging but totally worth it for the incredible views at the top. Could see the entire Bay Area on a clear day. Will definitely be back!',
+    7,
+    '2023-05-10'
+  ),
+  (
+    'd3b2c541-fd93-4564-98e6-ea7cf580cd24',
+    'c0e9b198-8ca2-4a0d-9703-836e84f3a82b', -- Fisherman's Wharf
+    '0c31d49c-5cb3-4cfa-a7b0-9dbcb8d89e68', -- Diana
+    'Too Touristy',
+    '3',
+    'Interesting to see the sea lions, but very crowded and overpriced. The seafood was fresh though. Probably wouldn''t go again but worth seeing once.',
+    3,
+    '2023-08-05'
+  ),
+  (
+    'e4c3d652-ae04-5675-09f7-fb8da691de35',
+    'd1f0c339-9d71-4f2b-a8e5-94bcf9427d12', -- Muir Woods
+    '27dfe806-85e5-492c-8f3c-1b8be9301d3c', -- Bob
+    'Magical Forest Experience',
+    '5',
+    'Walking among these ancient redwoods is a truly spiritual experience. Go early to avoid crowds and take the time to simply stand and absorb the quiet majesty of these incredible trees.',
+    10,
+    '2023-04-18'
+  ),
+  (
+    'f5d4e763-bf15-6786-10a8-ac9eb702ef46',
+    'd1f0c339-9d71-4f2b-a8e5-94bcf9427d12', -- Muir Woods
+    '6bc9148f-c74d-429e-afb5-62c0f9b08de4', -- Charlie
+    'Natural Wonder',
+    '4',
+    'Beautiful old-growth forest. The boardwalk trail is easy and accessible. Parking can be a nightmare though - make reservations in advance!',
+    4,
+    '2023-09-30'
+  );
 
--- Eiffel Tower, Paris
-insert into public.locations (
-    name, 
-    description, 
-    longitude,
-    latitude,
-    address, 
-    city, 
-    country, 
-    tags, 
-    safety_info, 
-    accessibility, 
-    creator_id
+-- ------------------------------------------------------------------------------------------------
+-- Insert sample review media connections
+INSERT INTO public.review_media (
+  id, review_id, media_id, display_order
 )
-values (
-    'Eiffel Tower',
-    'The iconic iron tower on the Champ de Mars, offering stunning views of Paris.',
-    2.2945,
-    48.8584,
-    'Champ de Mars, 5 Avenue Anatole France',
-    'Paris',
-    'France',
-    ARRAY['landmark', 'tourist-attraction', 'historical'],
-    'Well-lit area with regular security patrols. Crowded during peak hours.',
-    'Elevator access available. Some areas may have limited wheelchair accessibility.',
-    '0a1ff718-a54b-483d-b4fd-e9b2f4fc7611'::uuid
-);
+VALUES
+  (
+    '06e5f874-ca26-7897-21b9-bd0fc813ff57',
+    'a0e9f218-ca60-1231-65b3-bd4fc257fa91', -- Bob's review of Golden Gate Park
+    '44e3f652-ca04-5675-09b7-bd8fc691f435', -- Japanese Tea Garden photo
+    1
+  ),
+  (
+    '17f6a985-db37-8908-32c0-ce1fd924aa68',
+    'c2a1b430-ec82-3453-87d5-df6be479bc13', -- Alice's review of Mount Tamalpais
+    '55f4a763-db15-6786-10c8-ce94d702a446', -- Mount Tam summit video
+    1
+  ),
+  (
+    '28a7b096-ec48-9019-43d1-df2ae035bb79',
+    'd3b2c541-fd93-4564-98e6-ea7cf580cd24', -- Diana's review of Fisherman's Wharf
+    '66a5b874-ec26-7897-21d9-df05e813b557', -- Sea lions photo
+    1
+  ),
+  (
+    '39b8c107-fd59-0120-54e2-ea3bf146cc80',
+    'e4c3d652-ae04-5675-09f7-fb8da691de35', -- Bob's review of Muir Woods
+    '77b6c985-fd37-8908-32e0-ea16f924c668', -- Cathedral Grove photo
+    1
+  ),
+  (
+    '40c9d218-ae60-1231-65f3-fb4ca257dd91',
+    'e4c3d652-ae04-5675-09f7-fb8da691de35', -- Bob's review of Muir Woods
+    '88c7d096-ae48-9019-43f1-fb27a035d779', -- Redwood Creek photo
+    2
+  );
 
--- Shibuya Crossing, Tokyo
-insert into public.locations (
-    name, 
-    description, 
-    longitude,
-    latitude,
-    address, 
-    city, 
-    country, 
-    tags, 
-    safety_info, 
-    accessibility, 
-    creator_id
+-- ------------------------------------------------------------------------------------------------
+-- Insert sample review parameters
+INSERT INTO public.review_parameters (
+  id, review_id, parameter_name, rating
 )
-values (
-    'Shibuya Crossing',
-    'The world''s busiest pedestrian crossing, surrounded by bright lights and screens.',
-    139.7003,
-    35.6595,
-    '2-chōme-2-1 Dōgenzaka',
-    'Tokyo',
-    'Japan',
-    ARRAY['urban', 'city-life', 'photography'],
-    'Very safe area with police presence. Crowded at all times.',
-    'Street level crossing with tactile paving for visually impaired.',
-    '0a1ff718-a54b-483d-b4fd-e9b2f4fc7611'::uuid
-);
+VALUES
+  (
+    '51d0e329-bf71-2342-76a4-ac5fb368ee02',
+    'a0e9f218-ca60-1231-65b3-bd4fc257fa91', -- Bob's review of Golden Gate Park
+    'safety',
+    '5'
+  ),
+  (
+    '62e1f430-ca82-3453-87b5-bd6ac479ff13',
+    'a0e9f218-ca60-1231-65b3-bd4fc257fa91', -- Bob's review of Golden Gate Park
+    'accessibility',
+    '4'
+  ),
+  (
+    '73f2a541-db93-4564-98c6-ce7bd580aa24',
+    'c2a1b430-ec82-3453-87d5-df6be479bc13', -- Alice's review of Mount Tamalpais
+    'safety',
+    '3'
+  ),
+  (
+    '84a3b652-ec04-5675-09d7-df8ce691bb35',
+    'c2a1b430-ec82-3453-87d5-df6be479bc13', -- Alice's review of Mount Tamalpais
+    'atmosphere',
+    '5'
+  ),
+  (
+    '95b4c763-fd15-6786-10e8-ea9df702cc46',
+    'd3b2c541-fd93-4564-98e6-ea7cf580cd24', -- Diana's review of Fisherman's Wharf
+    'accessibility',
+    '5'
+  ),
+  (
+    'a6c5d874-ae26-7897-21f9-fb0ea813dd57',
+    'd3b2c541-fd93-4564-98e6-ea7cf580cd24', -- Diana's review of Fisherman's Wharf
+    'atmosphere',
+    '2'
+  ),
+  (
+    'b7d6e985-bf37-8908-32a0-ac1fb924ee68',
+    'e4c3d652-ae04-5675-09f7-fb8da691de35', -- Bob's review of Muir Woods
+    'accessibility',
+    '4'
+  ),
+  (
+    'c8e7f096-ca48-9019-43b1-bd2ac035ff79',
+    'e4c3d652-ae04-5675-09f7-fb8da691de35', -- Bob's review of Muir Woods
+    'safety',
+    '5'
+  ),
+  (
+    'd9f8a107-db59-0120-54c2-ce3bd146aa80',
+    'e4c3d652-ae04-5675-09f7-fb8da691de35', -- Bob's review of Muir Woods
+    'atmosphere',
+    '5'
+  );
 
--- Bondi Beach, Sydney
-insert into public.locations (
-    name, 
-    description, 
-    longitude,
-    latitude,
-    address, 
-    city, 
-    country, 
-    tags, 
-    safety_info, 
-    accessibility, 
-    creator_id
-)
-values (
-    'Bondi Beach',
-    'Famous Australian beach known for its golden sand and perfect waves.',
-    151.2744,
-    -33.8915,
-    'Queen Elizabeth Drive',
-    'Sydney',
-    'Australia',
-    ARRAY['beach', 'surfing', 'outdoor'],
-    'Lifeguards on duty during daytime. Follow beach safety flags.',
-    'Beach wheelchair available upon request. Accessible facilities available.',
-    '0a1ff718-a54b-483d-b4fd-e9b2f4fc7611'::uuid
-);
-
--- Central Park, New York
-insert into public.locations (
-    name, 
-    description, 
-    longitude,
-    latitude,
-    address, 
-    city, 
-    country, 
-    tags, 
-    safety_info, 
-    accessibility, 
-    creator_id
-)
-values (
-    'Central Park',
-    'An urban oasis in the heart of Manhattan, featuring lakes, gardens, and walking trails.',
-    -73.9654,
-    40.7829,
-    '59th to 110th Street',
-    'New York',
-    'United States',
-    ARRAY['park', 'nature', 'recreation'],
-    'Well-patrolled area. Stay on marked paths after dark.',
-    'Most areas accessible by wheelchair. Paved paths throughout.',
-    '0a1ff718-a54b-483d-b4fd-e9b2f4fc7611'::uuid
-);
-
--- Machu Picchu, Peru
-insert into public.locations (
-    name, 
-    description, 
-    longitude,
-    latitude,
-    address, 
-    city, 
-    country, 
-    tags, 
-    safety_info, 
-    accessibility, 
-    creator_id
-)
-values (
-    'Machu Picchu',
-    'Ancient Incan citadel set high in the Andes Mountains.',
-    -72.5450,
-    -13.1631,
-    'Machu Picchu Mountain',
-    'Cusco',
-    'Peru',
-    ARRAY['historical', 'hiking', 'unesco'],
-    'High altitude location. Acclimatization recommended. Guide recommended.',
-    'Challenging terrain. Limited accessibility for mobility-impaired visitors.',
-    '0a1ff718-a54b-483d-b4fd-e9b2f4fc7611'::uuid
-);
-
--- Santorini, Greece
-insert into public.locations (
-    name, 
-    description, 
-    longitude,
-    latitude,
-    address, 
-    city, 
-    country, 
-    tags, 
-    safety_info, 
-    accessibility, 
-    creator_id
-)
-values (
-    'Oia Sunset Point',
-    'Famous viewpoint for watching stunning sunsets over the Aegean Sea.',
-    25.3760,
-    36.4618,
-    'Oia Castle',
-    'Santorini',
-    'Greece',
-    ARRAY['sunset', 'views', 'romantic'],
-    'Crowded during sunset hours. Watch your step on narrow paths.',
-    'Some steep steps and narrow paths. Limited wheelchair access.',
-    '0a1ff718-a54b-483d-b4fd-e9b2f4fc7611'::uuid
-);
-
--- Victoria Falls, Zimbabwe
-insert into public.locations (
-    name, 
-    description, 
-    longitude,
-    latitude,
-    address, 
-    city, 
-    country, 
-    tags, 
-    safety_info, 
-    accessibility, 
-    creator_id
-)
-values (
-    'Victoria Falls',
-    'One of the world''s largest waterfalls, known locally as ''The Smoke that Thunders''.',
-    25.8572,
-    -17.9243,
-    'Victoria Falls National Park',
-    'Victoria Falls',
-    'Zimbabwe',
-    ARRAY['waterfall', 'nature', 'adventure'],
-    'Stay on designated viewing paths. Raincoats recommended.',
-    'Main viewpoints accessible via paved paths. Some areas require climbing.',
-    '0a1ff718-a54b-483d-b4fd-e9b2f4fc7611'::uuid
-);
-
--- Northern Lights Viewpoint, Iceland
-insert into public.locations (
-    name, 
-    description, 
-    longitude,
-    latitude,
-    address, 
-    city, 
-    country, 
-    tags, 
-    safety_info, 
-    accessibility, 
-    creator_id
-)
-values (
-    'Aurora Center',
-    'Prime viewing location for the Northern Lights near Reykjavik.',
-    -21.9303,
-    64.1283,
-    'Grótta Island Lighthouse',
-    'Reykjavik',
-    'Iceland',
-    ARRAY['aurora', 'night-sky', 'nature'],
-    'Dress warmly. Check weather conditions before visiting.',
-    'Parking area nearby. Short walk to viewing point.',
-    '0a1ff718-a54b-483d-b4fd-e9b2f4fc7611'::uuid
-);
-
--- Great Wall, China
-insert into public.locations (
-    name, 
-    description, 
-    longitude,
-    latitude,
-    address, 
-    city, 
-    country, 
-    tags, 
-    safety_info, 
-    accessibility, 
-    creator_id
-)
-values (
-    'Mutianyu Great Wall',
-    'Well-preserved section of the Great Wall with stunning mountain views.',
-    116.5681,
-    40.4319,
-    'Mutianyu Road',
-    'Beijing',
-    'China',
-    ARRAY['historical', 'hiking', 'unesco'],
-    'Stay on designated paths. Cable car available.',
-    'Cable car provides easier access. Some sections steep and challenging.',
-    '0a1ff718-a54b-483d-b4fd-e9b2f4fc7611'::uuid
-);
-
--- Add corresponding images for each location
-insert into public.location_images (location_id, image_url, uploaded_by)
-values
-    ((select id from public.locations where name = 'Eiffel Tower'),
-     'https://images.unsplash.com/photo-1511739001486-6bfe10ce785f',
-     '0a1ff718-a54b-483d-b4fd-e9b2f4fc7611'::uuid),
-    ((select id from public.locations where name = 'Shibuya Crossing'),
-     'https://images.unsplash.com/photo-1542051841857-5f90071e7989',
-     '0a1ff718-a54b-483d-b4fd-e9b2f4fc7611'::uuid),
-    ((select id from public.locations where name = 'Bondi Beach'),
-     'https://images.unsplash.com/photo-1578500494198-246f612d3b3d',
-     '0a1ff718-a54b-483d-b4fd-e9b2f4fc7611'::uuid),
-    ((select id from public.locations where name = 'Central Park'),
-     'https://images.unsplash.com/photo-1623593419606-7f9c8c22d736',
-     '0a1ff718-a54b-483d-b4fd-e9b2f4fc7611'::uuid),
-    ((select id from public.locations where name = 'Machu Picchu'),
-     'https://images.unsplash.com/photo-1526392060635-9d6019884377',
-     '0a1ff718-a54b-483d-b4fd-e9b2f4fc7611'::uuid),
-    ((select id from public.locations where name = 'Oia Sunset Point'),
-     'https://images.unsplash.com/photo-1533105079780-92b9be482077',
-     '0a1ff718-a54b-483d-b4fd-e9b2f4fc7611'::uuid),
-    ((select id from public.locations where name = 'Victoria Falls'),
-     'https://images.unsplash.com/photo-1544735716-392fe2489ffa',
-     '0a1ff718-a54b-483d-b4fd-e9b2f4fc7611'::uuid),
-    ((select id from public.locations where name = 'Aurora Center'),
-     'https://images.unsplash.com/photo-1579033461380-adb47c3eb938',
-     '0a1ff718-a54b-483d-b4fd-e9b2f4fc7611'::uuid),
-    ((select id from public.locations where name = 'Mutianyu Great Wall'),
-     'https://images.unsplash.com/photo-1508804052814-cd3ba865a116',
-     '0a1ff718-a54b-483d-b4fd-e9b2f4fc7611'::uuid);
-
--- Add ratings for each location
-insert into public.location_ratings (location_id, user_id, rating, comment)
-values
-    ((select id from public.locations where name = 'Eiffel Tower'),
-     '0a1ff718-a54b-483d-b4fd-e9b2f4fc7611'::uuid,
-     '5',
-     'Magical at night with the light show!'),
-    ((select id from public.locations where name = 'Shibuya Crossing'),
-     '0a1ff718-a54b-483d-b4fd-e9b2f4fc7611'::uuid,
-     '4',
-     'Incredible energy and atmosphere'),
-    ((select id from public.locations where name = 'Bondi Beach'),
-     '0a1ff718-a54b-483d-b4fd-e9b2f4fc7611'::uuid,
-     '5',
-     'Perfect beach day spot'),
-    ((select id from public.locations where name = 'Central Park'),
-     '0a1ff718-a54b-483d-b4fd-e9b2f4fc7611'::uuid,
-     '4',
-     'Beautiful in all seasons'),
-    ((select id from public.locations where name = 'Machu Picchu'),
-     '0a1ff718-a54b-483d-b4fd-e9b2f4fc7611'::uuid,
-     '5',
-     'Breathtaking ancient wonder'),
-    ((select id from public.locations where name = 'Oia Sunset Point'),
-     '0a1ff718-a54b-483d-b4fd-e9b2f4fc7611'::uuid,
-     '5',
-     'Most beautiful sunset ever'),
-    ((select id from public.locations where name = 'Victoria Falls'),
-     '0a1ff718-a54b-483d-b4fd-e9b2f4fc7611'::uuid,
-     '5',
-     'The power of nature is incredible here'),
-    ((select id from public.locations where name = 'Aurora Center'),
-     '0a1ff718-a54b-483d-b4fd-e9b2f4fc7611'::uuid,
-     '4',
-     'Amazing when the conditions are right'),
-    ((select id from public.locations where name = 'Mutianyu Great Wall'),
-     '0a1ff718-a54b-483d-b4fd-e9b2f4fc7611'::uuid,
-     '5',
-     'Less crowded than other sections, fantastic views');
+-- Refresh the materialized view to include our seed data
+REFRESH MATERIALIZED VIEW location_review_stats;
