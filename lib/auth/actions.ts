@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@/utils/supabase/server';
 
 export async function login(formData: FormData) {
   const supabase = await createClient();
@@ -30,7 +30,7 @@ export async function signInWithDiscord() {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'discord',
     options: {
-      redirectTo: 'http://localhost:3000/auth/callback',
+      redirectTo: `${process.env.SUPABASE_AUTH_DISCORD_REDIRECT_URI}`,
     },
   });
 

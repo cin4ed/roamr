@@ -1,32 +1,32 @@
 'use client';
 
 import { z } from 'zod';
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm, SubmitHandler } from 'react-hook-form';
 
-import * as Form from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { toast } from "sonner";
+import * as Form from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { toast } from 'sonner';
 
 const formSchema = z.object({
-  name: z.string().min(1, { message: "Location name is required" }),
-  description: z.string().min(1, { message: "Description is required" }),
+  name: z.string().min(1, { message: 'Location name is required' }),
+  description: z.string().min(1, { message: 'Description is required' }),
   latitude: z
-    .number({ invalid_type_error: "Latitude must be a number" })
-    .min(-90, { message: "Latitude must be between -90 and 90" })
-    .max(90, { message: "Latitude must be between -90 and 90" }),
+    .number({ invalid_type_error: 'Latitude must be a number' })
+    .min(-90, { message: 'Latitude must be between -90 and 90' })
+    .max(90, { message: 'Latitude must be between -90 and 90' }),
   longitude: z
-    .number({ invalid_type_error: "Longitude must be a number" })
-    .min(-180, { message: "Longitude must be between -180 and 180" })
-    .max(180, { message: "Longitude must be between -180 and 180" }),
+    .number({ invalid_type_error: 'Longitude must be a number' })
+    .min(-180, { message: 'Longitude must be between -180 and 180' })
+    .max(180, { message: 'Longitude must be between -180 and 180' }),
   address: z.string().optional(),
-  city: z.string().min(1, { message: "City is required" }),
-  country: z.string().min(1, { message: "Country is required" }),
+  city: z.string().min(1, { message: 'City is required' }),
+  country: z.string().min(1, { message: 'Country is required' }),
   tags: z.array(z.string()).optional(),
   safety_info: z.string().optional(),
   accessibility: z.string().optional(),
@@ -51,35 +51,34 @@ export const CreateLocationForm = ({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      description: "",
+      name: '',
+      description: '',
       latitude: 0,
       longitude: 0,
-      address: "",
-      city: "",
-      country: "",
+      address: '',
+      city: '',
+      country: '',
       tags: [],
-      safety_info: "",
-      accessibility: "",
+      safety_info: '',
+      accessibility: '',
     },
   });
 
-  const [tagInput, setTagInput] = useState("");
+  const [tagInput, setTagInput] = useState('');
 
   // Add the dropzone configuration here
-  
 
   // Update form coordinates when selectedLocation changes
   useEffect(() => {
     if (selectedLocation) {
-      form.setValue("latitude", selectedLocation.latitude);
-      form.setValue("longitude", selectedLocation.longitude);
+      form.setValue('latitude', selectedLocation.latitude);
+      form.setValue('longitude', selectedLocation.longitude);
     }
   }, [selectedLocation, form]);
 
-  const onSubmit: SubmitHandler<FormFields> = async (values) => {
+  const onSubmit: SubmitHandler<FormFields> = async values => {
     // First try to create the location
-    const createLocationResponse = await axios.post("api/locations", {
+    const createLocationResponse = await axios.post('api/locations', {
       name: values.name,
       description: values.description,
       latitude: values.latitude,
@@ -93,7 +92,7 @@ export const CreateLocationForm = ({
     });
 
     if (createLocationResponse.status === 400) {
-      toast.error("Failed to create location");
+      toast.error('Failed to create location');
       return;
     }
 
@@ -107,7 +106,7 @@ export const CreateLocationForm = ({
 
     // Log the FormData contents
     for (const pair of formData.entries()) {
-      console.log("FormData entry:", pair[0], pair[1]);
+      console.log('FormData entry:', pair[0], pair[1]);
     }
 
     const uploadImagesResponse = await axios.post(
@@ -115,28 +114,28 @@ export const CreateLocationForm = ({
       formData,
       {
         headers: {
-          "Content-Type": "multipart/form-data",
+          'Content-Type': 'multipart/form-data',
         },
       }
     );
 
     if (uploadImagesResponse.status === 400) {
-      toast.error("Failed to upload images");
+      toast.error('Failed to upload images');
       return;
     }
 
     if (uploadImagesResponse.status === 401) {
-      toast.error("Unauthorized");
+      toast.error('Unauthorized');
       return;
     }
 
     if (uploadImagesResponse.data.errors.length > 0) {
-      toast.error("Failed to upload images");
+      toast.error('Failed to upload images');
       console.error(uploadImagesResponse.data.errors);
       return;
     }
 
-    toast.success("Location created successfully");
+    toast.success('Location created successfully');
     console.log(uploadImagesResponse.data);
   };
 
@@ -187,10 +186,8 @@ export const CreateLocationForm = ({
                       type="number"
                       placeholder="Latitude"
                       {...field}
-                      onChange={(e) =>
-                        field.onChange(parseFloat(e.target.value))
-                      }
-                      className={selectedLocation ? "border-green-500" : ""}
+                      onChange={e => field.onChange(parseFloat(e.target.value))}
+                      className={selectedLocation ? 'border-green-500' : ''}
                       readOnly
                     />
                   </Form.FormControl>
@@ -210,10 +207,8 @@ export const CreateLocationForm = ({
                       type="number"
                       placeholder="Longitude"
                       {...field}
-                      onChange={(e) =>
-                        field.onChange(parseFloat(e.target.value))
-                      }
-                      className={selectedLocation ? "border-green-500" : ""}
+                      onChange={e => field.onChange(parseFloat(e.target.value))}
+                      className={selectedLocation ? 'border-green-500' : ''}
                       readOnly
                     />
                   </Form.FormControl>
@@ -258,7 +253,6 @@ export const CreateLocationForm = ({
 
         <div className="not-prose flex flex-col gap-4">
           <Form.FormLabel>Images</Form.FormLabel>
-          
         </div>
 
         <div>
@@ -268,20 +262,18 @@ export const CreateLocationForm = ({
             render={({ field }) => (
               <Form.FormItem>
                 <Form.FormLabel>Tags</Form.FormLabel>
-                <Form.FormDescription>
-                  Enter tags separated by commas
-                </Form.FormDescription>
+                <Form.FormDescription>Enter tags separated by commas</Form.FormDescription>
                 <Form.FormControl>
                   <Input
                     placeholder="e.g. hiking, nature, beach"
                     value={tagInput}
-                    onChange={(e) => {
+                    onChange={e => {
                       const value = e.target.value;
                       setTagInput(value);
 
                       const tagsArray = value
-                        .split(",")
-                        .map((tag) => tag.trim())
+                        .split(',')
+                        .map(tag => tag.trim())
                         .filter(Boolean);
                       field.onChange(tagsArray);
                     }}
@@ -290,11 +282,7 @@ export const CreateLocationForm = ({
                 {field.value && field.value.length > 0 && (
                   <div className="flex flex-wrap gap-2 mt-2">
                     {field.value.map((tag, index) => (
-                      <Badge
-                        key={index}
-                        variant="secondary"
-                        className="px-3 py-1"
-                      >
+                      <Badge key={index} variant="secondary" className="px-3 py-1">
                         {tag}
                       </Badge>
                     ))}
@@ -360,10 +348,7 @@ export const CreateLocationForm = ({
               <Form.FormItem>
                 <Form.FormLabel>Safety Information (Optional)</Form.FormLabel>
                 <Form.FormControl>
-                  <Textarea
-                    placeholder="Any safety concerns or tips"
-                    {...field}
-                  />
+                  <Textarea placeholder="Any safety concerns or tips" {...field} />
                 </Form.FormControl>
                 <Form.FormMessage />
               </Form.FormItem>
@@ -377,14 +362,9 @@ export const CreateLocationForm = ({
             name="accessibility"
             render={({ field }) => (
               <Form.FormItem>
-                <Form.FormLabel>
-                  Accessibility Information (Optional)
-                </Form.FormLabel>
+                <Form.FormLabel>Accessibility Information (Optional)</Form.FormLabel>
                 <Form.FormControl>
-                  <Textarea
-                    placeholder="How accessible is this location?"
-                    {...field}
-                  />
+                  <Textarea placeholder="How accessible is this location?" {...field} />
                 </Form.FormControl>
                 <Form.FormMessage />
               </Form.FormItem>

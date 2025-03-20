@@ -5,7 +5,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Map as MapIcon, Satellite } from 'lucide-react';
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/utils/supabase/client';
 import type { Database } from '@/types/supabase';
 import { LocationMarker } from '@/components/location-marker';
 

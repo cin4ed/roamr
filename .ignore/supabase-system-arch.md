@@ -1,0 +1,4 @@
+- Supabase Client 
+    - Can be browser-side or server-side
+    - Requires supabase url and supabase key
+    - Server-side requires cookie handling configuration

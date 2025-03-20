@@ -227,9 +227,10 @@ max_frequency = "5s"
 # `twitter`, `slack`, `spotify`, `workos`, `zoom`.
 [auth.external.discord]
 enabled = true
-client_id = "env(DISCORD_CLIENT_ID)"
-secret = "env(DISCORD_CLIENT_SECRET)"
-redirect_uri = "http://localhost:3000/auth/callback"
+client_id = "env(SUPABASE_AUTH_DISCORD_CLIENT_ID)"
+secret = "env(SUPABASE_AUTH_DISCORD_CLIENT_SECRET)"
+redirect_uri = "env(SUPABASE_AUTH_DISCORD_REDIRECT_URI)"
+
 [auth.external.apple]
 enabled = false
 client_id = ""

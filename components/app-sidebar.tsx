@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/utils';
 import { Telescope, MapPinPlus, Home } from 'lucide-react';
 import { Button } from './ui/button';
 import { Separator } from '@/components/ui/separator';

@@ -4,23 +4,12 @@ import Map, { Source, StyleSpecification, useMap } from 'react-map-gl/maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import {
-  Map as MapIcon,
-  Satellite,
-  Maximize2,
-  Star,
-  Compass,
-  User,
-  PlusCircle,
-} from 'lucide-react';
-import { createClient } from '@/lib/supabase/client';
+import { Map as MapIcon, Satellite, Maximize2, Compass, User, PlusCircle } from 'lucide-react';
+import { createClient } from '@/utils/supabase/client';
 import type { Database } from '@/types/supabase';
 import { LocationMarker } from '@/components/location-marker';
-import { Drawer } from 'vaul';
-import Image from 'next/image';
-import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
 import ExploreDrawer from '@/components/ExploreDrawer';
+import Link from 'next/link';
 
 type Location = Database['public']['Tables']['locations']['Row'];
 const snapPoints = ['100px', 0.5, 1];
@@ -29,15 +18,10 @@ export default function Explore() {
   const [isVectorStyle, setIsVectorStyle] = useState(true);
   const [locations, setLocations] = useState<Location[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
-  const [snap, setSnap] = useState<number | string | null>(snapPoints[1]);
 
   async function loadLocations() {
     const supabase = await createClient();
-    const { data, error } = await supabase.from('locations').select(`
-        *,
-        location_images(*),
-        rating_stats:location_rating_stats(average_rating, total_ratings)
-      `);
+    const { data, error } = await supabase.from('locations').select(`*`);
     if (error) {
       console.error(error);
     } else {
@@ -89,7 +73,6 @@ export default function Explore() {
 
   const handleLocationSelect = (location: Location) => {
     setSelectedLocation(location);
-    setSnap(snapPoints[1]);
   };
 
   return (
@@ -124,8 +107,6 @@ export default function Explore() {
             style={{ width: '100%', height: '100%' }}
             mapStyle={mapStyle}
             cursor="grab"
-            onDragStart={() => setSnap(snapPoints[0])}
-            onClick={() => setSnap(snapPoints[0])}
           >
             <MapContent locations={locations} onLocationSelect={handleLocationSelect} />
           </Map>
@@ -141,10 +122,12 @@ export default function Explore() {
             <User className="w-6 h-6" />
             <span className="text-xs">You</span>
           </button>
-          <button className="flex flex-col items-center gap-1 text-muted-foreground">
-            <PlusCircle className="w-6 h-6" />
-            <span className="text-xs">Contribute</span>
-          </button>
+          <Link href="/locations/create">
+            <button className="flex flex-col items-center gap-1 text-muted-foreground">
+              <PlusCircle className="w-6 h-6" />
+              <span className="text-xs">Contribute</span>
+            </button>
+          </Link>
         </div>
       </div>
 

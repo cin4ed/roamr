@@ -2,12 +2,12 @@
 
 import * as React from 'react';
 
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/utils';
 import { Search, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useDebounce } from 'use-debounce';
 import type { FeatureCollection, Feature } from 'geojson';
-import { autocomplete } from '@/lib/photon';
+import { autocomplete } from '@/utils/photon';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface SearchBarProps {

@@ -12,8 +12,17 @@ import {
 import { Button } from '@/components/ui/button';
 import roamrLogo from '@/public/roamr-logo.png';
 import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
+import type { AuthError } from '@/app/auth/v1/callback/route';
 
-export default function AuthCodeError() {
+export default function AuthErrorPage() {
+  const searchParams = useSearchParams();
+
+  const error: AuthError = {
+    error_code: searchParams.get('error_code') || 'An unknown error occurred during authentication',
+    error_description: searchParams.get('error_description') || 'unknown_error',
+  };
+
   return (
     <div className="relative flex min-h-svh w-full items-center justify-center p-6 md:p-10 bg-zinc-100 overflow-hidden">
       {/* Background texture overlay */}
@@ -38,15 +47,13 @@ export default function AuthCodeError() {
               <CardDescription>There was a problem signing you in</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground">{error.error_description}</p>
+              {error.error_code && (
+                <p className="text-sm text-muted-foreground">Error code: {error.error_code}</p>
+              )}
               <p className="text-sm text-muted-foreground">
-                We encountered an issue with your authentication code. This could be due to:
+                Please try again or contact support if the problem persists.
               </p>
-              <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-1">
-                <li>The authentication code has expired</li>
-                <li>The code was already used</li>
-                <li>There was a network issue</li>
-                <li>Our authentication service is experiencing problems</li>
-              </ul>
             </CardContent>
             <CardFooter className="flex justify-center">
               <Link href="/login" passHref>
