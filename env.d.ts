@@ -8,6 +8,5 @@ declare namespace NodeJS {
     // Discord OAuth
     SUPABASE_AUTH_DISCORD_CLIENT_ID: string;
     SUPABASE_AUTH_DISCORD_CLIENT_SECRET: string;
-    SUPABASE_AUTH_DISCORD_REDIRECT_URI: string;
   }
 }
