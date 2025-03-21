@@ -254,7 +254,7 @@ export const CreateLocationForm = ({
         {/* Choose a location on the map */}
         <div className="space-y-2">
           <Form.FormLabel>Location</Form.FormLabel>
-          <div className="relative h-36 w-full rounded-md overflow-hidden">
+          <div className="relative h-52 w-full rounded-md overflow-hidden">
             {showMap ? (
               <>
                 <ChooseLocationMap
@@ -263,13 +263,8 @@ export const CreateLocationForm = ({
                   initialLongitude={currentLocation?.longitude}
                   initialZoom={currentLocation ? 10 : 3.5}
                 />
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className="absolute top-2 right-2 z-10"
-                  onClick={handleCloseMap}
-                >
-                  Done
+                <Button size="sm" className="absolute top-2 right-2 z-10" onClick={handleCloseMap}>
+                  Save
                 </Button>
               </>
             ) : (
