@@ -11,6 +11,8 @@ export async function GET(request: Request) {
   const code = searchParams.get('code');
   const next = searchParams.get('next') ?? '/explore';
 
+  console.log(searchParams);
+
   if (!code) {
     return NextResponse.redirect(
       `${origin}/auth/error?error_code=missing_code&error_description=Missing code`

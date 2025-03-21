@@ -5,13 +5,14 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, SubmitHandler } from 'react-hook-form';
-
+import { ChooseLocationMap } from '@/components/ChooseLocationMap';
 import * as Form from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
+import { cn } from '@/utils/utils';
 
 const formSchema = z.object({
   name: z.string().min(1, { message: 'Location name is required' }),
@@ -39,6 +40,7 @@ type CreateLocationFormProps = {
   onRequestLocationSelect?: () => void;
   isSelectingLocation?: boolean;
   setIsSelectingLocation?: (isSelecting: boolean) => void;
+  className?: string;
 };
 
 export const CreateLocationForm = ({
@@ -47,6 +49,7 @@ export const CreateLocationForm = ({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   isSelectingLocation,
   setIsSelectingLocation,
+  className,
 }: CreateLocationFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -65,16 +68,47 @@ export const CreateLocationForm = ({
   });
 
   const [tagInput, setTagInput] = useState('');
+  const [showMap, setShowMap] = useState(false);
+  const [currentLocation, setCurrentLocation] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(selectedLocation || null);
 
-  // Add the dropzone configuration here
-
-  // Update form coordinates when selectedLocation changes
+  // Update component state when prop changes
   useEffect(() => {
     if (selectedLocation) {
-      form.setValue('latitude', selectedLocation.latitude);
-      form.setValue('longitude', selectedLocation.longitude);
+      setCurrentLocation(selectedLocation);
     }
-  }, [selectedLocation, form]);
+  }, [selectedLocation]);
+
+  // Update form coordinates when currentLocation changes
+  useEffect(() => {
+    if (currentLocation) {
+      form.setValue('latitude', currentLocation.latitude);
+      form.setValue('longitude', currentLocation.longitude);
+    }
+  }, [currentLocation, form]);
+
+  const handleLocationSelected = (latitude: number, longitude: number) => {
+    setCurrentLocation({ latitude, longitude });
+  };
+
+  const handleEditLocation = () => {
+    setShowMap(true);
+    if (onRequestLocationSelect) {
+      onRequestLocationSelect();
+    }
+    if (setIsSelectingLocation) {
+      setIsSelectingLocation(true);
+    }
+  };
+
+  const handleCloseMap = () => {
+    setShowMap(false);
+    if (setIsSelectingLocation) {
+      setIsSelectingLocation(false);
+    }
+  };
 
   const onSubmit: SubmitHandler<FormFields> = async values => {
     // First try to create the location
@@ -141,100 +175,22 @@ export const CreateLocationForm = ({
 
   return (
     <Form.Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="p-4 space-y-5">
-        <h2 className="text-2xl font-bold">Create Location</h2>
-        <div className="space-y-4">
-          <Form.FormLabel>Location Coordinates</Form.FormLabel>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => {
-              if (onRequestLocationSelect) {
-                onRequestLocationSelect();
-              }
-              if (setIsSelectingLocation) {
-                setIsSelectingLocation(true);
-              }
-            }}
-            className="flex w-full h-20 items-center gap-2"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-              <circle cx="12" cy="10" r="3"></circle>
-            </svg>
-            Select Location on Map
-          </Button>
-          <div className="grid grid-cols-2 gap-4">
-            <Form.FormField
-              control={form.control}
-              name="latitude"
-              render={({ field }) => (
-                <Form.FormItem>
-                  <Form.FormLabel>Latitude</Form.FormLabel>
-                  <Form.FormControl>
-                    <Input
-                      type="number"
-                      placeholder="Latitude"
-                      {...field}
-                      onChange={e => field.onChange(parseFloat(e.target.value))}
-                      className={selectedLocation ? 'border-green-500' : ''}
-                      readOnly
-                    />
-                  </Form.FormControl>
-                  <Form.FormMessage />
-                </Form.FormItem>
-              )}
-            />
-
-            <Form.FormField
-              control={form.control}
-              name="longitude"
-              render={({ field }) => (
-                <Form.FormItem>
-                  <Form.FormLabel>Longitude</Form.FormLabel>
-                  <Form.FormControl>
-                    <Input
-                      type="number"
-                      placeholder="Longitude"
-                      {...field}
-                      onChange={e => field.onChange(parseFloat(e.target.value))}
-                      className={selectedLocation ? 'border-green-500' : ''}
-                      readOnly
-                    />
-                  </Form.FormControl>
-                  <Form.FormMessage />
-                </Form.FormItem>
-              )}
-            />
-          </div>
-        </div>
-
+      <form onSubmit={form.handleSubmit(onSubmit)} className={cn(className)}>
         <div>
           <Form.FormField
             control={form.control}
             name="name"
             render={({ field }) => (
               <Form.FormItem>
-                <Form.FormLabel>Location Name</Form.FormLabel>
+                <Form.FormLabel>Name</Form.FormLabel>
                 <Form.FormControl>
-                  <Input placeholder="Enter location name" {...field} />
+                  <Input className="w-full bg-background" {...field} />
                 </Form.FormControl>
                 <Form.FormMessage />
               </Form.FormItem>
             )}
           />
         </div>
-
         <div>
           <Form.FormField
             control={form.control}
@@ -243,18 +199,16 @@ export const CreateLocationForm = ({
               <Form.FormItem>
                 <Form.FormLabel>Description</Form.FormLabel>
                 <Form.FormControl>
-                  <Textarea placeholder="Describe this location" {...field} />
+                  <Textarea className="w-full bg-background" {...field} />
                 </Form.FormControl>
                 <Form.FormMessage />
+                <Form.FormDescription>
+                  Describe this location in detail. What makes it special?
+                </Form.FormDescription>
               </Form.FormItem>
             )}
           />
         </div>
-
-        <div className="not-prose flex flex-col gap-4">
-          <Form.FormLabel>Images</Form.FormLabel>
-        </div>
-
         <div>
           <Form.FormField
             control={form.control}
@@ -262,10 +216,9 @@ export const CreateLocationForm = ({
             render={({ field }) => (
               <Form.FormItem>
                 <Form.FormLabel>Tags</Form.FormLabel>
-                <Form.FormDescription>Enter tags separated by commas</Form.FormDescription>
                 <Form.FormControl>
                   <Input
-                    placeholder="e.g. hiking, nature, beach"
+                    className="w-full bg-background"
                     value={tagInput}
                     onChange={e => {
                       const value = e.target.value;
@@ -289,94 +242,59 @@ export const CreateLocationForm = ({
                   </div>
                 )}
                 <Form.FormMessage />
+                <Form.FormDescription>
+                  Enter tags separated by commas. e.g. hiking, nature, beach. Tags let other users
+                  find your location more easily.
+                </Form.FormDescription>
               </Form.FormItem>
             )}
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <Form.FormField
-            control={form.control}
-            name="city"
-            render={({ field }) => (
-              <Form.FormItem>
-                <Form.FormLabel>City</Form.FormLabel>
-                <Form.FormControl>
-                  <Input placeholder="City" {...field} />
-                </Form.FormControl>
-                <Form.FormMessage />
-              </Form.FormItem>
+        {/* Choose a location on the map */}
+        <div className="space-y-2">
+          <Form.FormLabel>Location</Form.FormLabel>
+          <div className="relative h-36 w-full rounded-md overflow-hidden">
+            {showMap ? (
+              <>
+                <ChooseLocationMap
+                  onLocationSelected={handleLocationSelected}
+                  initialLatitude={currentLocation?.latitude}
+                  initialLongitude={currentLocation?.longitude}
+                  initialZoom={currentLocation ? 10 : 3.5}
+                />
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="absolute top-2 right-2 z-10"
+                  onClick={handleCloseMap}
+                >
+                  Done
+                </Button>
+              </>
+            ) : (
+              <div className="flex flex-col items-center justify-center h-full bg-muted">
+                {currentLocation ? (
+                  <div className="text-center">
+                    <p className="text-sm mb-2">
+                      Selected location: {currentLocation.latitude.toFixed(4)},{' '}
+                      {currentLocation.longitude.toFixed(4)}
+                    </p>
+                    <Button onClick={handleEditLocation}>Edit Location</Button>
+                  </div>
+                ) : (
+                  <Button onClick={handleEditLocation}>Choose Location on Map</Button>
+                )}
+              </div>
             )}
-          />
-
-          <Form.FormField
-            control={form.control}
-            name="country"
-            render={({ field }) => (
-              <Form.FormItem>
-                <Form.FormLabel>Country</Form.FormLabel>
-                <Form.FormControl>
-                  <Input placeholder="Country" {...field} />
-                </Form.FormControl>
-                <Form.FormMessage />
-              </Form.FormItem>
-            )}
-          />
-        </div>
-
-        <div>
-          <Form.FormField
-            control={form.control}
-            name="address"
-            render={({ field }) => (
-              <Form.FormItem>
-                <Form.FormLabel>Address (Optional)</Form.FormLabel>
-                <Form.FormControl>
-                  <Input placeholder="Street address" {...field} />
-                </Form.FormControl>
-                <Form.FormMessage />
-              </Form.FormItem>
-            )}
-          />
+          </div>
         </div>
 
         <div>
-          <Form.FormField
-            control={form.control}
-            name="safety_info"
-            render={({ field }) => (
-              <Form.FormItem>
-                <Form.FormLabel>Safety Information (Optional)</Form.FormLabel>
-                <Form.FormControl>
-                  <Textarea placeholder="Any safety concerns or tips" {...field} />
-                </Form.FormControl>
-                <Form.FormMessage />
-              </Form.FormItem>
-            )}
-          />
-        </div>
-
-        <div>
-          <Form.FormField
-            control={form.control}
-            name="accessibility"
-            render={({ field }) => (
-              <Form.FormItem>
-                <Form.FormLabel>Accessibility Information (Optional)</Form.FormLabel>
-                <Form.FormControl>
-                  <Textarea placeholder="How accessible is this location?" {...field} />
-                </Form.FormControl>
-                <Form.FormMessage />
-              </Form.FormItem>
-            )}
-          />
-        </div>
-
-        <div>
-          <Button type="submit" disabled={!selectedLocation} className="w-full">
+          <Button type="submit" disabled={!currentLocation} className="w-full">
             Create Location
           </Button>
-          {!selectedLocation && (
+          {!currentLocation && (
             <p className="text-sm text-amber-500 text-center mt-4">
               Please select a location on the map before submitting
             </p>

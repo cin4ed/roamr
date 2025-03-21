@@ -1,5 +1,8 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/utils/supabase/server';
+import { CreateLocationForm } from '@/components/CreateLocationForm';
+import Image from 'next/image';
+import newLocationImage from '@/public/new_location_heading.webp';
 
 export default async function CreateLocationPage() {
   // Check if user is authenticated
@@ -15,10 +18,23 @@ export default async function CreateLocationPage() {
   }
 
   return (
-    <div className="container mx-auto py-8">
-      <h1 className="text-2xl font-bold mb-6">Create New Location</h1>
-      <div className="bg-card p-6 rounded-lg shadow">
-        <p>Location creation form will be added here.</p>
+    <div className="relative flex min-h-svh w-full items-center justify-center p-6 md:p-10 bg-zinc-100 overflow-hidden">
+      {/* Background texture overlay */}
+      <div
+        className="absolute inset-0 z-0 pointer-events-none"
+        style={{
+          opacity: 0.8,
+          backgroundRepeat: 'repeat',
+          backgroundSize: '550px',
+          backgroundImage: `url("/paper-texture.webp")`,
+          mixBlendMode: 'multiply',
+        }}
+        aria-hidden="true"
+      ></div>
+
+      <div className="w-full max-w-sm relative z-10">
+        <Image src={newLocationImage} alt="New Location" width={250} height={250} priority />
+        <CreateLocationForm className="space-y-5 mt-5" />
       </div>
     </div>
   );

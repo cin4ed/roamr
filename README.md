@@ -38,6 +38,7 @@ The project is currently in the early stages of development, and I'm working on 
 This project is built using the following technologies:
 
 - [Next.js](https://nextjs.org/): React framework for building web applications.
+- [Supabase](https://supabase.com/): Database and authentication.
 - [Shadcn UI](https://ui.shadcn.com/): A collection of React components.
 - [Tailwind CSS](https://tailwindcss.com/): Utility-first CSS framework.
 - [MapLibre](https://maplibre.org/): Map rendering library.
@@ -45,16 +46,32 @@ This project is built using the following technologies:
 
 ## 🚀 Getting Started
 
-To run this project locally, clone the repository, install the dependencies with your package manager of choice (I recommend [pnpm](https://pnpm.io/)), and then run the development server.
+To run this project locally, you'll need the following tools:
+
+- [Node.js](https://nodejs.org/en/): JavaScript runtime.
+- [pnpm](https://pnpm.io/): Package manager. Or any other package manager you prefer.
+- [Supabase CLI](https://supabase.com/docs/guides/local-development): Database and authentication.
+- [Docker](https://www.docker.com/): Containerization tool.
+
+Let's start by cloning the repository:
 
 ```bash
 git clone https://github.com/cin4ed/roamr
 cd roamr
-pnpm install
-pnpm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser to see the app running.
+If you are planning to support OAuth, you'll need to setup the OAuth providers in the `supabase/config.toml` file. You can refer to the [Supabase documentation](https://supabase.com/docs/guides/local-development/overview#use-auth-locally) for more information on how to do this.
+
+By default, the project is configured to use the Discord OAuth provider. If you want to disable it, you can set the `enabled` field to `false` in the `supabase/config.toml` file.
+
+If you want to use Discord as the OAuth provider, you'll need to create a new application in the [Discord Developer Portal](https://discord.com/developers/applications).
+
+Get the `CLIENT_ID` and `CLIENT_SECRET` from the application and add them to the `.env.local` file.
+
+```bash
+SUPABASE_AUTH_DISCORD_CLIENT_ID=your_client_id
+SUPABASE_AUTH_DISCORD_CLIENT_SECRET=your_client_secret
+```
 
 ## 🤝 Contributing
 

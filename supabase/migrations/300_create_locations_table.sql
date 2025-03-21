@@ -12,7 +12,7 @@ create table public.locations (
   description text null,
   longitude numeric not null,
   latitude numeric not null,
-  featured_image text null
+  featured_image text null,
   coordinates geography(POINT) GENERATED ALWAYS AS (ST_SetSRID(ST_MakePoint(longitude, latitude), 4326)::geography) STORED,
   address text null,
   city text null,

@@ -29,7 +29,7 @@ CREATE TRIGGER update_location_media_updated_at
     EXECUTE FUNCTION update_updated_at_column();
 
 -- Create a function to upload media to a location
-CREATE OR REPLACE FUNCTION add_location_media(
-    p_media_type TEXT,
-    p_media_url
-)
+-- CREATE OR REPLACE FUNCTION add_location_media(
+--     p_media_type TEXT,
+--     p_media_url
+-- )

@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import roamrLogo from '@/public/roamr-logo.png';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
-import type { AuthError } from '@/app/auth/v1/callback/route';
+import type { AuthError } from '@/app/auth/callback/route';
 
 export default function AuthErrorPage() {
   const searchParams = useSearchParams();
