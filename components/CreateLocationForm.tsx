@@ -1,7 +1,7 @@
 'use client';
 
 import { z } from 'zod';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, SubmitHandler } from 'react-hook-form';
@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { cn } from '@/utils/utils';
+import {  }
 
 const formSchema = z.object({
   name: z.string().min(1, { message: 'Location name is required' }),
@@ -25,32 +26,17 @@ const formSchema = z.object({
     .number({ invalid_type_error: 'Longitude must be a number' })
     .min(-180, { message: 'Longitude must be between -180 and 180' })
     .max(180, { message: 'Longitude must be between -180 and 180' }),
-  address: z.string().optional(),
-  city: z.string().min(1, { message: 'City is required' }),
-  country: z.string().min(1, { message: 'Country is required' }),
+  // address: z.string().optional(),
+  // city: z.string().min(1, { message: 'City is required' }),
+  // country: z.string().min(1, { message: 'Country is required' }),
   tags: z.array(z.string()).optional(),
-  safety_info: z.string().optional(),
-  accessibility: z.string().optional(),
+  // safety_info: z.string().optional(),
+  // accessibility: z.string().optional(),
 });
 
 type FormFields = z.infer<typeof formSchema>;
 
-type CreateLocationFormProps = {
-  selectedLocation?: { latitude: number; longitude: number } | null;
-  onRequestLocationSelect?: () => void;
-  isSelectingLocation?: boolean;
-  setIsSelectingLocation?: (isSelecting: boolean) => void;
-  className?: string;
-};
-
-export const CreateLocationForm = ({
-  selectedLocation,
-  onRequestLocationSelect,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  isSelectingLocation,
-  setIsSelectingLocation,
-  className,
-}: CreateLocationFormProps) => {
+export const CreateLocationForm = ({ className }: { className: string }) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -58,50 +44,32 @@ export const CreateLocationForm = ({
       description: '',
       latitude: 0,
       longitude: 0,
-      address: '',
-      city: '',
-      country: '',
+      // address: '',
+      // city: '',
+      // country: '',
       tags: [],
-      safety_info: '',
-      accessibility: '',
+      // safety_info: '',
+      // accessibility: '',
     },
   });
 
   const [tagInput, setTagInput] = useState('');
-  const [showMap, setShowMap] = useState(false);
-  const [currentLocation, setCurrentLocation] = useState<{
-    latitude: number;
-    longitude: number;
-  } | null>(selectedLocation || null);
-
-  // Update component state when prop changes
-  useEffect(() => {
-    if (selectedLocation) {
-      setCurrentLocation(selectedLocation);
-    }
-  }, [selectedLocation]);
-
-  // Update form coordinates when currentLocation changes
-  useEffect(() => {
-    if (currentLocation) {
-      form.setValue('latitude', currentLocation.latitude);
-      form.setValue('longitude', currentLocation.longitude);
-    }
-  }, [currentLocation, form]);
 
   const onSubmit: SubmitHandler<FormFields> = async values => {
+    console.log(values);
+    return;
     // First try to create the location
     const createLocationResponse = await axios.post('api/locations', {
       name: values.name,
       description: values.description,
       latitude: values.latitude,
       longitude: values.longitude,
-      address: values.address,
-      city: values.city,
-      country: values.country,
+      // address: values.address,
+      // city: values.city,
+      // country: values.country,
       tags: values.tags,
-      safety_info: values.safety_info,
-      accessibility: values.accessibility,
+      // safety_info: values.safety_info,
+      // accessibility: values.accessibility,
     });
 
     if (createLocationResponse.status === 400) {
@@ -153,7 +121,8 @@ export const CreateLocationForm = ({
   };
 
   const handleLocationChange = (lat: number, lng: number) => {
-    setCurrentLocation({ latitude, longitude });
+    form.setValue('latitude', lat);
+    form.setValue('longitude', lng);
   };
 
   return (
@@ -236,16 +205,14 @@ export const CreateLocationForm = ({
             )}
           />
         </div>
-
-        {/* Choose a location on the map */}
         <div className="space-y-2">
           <Form.FormLabel>Location</Form.FormLabel>
-          <div className="relative h-52 w-full rounded-md overflow-hidden">
+          <div className="relative h-52 w-full rounded-md border-4 border-background overflow-hidden">
             <ChooseLocationMap
               onLocationChange={handleLocationChange}
-              initialLatitude={currentLocation?.latitude}
-              initialLongitude={currentLocation?.longitude}
-              initialZoom={currentLocation ? 10 : 3.5}
+              initialLatitude={0}
+              initialLongitude={0}
+              initialZoom={3.5}
             />
           </div>
           <Form.FormDescription>
@@ -253,16 +220,14 @@ export const CreateLocationForm = ({
             geolocate control in the top right corner if you want to use your current location.
           </Form.FormDescription>
         </div>
-
         <div>
-          <Button type="submit" disabled={!currentLocation} className="w-full">
+          <Form.FormLabel>Images</Form.FormLabel>
+
+        </div>
+        <div>
+          <Button type="submit" className="w-full">
             Create Location
           </Button>
-          {!currentLocation && (
-            <p className="text-sm text-amber-500 text-center mt-4">
-              Please select a location on the map before submitting
-            </p>
-          )}
         </div>
       </form>
     </Form.Form>
