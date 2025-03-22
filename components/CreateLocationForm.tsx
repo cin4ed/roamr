@@ -89,27 +89,6 @@ export const CreateLocationForm = ({
     }
   }, [currentLocation, form]);
 
-  const handleLocationSelected = (latitude: number, longitude: number) => {
-    setCurrentLocation({ latitude, longitude });
-  };
-
-  const handleEditLocation = () => {
-    setShowMap(true);
-    if (onRequestLocationSelect) {
-      onRequestLocationSelect();
-    }
-    if (setIsSelectingLocation) {
-      setIsSelectingLocation(true);
-    }
-  };
-
-  const handleCloseMap = () => {
-    setShowMap(false);
-    if (setIsSelectingLocation) {
-      setIsSelectingLocation(false);
-    }
-  };
-
   const onSubmit: SubmitHandler<FormFields> = async values => {
     // First try to create the location
     const createLocationResponse = await axios.post('api/locations', {
@@ -173,6 +152,10 @@ export const CreateLocationForm = ({
     console.log(uploadImagesResponse.data);
   };
 
+  const handleLocationChange = (lat: number, lng: number) => {
+    setCurrentLocation({ latitude, longitude });
+  };
+
   return (
     <Form.Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className={cn(className)}>
@@ -186,6 +169,9 @@ export const CreateLocationForm = ({
                 <Form.FormControl>
                   <Input className="w-full bg-background" {...field} />
                 </Form.FormControl>
+                <Form.FormDescription>
+                  Give the location an original name, be creative!
+                </Form.FormDescription>
                 <Form.FormMessage />
               </Form.FormItem>
             )}
@@ -255,34 +241,17 @@ export const CreateLocationForm = ({
         <div className="space-y-2">
           <Form.FormLabel>Location</Form.FormLabel>
           <div className="relative h-52 w-full rounded-md overflow-hidden">
-            {showMap ? (
-              <>
-                <ChooseLocationMap
-                  onLocationSelected={handleLocationSelected}
-                  initialLatitude={currentLocation?.latitude}
-                  initialLongitude={currentLocation?.longitude}
-                  initialZoom={currentLocation ? 10 : 3.5}
-                />
-                <Button size="sm" className="absolute top-2 right-2 z-10" onClick={handleCloseMap}>
-                  Save
-                </Button>
-              </>
-            ) : (
-              <div className="flex flex-col items-center justify-center h-full bg-muted">
-                {currentLocation ? (
-                  <div className="text-center">
-                    <p className="text-sm mb-2">
-                      Selected location: {currentLocation.latitude.toFixed(4)},{' '}
-                      {currentLocation.longitude.toFixed(4)}
-                    </p>
-                    <Button onClick={handleEditLocation}>Edit Location</Button>
-                  </div>
-                ) : (
-                  <Button onClick={handleEditLocation}>Choose Location on Map</Button>
-                )}
-              </div>
-            )}
+            <ChooseLocationMap
+              onLocationChange={handleLocationChange}
+              initialLatitude={currentLocation?.latitude}
+              initialLongitude={currentLocation?.longitude}
+              initialZoom={currentLocation ? 10 : 3.5}
+            />
           </div>
+          <Form.FormDescription>
+            Drag the marker and place it on top of the location you want to submit. Press the
+            geolocate control in the top right corner if you want to use your current location.
+          </Form.FormDescription>
         </div>
 
         <div>
