@@ -13,7 +13,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { cn } from '@/utils/utils';
-import {  }
 
 const formSchema = z.object({
   name: z.string().min(1, { message: 'Location name is required' }),
@@ -54,6 +53,8 @@ export const CreateLocationForm = ({ className }: { className: string }) => {
   });
 
   const [tagInput, setTagInput] = useState('');
+  const [latitude, setLatitude] = useState(0);
+  const [longitude, setLongitude] = useState(0);
 
   const onSubmit: SubmitHandler<FormFields> = async values => {
     console.log(values);
@@ -121,6 +122,8 @@ export const CreateLocationForm = ({ className }: { className: string }) => {
   };
 
   const handleLocationChange = (lat: number, lng: number) => {
+    setLatitude(lat);
+    setLongitude(lng);
     form.setValue('latitude', lat);
     form.setValue('longitude', lng);
   };
@@ -215,6 +218,16 @@ export const CreateLocationForm = ({ className }: { className: string }) => {
               initialZoom={3.5}
             />
           </div>
+          <div className="flex text-sm justify-between gap-2">
+            <div className="flex bg-background divide-x divide-muted rounded flex-1">
+              <div className="px-2 py-1 text-muted-foreground">lat</div>
+              <div className="px-2 py-1 text-muted-foreground">{latitude}</div>
+            </div>
+            <div className="flex bg-background divide-x divide-muted rounded flex-1">
+              <div className="px-2 py-1 text-muted-foreground">lng</div>
+              <div className="px-2 py-1 text-muted-foreground">{longitude}</div>
+            </div>
+          </div>
           <Form.FormDescription>
             Drag the marker and place it on top of the location you want to submit. Press the
             geolocate control in the top right corner if you want to use your current location.
@@ -222,7 +235,6 @@ export const CreateLocationForm = ({ className }: { className: string }) => {
         </div>
         <div>
           <Form.FormLabel>Images</Form.FormLabel>
-
         </div>
         <div>
           <Button type="submit" className="w-full">
