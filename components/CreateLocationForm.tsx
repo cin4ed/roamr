@@ -218,14 +218,14 @@ export const CreateLocationForm = ({ className }: { className: string }) => {
               initialZoom={3.5}
             />
           </div>
-          <div className="flex text-sm justify-between gap-2">
-            <div className="flex bg-background divide-x divide-muted rounded flex-1">
-              <div className="px-2 py-1 text-muted-foreground">lat</div>
-              <div className="px-2 py-1 text-muted-foreground">{latitude}</div>
+          <div className="grid grid-cols-2 text-sm gap-2">
+            <div className="grid grid-cols-4 bg-background divide-x divide-muted rounded">
+              <div className="px-2 py-1 text-muted-foreground flex-shrink-0">lat</div>
+              <div className="px-2 col-span-3 py-1 text-muted-foreground truncate">{latitude}</div>
             </div>
-            <div className="flex bg-background divide-x divide-muted rounded flex-1">
-              <div className="px-2 py-1 text-muted-foreground">lng</div>
-              <div className="px-2 py-1 text-muted-foreground">{longitude}</div>
+            <div className="grid grid-cols-4 bg-background divide-x divide-muted rounded">
+              <div className="px-2 py-1 text-muted-foreground flex-shrink-0">lng</div>
+              <div className="px-2 col-span-3 py-1 text-muted-foreground truncate">{longitude}</div>
             </div>
           </div>
           <Form.FormDescription>
