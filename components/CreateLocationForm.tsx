@@ -16,6 +16,7 @@ import { cn } from '@/utils/utils';
 const MAX_NAME_LENGTH = 50;
 const MAX_DESCRIPTION_LENGTH = 250;
 const MAX_TAGS_LENGTH = 10;
+const MAX_IMAGES_LENGTH = 10;
 
 const formSchema = z.object({
   name: z
@@ -78,6 +79,7 @@ export const CreateLocationForm = ({ className }: { className: string }) => {
 
   const onSubmit: SubmitHandler<FormFields> = async values => {
     console.log(values);
+
     // Uncomment this section to enable actual form submission
     /*
     // First try to create the location
@@ -297,14 +299,18 @@ export const CreateLocationForm = ({ className }: { className: string }) => {
         </div>
         <div className="space-y-2">
           <Form.FormLabel>Images</Form.FormLabel>
-          <ImageDropzone onChange={handleImagesChange} className="mt-2">
+          <ImageDropzone
+            onChange={handleImagesChange}
+            className="mt-2"
+            maxFiles={MAX_IMAGES_LENGTH}
+          >
             <Form.FormDescription>
               Upload photos of this location to help others find it
             </Form.FormDescription>
           </ImageDropzone>
         </div>
         <div>
-          <Button type="submit" className="w-full">
+          <Button type="submit" className="w-full mt-4">
             Create Location
           </Button>
         </div>
