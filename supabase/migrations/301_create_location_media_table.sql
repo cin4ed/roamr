@@ -2,11 +2,13 @@
 CREATE TABLE public.location_media (
     id uuid NOT NULL DEFAULT uuid_generate_v4(),
     location_id uuid NOT NULL REFERENCES public.locations(id) ON DELETE CASCADE,
-    media_id uuid NOT NULL REFERENCES public.media(id) ON DELETE CASCADE,
+    -- media_id uuid NOT NULL REFERENCES public.media(id) ON DELETE CASCADE,
+    media_url text NOT NULL,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     CONSTRAINT location_media_pkey PRIMARY KEY (id),
-    CONSTRAINT unique_location_media UNIQUE (location_id, media_id)
+    -- CONSTRAINT unique_location_media UNIQUE (location_id, media_id)
+    CONSTRAINT unique_location_media UNIQUE (location_id, media_url)
 );
 
 -- Enable row level security for the location_media table
@@ -27,9 +29,3 @@ CREATE TRIGGER update_location_media_updated_at
     BEFORE UPDATE ON public.location_media
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
-
--- Create a function to upload media to a location
--- CREATE OR REPLACE FUNCTION add_location_media(
---     p_media_type TEXT,
---     p_media_url
--- )

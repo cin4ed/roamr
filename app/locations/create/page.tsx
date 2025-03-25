@@ -1,18 +1,17 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/utils/supabase/server';
 import { CreateLocationForm } from '@/components/CreateLocationForm';
-import Image from 'next/image';
 import newLocationImage from '@/public/new_location_heading.webp';
+import Image from 'next/image';
 
 export default async function CreateLocationPage() {
-  // Check if user is authenticated
   const supabase = await createClient();
+
   const {
     data: { user },
     error: authError,
   } = await supabase.auth.getUser();
 
-  // If not authenticated, redirect to login page
   if (authError || !user) {
     redirect('/login');
   }

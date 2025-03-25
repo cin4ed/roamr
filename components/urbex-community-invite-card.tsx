@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/utils/utils';
+import { cn } from '@/utils/cn';
 
 export function UrbexCommunityInviteCard({
   className,

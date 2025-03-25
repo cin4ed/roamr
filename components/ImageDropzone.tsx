@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useDropzone, FileRejection, FileError } from 'react-dropzone';
-import { cn } from '@/utils/utils';
+import { cn } from '@/utils/cn';
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 

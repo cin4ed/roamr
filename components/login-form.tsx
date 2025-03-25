@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '@/utils/utils';
+import { cn } from '@/utils/cn';
 import { Button } from '@/components/ui/button';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';

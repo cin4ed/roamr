@@ -1,42 +1,60 @@
--- Create a centralized media table for all types of media
-CREATE TABLE public.media (
-    id uuid NOT NULL DEFAULT uuid_generate_v4(),
-    media_type text NOT NULL CHECK (media_type IN ('photo', 'video')),
-    media_url text NOT NULL,
-    caption text,
-    uploaded_by uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-    created_at timestamp with time zone DEFAULT now(),
-    updated_at timestamp with time zone DEFAULT now(),
-    CONSTRAINT media_pkey PRIMARY KEY (id)
-);
+-- Create bucket for media
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('media', 'media', true);
 
--- Enable row level security for the media table
-ALTER TABLE public.media ENABLE ROW LEVEL SECURITY;
-
--- Media policies
-CREATE POLICY "Anyone can read media"
-    ON media FOR SELECT
+-- Create policy to allow public access to media
+CREATE POLICY "Public access to media"
+    ON storage.objects
+    FOR SELECT
     TO public
     USING (true);
 
+-- Create policy to allow authenticated users to upload media
 CREATE POLICY "Authenticated users can upload media"
-    ON media FOR INSERT
+    ON storage.objects
+    FOR INSERT
     TO authenticated
-    WITH CHECK (auth.uid() = uploaded_by);
+    WITH CHECK (true);
 
-CREATE POLICY "Users can update their media"
-    ON media FOR UPDATE
-    TO authenticated
-    USING (auth.uid() = uploaded_by)
-    WITH CHECK (auth.uid() = uploaded_by);
+-- -- Create a centralized media table for all types of media
+-- CREATE TABLE public.media (
+--     id uuid NOT NULL DEFAULT uuid_generate_v4(),
+--     media_type text NOT NULL CHECK (media_type IN ('photo', 'video')),
+--     media_url text NOT NULL,
+--     caption text,
+--     uploaded_by uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+--     created_at timestamp with time zone DEFAULT now(),
+--     updated_at timestamp with time zone DEFAULT now(),
+--     CONSTRAINT media_pkey PRIMARY KEY (id)
+-- );
 
-CREATE POLICY "Users can delete their media"
-    ON media FOR DELETE
-    TO authenticated
-    USING (auth.uid() = uploaded_by);
+-- -- Enable row level security for the media table
+-- ALTER TABLE public.media ENABLE ROW LEVEL SECURITY;
 
--- Create a trigger to automatically update the updated_at column for the media table
-CREATE TRIGGER update_media_updated_at
-    BEFORE UPDATE ON media
-    FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
+-- -- Media policies
+-- CREATE POLICY "Anyone can read media"
+--     ON media FOR SELECT
+--     TO public
+--     USING (true);
+
+-- CREATE POLICY "Authenticated users can upload media"
+--     ON media FOR INSERT
+--     TO authenticated
+--     WITH CHECK (auth.uid() = uploaded_by);
+
+-- CREATE POLICY "Users can update their media"
+--     ON media FOR UPDATE
+--     TO authenticated
+--     USING (auth.uid() = uploaded_by)
+--     WITH CHECK (auth.uid() = uploaded_by);
+
+-- CREATE POLICY "Users can delete their media"
+--     ON media FOR DELETE
+--     TO authenticated
+--     USING (auth.uid() = uploaded_by);
+
+-- -- Create a trigger to automatically update the updated_at column for the media table
+-- CREATE TRIGGER update_media_updated_at
+--     BEFORE UPDATE ON media
+--     FOR EACH ROW
+--     EXECUTE FUNCTION update_updated_at_column();

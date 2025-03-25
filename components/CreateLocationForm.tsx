@@ -11,7 +11,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import ImageDropzone from '@/components/ImageDropzone';
-import { cn } from '@/utils/utils';
+import { cn } from '@/utils/cn';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 const MAX_NAME_LENGTH = 50;
 const MAX_DESCRIPTION_LENGTH = 250;
@@ -39,23 +41,27 @@ const formSchema = z.object({
     .number({ invalid_type_error: 'Longitude must be a number' })
     .min(-180, { message: 'Longitude must be between -180 and 180' })
     .max(180, { message: 'Longitude must be between -180 and 180' }),
-  // address: z.string().optional(),
-  // city: z.string().min(1, { message: 'City is required' }),
-  // country: z.string().min(1, { message: 'Country is required' }),
   tags: z
     .array(z.string())
     .optional()
     .refine(tags => !tags || tags.length <= MAX_TAGS_LENGTH, {
       message: `Tags must be less than ${MAX_TAGS_LENGTH} characters`,
     }),
-  // safety_info: z.string().optional(),
-  // accessibility: z.string().optional(),
   images: z.array(z.instanceof(File)).optional(),
+  // safety_info: z.string().optional(),
+  // address: z.string().optional(),
+  // city: z.string().min(1, { message: 'City is required' }),
+  // country: z.string().min(1, { message: 'Country is required' }),
+  // accessibility: z.string().optional(),
 });
 
 type FormFields = z.infer<typeof formSchema>;
 
 export const CreateLocationForm = ({ className }: { className: string }) => {
+  const router = useRouter();
+  const [tagInput, setTagInput] = useState('');
+  const [latitude, setLatitude] = useState(0);
+  const [longitude, setLongitude] = useState(0);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -63,90 +69,58 @@ export const CreateLocationForm = ({ className }: { className: string }) => {
       description: '',
       latitude: 0,
       longitude: 0,
+      tags: [],
+      images: [],
+      // safety_info: '',
+      // accessibility: '',
       // address: '',
       // city: '',
       // country: '',
-      tags: [],
-      // safety_info: '',
-      // accessibility: '',
-      images: [],
     },
   });
 
-  const [tagInput, setTagInput] = useState('');
-  const [latitude, setLatitude] = useState(0);
-  const [longitude, setLongitude] = useState(0);
-
   const onSubmit: SubmitHandler<FormFields> = async values => {
-    console.log(values);
-
-    // Uncomment this section to enable actual form submission
-    /*
-    // First try to create the location
-    const createLocationResponse = await axios.post('api/locations', {
-      name: values.name,
-      description: values.description,
-      latitude: values.latitude,
-      longitude: values.longitude,
-      // address: values.address,
-      // city: values.city,
-      // country: values.country,
-      tags: values.tags,
-      // safety_info: values.safety_info,
-      // accessibility: values.accessibility,
-    });
-
-    if (createLocationResponse.status === 400) {
-      toast.error('Failed to create location');
-      return;
-    }
-
-    // Upload images using FormData after successful location creation
-    if (values.images && values.images.length > 0) {
+    try {
       const formData = new FormData();
-      
-      values.images.forEach((image) => {
-        formData.append("images", image);
-      });
-  
-      // Log the FormData contents
-      for (const pair of formData.entries()) {
-        console.log('FormData entry:', pair[0], pair[1]);
-      }
-  
-      const uploadImagesResponse = await axios.post(
-        `/api/locations/${createLocationResponse.data.locationId}/images`,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
+
+      formData.append(
+        'locationData',
+        JSON.stringify({
+          name: values.name,
+          description: values.description,
+          latitude: values.latitude,
+          longitude: values.longitude,
+          tags: values.tags,
+        })
       );
-  
-      if (uploadImagesResponse.status === 400) {
-        toast.error('Failed to upload images');
-        return;
+
+      if (values.images && values.images.length > 0) {
+        values.images.forEach(image => {
+          formData.append('images', image);
+        });
       }
-  
-      if (uploadImagesResponse.status === 401) {
-        toast.error('Unauthorized');
-        return;
+
+      const response = await fetch('/api/locations', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to create location');
       }
-  
-      if (uploadImagesResponse.data.errors.length > 0) {
-        toast.error('Failed to upload images');
-        console.error(uploadImagesResponse.data.errors);
-        return;
-      }
-  
+
+      const result = await response.json();
+
+      console.log(result);
+
       toast.success('Location created successfully');
-      console.log(uploadImagesResponse.data);
-    } else {
-      toast.success('Location created successfully (no images uploaded)');
+
+      router.push(`/explore`);
+    } catch (error) {
+      console.error('Error submitting location:', error);
+      toast.error('Failed to create location');
     }
-    */
-    return;
   };
 
   const handleLocationChange = (lat: number, lng: number) => {

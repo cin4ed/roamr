@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 
-import { cn } from '@/utils/utils';
+import { cn } from '@/utils/cn';
 import { Search, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useDebounce } from 'use-debounce';
