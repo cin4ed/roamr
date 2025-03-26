@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { useAuth } from "@/hooks/useAuth";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Pencil } from "lucide-react";
-import { SignOutButton } from "@/components/sign-out-button";
+import { useAuth } from '@/hooks/useAuth';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Pencil } from 'lucide-react';
+// import { SignOutButton } from '@/components/sign-out-button';
 
 export default function ProfilePage() {
   const { session, loading } = useAuth();
@@ -30,10 +30,7 @@ export default function ProfilePage() {
             <div className="flex justify-between items-center">
               <div className="flex gap-3 items-center">
                 <Avatar className="w-20 h-20">
-                  <AvatarImage
-                    src={session.user.user_metadata.picture}
-                    alt="User picture"
-                  />
+                  <AvatarImage src={session.user.user_metadata.picture} alt="User picture" />
                   <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
                 <div>
@@ -49,9 +46,7 @@ export default function ProfilePage() {
               </Button>
             </div>
             <Separator />
-            <div className="flex justify-end">
-              <SignOutButton />
-            </div>
+            <div className="flex justify-end">{/* <SignOutButton /> */}</div>
             <div>
               <h2 className="text-muted-foreground">📊 Statistics</h2>
               <div className="coming-soon">

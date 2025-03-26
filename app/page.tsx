@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import Link from "next/link";
-import Image from "next/image";
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import Link from 'next/link';
+import Image from 'next/image';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -13,17 +13,20 @@ export default function Home() {
     setIsMenuOpen(prev => !prev);
   }, []);
 
-  const searchSuggestions = useMemo(() => [
-    "Abandoned hotel in Paris",
-    "Ancient ruins in Mexico",
-    "Spooky hospital in Detroit",
-    "Ghost town in Arizona",
-    "Lost temple in Cambodia",
-    "Forgotten castle in Scotland",
-    "Underground bunker in Berlin"
-  ], []);
+  const searchSuggestions = useMemo(
+    () => [
+      'Abandoned hotel in Paris',
+      'Ancient ruins in Mexico',
+      'Spooky hospital in Detroit',
+      'Ghost town in Arizona',
+      'Lost temple in Cambodia',
+      'Forgotten castle in Scotland',
+      'Underground bunker in Berlin',
+    ],
+    []
+  );
 
-  const [placeholderText, setPlaceholderText] = useState("");
+  const [placeholderText, setPlaceholderText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
   const [typingSpeed, setTypingSpeed] = useState(100);
@@ -32,7 +35,7 @@ export default function Home() {
   // Blinking cursor animation
   useEffect(() => {
     const cursorInterval = setInterval(() => {
-      setShowCursor((prev) => !prev);
+      setShowCursor(prev => !prev);
     }, 530);
 
     return () => clearInterval(cursorInterval);
@@ -54,7 +57,7 @@ export default function Home() {
         setTypingSpeed(50);
       } else if (isDeleting && placeholderText.length === 0) {
         setIsDeleting(false);
-        setCurrentIndex((prev) => (prev + 1) % searchSuggestions.length);
+        setCurrentIndex(prev => (prev + 1) % searchSuggestions.length);
         return;
       }
     };
@@ -67,27 +70,23 @@ export default function Home() {
     <div>
       <header className="flex justify-between items-center px-6 py-4 border-b">
         {/* Left side - Logo */}
-        <div className="text-2xl font-bold">
-          Roamr
-        </div>
+        <div className="text-2xl font-bold">Roamr</div>
         {/* Mobile Menu Button */}
-        <button 
-          className="md:hidden p-2" 
-          onClick={toggleMenu}
-          aria-label="Toggle menu"
-        >
-          <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            fill="none" 
-            viewBox="0 0 24 24" 
-            strokeWidth={1.5} 
-            stroke="currentColor" 
+        <button className="md:hidden p-2" onClick={toggleMenu} aria-label="Toggle menu">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
             className="w-6 h-6"
           >
-            <path 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-              d={isMenuOpen ? "M6 18L18 6M6 6l12 12" : "M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5"} 
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d={
+                isMenuOpen ? 'M6 18L18 6M6 6l12 12' : 'M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5'
+              }
             />
           </svg>
         </button>
@@ -95,54 +94,44 @@ export default function Home() {
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6">
           <Button variant="ghost" asChild>
-            <Link href="/explore">
-              Explore
-            </Link>
+            <Link href="/explore">Explore</Link>
           </Button>
-          <Button variant="ghost">
-            Create
-          </Button>
-          <Button variant="ghost">
-            Invite
-          </Button>
-          <Button variant="ghost">
-            Log in
-          </Button>
-          <Button>
-            Sign up
-          </Button>
+          <Button variant="ghost">Create</Button>
+          <Button variant="ghost">Invite</Button>
+          <Button variant="ghost">Log in</Button>
+          <Button>Sign up</Button>
         </nav>
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
           <div className="absolute top-[65px] left-0 right-0 bg-black/90 border-b md:hidden z-50">
             <nav className="flex flex-col p-4">
-              <Link 
-                href="/explore" 
+              <Link
+                href="/explore"
                 className="px-4 py-3 hover:bg-zinc-50 rounded-lg"
                 onClick={toggleMenu}
               >
                 Explore
               </Link>
-              <button 
+              <button
                 className="px-4 py-3 text-left hover:bg-zinc-50 rounded-lg"
                 onClick={toggleMenu}
               >
                 Create
               </button>
-              <button 
+              <button
                 className="px-4 py-3 text-left hover:bg-zinc-50 rounded-lg"
                 onClick={toggleMenu}
               >
                 Invite
               </button>
-              <button 
+              <button
                 className="px-4 py-3 text-left hover:bg-zinc-50 rounded-lg"
                 onClick={toggleMenu}
               >
                 Log in
               </button>
-              <button 
+              <button
                 className="px-4 py-3 text-left bg-zinc-900 text-white rounded-lg mt-2"
                 onClick={toggleMenu}
               >
@@ -158,10 +147,11 @@ export default function Home() {
           <div
             className="absolute inset-0 w-full h-full"
             style={{
-              backgroundImage: 'url("https://cdn.usegalileo.ai/sdxl10/1f6a1612-9b4c-4659-972e-c9cf05bfd087.png")',
+              backgroundImage:
+                'url("https://cdn.usegalileo.ai/sdxl10/1f6a1612-9b4c-4659-972e-c9cf05bfd087.png")',
               backgroundSize: 'cover',
               backgroundPosition: 'center',
-              filter: 'brightness(0.7)'
+              filter: 'brightness(0.7)',
             }}
           />
 
@@ -176,10 +166,15 @@ export default function Home() {
               <div className="flex w-full bg-black/30 backdrop-blur-sm border border-white/10 rounded-full overflow-hidden">
                 <Input
                   type="text"
-                  placeholder={`${placeholderText}${showCursor ? '|' : ' '}` || "Search for locations..."}
+                  placeholder={
+                    `${placeholderText}${showCursor ? '|' : ' '}` || 'Search for locations...'
+                  }
                   className="border-0 bg-transparent text-white placeholder:text-white/80 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0 !text-base md:!text-lg h-12 md:h-16 px-4 md:px-8 [&:not(:placeholder-shown)]:!text-base md:[&:not(:placeholder-shown)]:!text-lg"
                 />
-                <Button variant="ghost" className="text-white hover:bg-white/10 rounded-none px-6 md:px-12 text-base md:text-lg h-12 md:h-16">
+                <Button
+                  variant="ghost"
+                  className="text-white hover:bg-white/10 rounded-none px-6 md:px-12 text-base md:text-lg h-12 md:h-16"
+                >
                   Search
                 </Button>
               </div>
@@ -289,7 +284,9 @@ export default function Home() {
                   <span className="text-2xl">1</span>
                 </div>
                 <h3 className="text-xl font-semibold mb-4">Discover</h3>
-                <p className="text-white/70">Browse our curated collection of abandoned places and hidden gems</p>
+                <p className="text-white/70">
+                  Browse our curated collection of abandoned places and hidden gems
+                </p>
               </div>
               {/* Repeat for Plan and Explore steps */}
             </div>
@@ -344,7 +341,7 @@ export default function Home() {
             </div>
           </div>
         </section>
-        
+
         {/* Safety First */}
         <section className="py-24 bg-orange-800">
           <div className="max-w-7xl mx-auto px-4">
@@ -392,7 +389,9 @@ export default function Home() {
                     <p className="text-sm text-zinc-600">Urban Explorer</p>
                   </div>
                 </div>
-                <p className="text-zinc-600">&quot;Found amazing locations I never knew existed in my own city!&quot;</p>
+                <p className="text-zinc-600">
+                  &quot;Found amazing locations I never knew existed in my own city!&quot;
+                </p>
               </div>
               {/* Repeat for other testimonials */}
             </div>
@@ -404,17 +403,36 @@ export default function Home() {
           {/* Brand Section */}
           <div className="space-y-4">
             <h3 className="text-2xl font-bold text-white">Roamr</h3>
-            <p className="text-sm">Discover and explore the world&apos;s most fascinating abandoned places and hidden gems.</p>
+            <p className="text-sm">
+              Discover and explore the world&apos;s most fascinating abandoned places and hidden
+              gems.
+            </p>
           </div>
 
           {/* Quick Links */}
           <div className="space-y-4">
             <h4 className="text-lg font-semibold text-white">Quick Links</h4>
             <ul className="space-y-2">
-              <li><Link href="/explore" className="hover:text-white transition-colors">Explore</Link></li>
-              <li><Link href="/popular" className="hover:text-white transition-colors">Popular Places</Link></li>
-              <li><Link href="/submit" className="hover:text-white transition-colors">Submit Location</Link></li>
-              <li><Link href="/about" className="hover:text-white transition-colors">About Us</Link></li>
+              <li>
+                <Link href="/explore" className="hover:text-white transition-colors">
+                  Explore
+                </Link>
+              </li>
+              <li>
+                <Link href="/popular" className="hover:text-white transition-colors">
+                  Popular Places
+                </Link>
+              </li>
+              <li>
+                <Link href="/submit" className="hover:text-white transition-colors">
+                  Submit Location
+                </Link>
+              </li>
+              <li>
+                <Link href="/about" className="hover:text-white transition-colors">
+                  About Us
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -422,10 +440,26 @@ export default function Home() {
           <div className="space-y-4">
             <h4 className="text-lg font-semibold text-white">Resources</h4>
             <ul className="space-y-2">
-              <li><Link href="/safety" className="hover:text-white transition-colors">Safety Guidelines</Link></li>
-              <li><Link href="/photography" className="hover:text-white transition-colors">Photography Tips</Link></li>
-              <li><Link href="/community" className="hover:text-white transition-colors">Community</Link></li>
-              <li><Link href="/faq" className="hover:text-white transition-colors">FAQ</Link></li>
+              <li>
+                <Link href="/safety" className="hover:text-white transition-colors">
+                  Safety Guidelines
+                </Link>
+              </li>
+              <li>
+                <Link href="/photography" className="hover:text-white transition-colors">
+                  Photography Tips
+                </Link>
+              </li>
+              <li>
+                <Link href="/community" className="hover:text-white transition-colors">
+                  Community
+                </Link>
+              </li>
+              <li>
+                <Link href="/faq" className="hover:text-white transition-colors">
+                  FAQ
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -433,10 +467,26 @@ export default function Home() {
           <div className="space-y-4">
             <h4 className="text-lg font-semibold text-white">Legal</h4>
             <ul className="space-y-2">
-              <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
-              <li><Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link></li>
-              <li><Link href="/guidelines" className="hover:text-white transition-colors">Community Guidelines</Link></li>
-              <li><Link href="/contact" className="hover:text-white transition-colors">Contact Us</Link></li>
+              <li>
+                <Link href="/privacy" className="hover:text-white transition-colors">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/terms" className="hover:text-white transition-colors">
+                  Terms of Service
+                </Link>
+              </li>
+              <li>
+                <Link href="/guidelines" className="hover:text-white transition-colors">
+                  Community Guidelines
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="hover:text-white transition-colors">
+                  Contact Us
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
@@ -447,10 +497,18 @@ export default function Home() {
             <p className="text-sm">© 2024 Roamr. All rights reserved.</p>
             {/* Social Links */}
             <div className="flex items-center gap-6">
-              <Link href="#" className="hover:text-white transition-colors">Twitter</Link>
-              <Link href="#" className="hover:text-white transition-colors">Instagram</Link>
-              <Link href="#" className="hover:text-white transition-colors">Facebook</Link>
-              <Link href="#" className="hover:text-white transition-colors">YouTube</Link>
+              <Link href="#" className="hover:text-white transition-colors">
+                Twitter
+              </Link>
+              <Link href="#" className="hover:text-white transition-colors">
+                Instagram
+              </Link>
+              <Link href="#" className="hover:text-white transition-colors">
+                Facebook
+              </Link>
+              <Link href="#" className="hover:text-white transition-colors">
+                YouTube
+              </Link>
             </div>
           </div>
         </div>

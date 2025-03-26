@@ -1,10 +1,8 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from '@/utils/supabase/server';
 
 export default async function LocationsPage() {
   const supabase = await createClient();
-  const { data: locations, error } = await supabase
-    .from("locations")
-    .select("*");
+  const { data: locations, error } = await supabase.from('locations').select('*');
 
   if (error) {
     console.error(error);

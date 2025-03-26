@@ -1,110 +1,149 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Marker } from "react-map-gl/maplibre";
-import type { Database } from "@/types/supabase";
-import { Badge } from "@/components/ui/badge";
-import { Star } from "lucide-react";
-import Image from "next/image";
-
-type Location = Database["public"]["Tables"]["locations"]["Row"];
+import { useState, useEffect, useCallback } from 'react';
+import { Marker } from 'react-map-gl/maplibre';
+import { Badge } from '@/components/ui/badge';
+import { Star } from 'lucide-react';
+import { useIsMobile } from '@/hooks/useIsMobile';
+import type { Location } from '@/types';
+import Image from 'next/image';
 
 interface LocationMarkerProps {
-    location: Location;
+  location: Location;
+  onLocationClick?: (location: Location) => void;
+  onLocationDoubleClick?: (location: Location) => void;
 }
 
-export function LocationMarker({ location }: LocationMarkerProps) {
-    const [isHovered, setIsHovered] = useState(false);
+export function LocationMarker({
+  location,
+  onLocationClick,
+  onLocationDoubleClick,
+}: LocationMarkerProps) {
+  const isMobile = useIsMobile();
+  const [isHovered, setIsHovered] = useState(false);
+  const [media, setMedia] = useState<string | null>(null);
 
-    // Temporary rating for demo - we'll add this to the database later
-    const rating = 4.5;
+  // const rating =
+  //   location.rating_stats && location.rating_stats.length > 0
+  //     ? location.rating_stats[0].average_rating
+  //     : 0;
+  const rating = 4.5;
 
-    if (!location.longitude || !location.latitude) return null;
+  const getFeaturedMedia = useCallback(async () => {
+    const featuredMedia =
+      location.location_media && location.location_media.length > 0
+        ? location.location_media[0].media_url
+        : null;
 
-    return (
-        <Marker
-            longitude={Number(location.longitude)}
-            latitude={Number(location.latitude)}
-            anchor="bottom"
-        >
-            <div
-                className="relative"
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
-            >
-                {/* Marker with Preview Image */}
-                <div className="relative flex flex-col items-center">
-                    <div className="w-12 h-12 rounded-full border-2 border-background shadow-lg overflow-hidden hover:scale-110 transition-transform cursor-pointer bg-background">
-                        {/* Placeholder gradient background when no image is available */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/40 rounded-full" />
+    if (!featuredMedia) return;
 
-                        {/* Location preview image */}
-                        <div className="relative w-full h-full opacity-80 hover:opacity-100 transition-opacity">
-                            {location.location_images && location.location_images.length > 0 ? (
-                                <Image
-                                    src={location.location_images[0].image_url}
-                                    alt={location.name}
-                                    width={48}
-                                    height={48}
-                                    className="object-cover w-full h-full"
-                                />
-                            ) : (
-                                // Fallback gradient background when no image is available
-                                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/40" />
-                            )}
-                        </div>
-                    </div>
+    // const supabase = await createClient();
+    // const { data } = await supabase.storage.from('media').getPublicUrl(featuredMedia);
 
-                    {/* Rating Badge */}
-                    <div className="absolute -bottom-6 right-0.5 bg-background text-xs font-medium px-1.5 py-0.5 rounded-full shadow-sm flex items-center gap-0.5">
-                        <Star className="w-3 h-3" />
-                        <span>{rating}</span>
-                    </div>
+    // console.log(data);
 
-                    {/* Triangle pointer
-                    <div className="w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-t-[8px] border-black -mt-0.5" /> */}
-                </div>
+    setMedia(featuredMedia);
+  }, [location]);
 
-                {/* Preview Card */}
-                {isHovered && (
-                    <div className="absolute bottom-[calc(100%+12px)] left-1/2 -translate-x-1/2 w-64 bg-background border rounded-lg shadow-lg p-3 z-10">
-                        <div className="relative aspect-video w-full rounded-md overflow-hidden bg-muted mb-2">
-                            {/* We'll use the same placeholder for now */}
-                            {location.location_images && location.location_images.length > 0 ? (
-                                <Image
-                                    src={location.location_images[0].image_url}
-                                    alt={location.name}
-                                    className="object-cover w-full h-full"
-                                    width={230}
-                                    height={129}
-                                />
-                            ) : (
-                                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/40" />
-                            )}
-                        </div>
-                        <h3 className="font-semibold truncate mb-1">{location.name}</h3>
-                        <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
-                            {location.description}
-                        </p>
-                        <div className="flex items-center gap-2 flex-wrap">
-                            {location.tags?.map((tag) => (
-                                <Badge key={tag} variant="secondary" className="text-xs">
-                                    {tag}
-                                </Badge>
-                            ))}
-                        </div>
-                        <div className="flex items-center justify-between mt-2">
-                            <div className="text-sm text-muted-foreground">
-                                {location.city}, {location.country}
-                            </div>
-                            <div className="flex items-center gap-1 text-sm font-medium">
-                                <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                                {rating}
-                            </div>
-                        </div>
-                    </div>
-                )}
+  useEffect(() => {
+    getFeaturedMedia();
+  }, [getFeaturedMedia]);
+
+  return (
+    <Marker
+      longitude={Number(location.longitude)}
+      latitude={Number(location.latitude)}
+      anchor="bottom"
+      style={{ zIndex: isHovered ? 100 : 1 }}
+    >
+      <div
+        className="relative"
+        onMouseEnter={() => !isMobile && setIsHovered(true)}
+        onMouseLeave={() => !isMobile && setIsHovered(false)}
+        style={{ zIndex: isHovered ? 999 : 1 }}
+      >
+        <div className="relative flex flex-col items-center">
+          <div
+            className="w-12 h-12 rounded-full border-2 border-black shadow-lg overflow-hidden hover:scale-110 transition-transform cursor-pointer bg-background"
+            onClick={e => {
+              e.stopPropagation();
+              onLocationClick?.(location);
+            }}
+            onDoubleClick={e => {
+              e.stopPropagation();
+              onLocationDoubleClick?.(location);
+            }}
+          >
+            <div className="relative w-full h-full transition-opacity">
+              {media ? (
+                <Image
+                  src={media}
+                  alt={location.name}
+                  loading="eager"
+                  priority
+                  width={100}
+                  height={100}
+                  className="object-cover w-full h-full"
+                />
+              ) : (
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/40" />
+              )}
             </div>
-        </Marker>
-    );
-} 
+          </div>
+
+          <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-background text-xs font-medium px-1.5 py-0.5 rounded-full shadow-sm flex items-center gap-0.5">
+            <Star className="w-3 h-3" />
+            <span>{rating}</span>
+          </div>
+        </div>
+
+        {isHovered && !isMobile && (
+          <div
+            className="fixed bottom-[calc(100%+12px)] left-1/2 -translate-x-1/2 w-64 bg-background border rounded-lg shadow-lg p-3"
+            style={{ zIndex: 1000 }}
+          >
+            <div className="relative aspect-video w-full rounded-md overflow-hidden bg-muted mb-2">
+              {media ? (
+                <Image
+                  src={media}
+                  alt={location.name}
+                  className="object-cover w-full h-full"
+                  width={230}
+                  height={129}
+                />
+              ) : (
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/40" />
+              )}
+            </div>
+            <h3 className="font-semibold truncate mb-1">{location.name}</h3>
+            <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
+              {location.description}
+            </p>
+            <div className="flex items-center gap-2 flex-wrap">
+              {location.tags?.map((tag: string) => (
+                <Badge key={tag} variant="secondary" className="text-xs">
+                  {tag}
+                </Badge>
+              ))}
+            </div>
+            <div className="flex items-center justify-between mt-2">
+              {location.city && location.country ? (
+                <div className="text-sm text-muted-foreground">
+                  {location.city}, {location.country}
+                </div>
+              ) : (
+                <div className="text-sm text-muted-foreground">
+                  <p>No location details</p>
+                </div>
+              )}
+              <div className="flex items-center gap-1 text-sm font-medium">
+                <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                {rating}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </Marker>
+  );
+}

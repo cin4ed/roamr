@@ -1,10 +1,12 @@
 declare namespace NodeJS {
   interface ProcessEnv {
-    DISCORD__ID: string;
-    DISCORD_CLIENT_SECRET: string;
-    NEXTAUTH_URL: string;
-    NEXTAUTH_SECRET: string;
+    // Site
     NEXT_PUBLIC_SUPABASE_URL: string;
     NEXT_PUBLIC_SUPABASE_ANON_KEY: string;
+    NEXT_PUBLIC_SITE_URL: string;
+
+    // Discord OAuth
+    SUPABASE_AUTH_DISCORD_CLIENT_ID: string;
+    SUPABASE_AUTH_DISCORD_CLIENT_SECRET: string;
   }
 }

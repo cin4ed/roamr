@@ -4,6 +4,7 @@
 
 body {
   font-family: Arial, Helvetica, sans-serif;
+  pointer-events: all !important;
 }
 
 @layer base {
@@ -90,7 +91,7 @@ body {
 }
 
 .coming-soon::after {
-  content: "Coming Soon";
+  content: 'Coming Soon';
   position: absolute;
   inset: 0;
   display: flex;

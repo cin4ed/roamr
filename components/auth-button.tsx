@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { signIn, signOut, useSession } from "next-auth/react";
-import { Button } from "@/components/ui/button";
+import { signIn, signOut, useSession } from 'next-auth/react';
+import { Button } from '@/components/ui/button';
 
 export default function AuthButton() {
   const { data: session } = useSession();
@@ -9,14 +9,13 @@ export default function AuthButton() {
   if (session?.user) {
     return (
       <>
-        Welcome, {session.user.name}!{" "}
-        <Button onClick={() => signOut()}>Sign out</Button>
+        Welcome, {session.user.name}! <Button onClick={() => signOut()}>Sign out</Button>
       </>
     );
   }
 
   return (
-    <Button onClick={() => signIn("discord")}>
+    <Button onClick={() => signIn('discord')}>
       <DiscordIcon />
       <span>Sign in with Discord</span>
     </Button>
