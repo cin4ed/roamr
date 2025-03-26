@@ -6,7 +6,7 @@ export function useLocations() {
   const [locations, setLocations] = useState<Location[]>([]);
 
   async function fetchLocations() {
-    const supabase = await createClient();
+    const supabase = createClient();
     const { data, error } = await supabase
       .from('locations')
       .select('*, location_media (location_id, media_url)');

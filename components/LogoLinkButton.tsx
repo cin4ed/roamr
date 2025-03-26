@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import roamrLogo from '@/public/roamr-logo.webp';
+import { cn } from '@/utils/cn';
 
 export default function LogoLinkButton({
   className,
@@ -10,8 +11,8 @@ export default function LogoLinkButton({
   width: number;
 }) {
   return (
-    <Link href="/" className={className}>
-      <Image src={roamrLogo} alt="Roamr Logo" width={width} />
+    <Link href="/" className={cn(className)}>
+      <Image src={roamrLogo} alt="Roamr Logo" width={width} draggable={false} />
     </Link>
   );
 }

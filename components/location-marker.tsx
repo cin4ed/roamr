@@ -37,12 +37,12 @@ export function LocationMarker({
 
     if (!featuredMedia) return;
 
-    const supabase = await createClient();
-    const { data } = await supabase.storage.from('media').getPublicUrl(featuredMedia);
+    // const supabase = await createClient();
+    // const { data } = await supabase.storage.from('media').getPublicUrl(featuredMedia);
 
-    console.log(data);
+    // console.log(data);
 
-    setMedia(data.publicUrl);
+    setMedia(featuredMedia);
   }, [location]);
 
   useEffect(() => {
@@ -56,8 +56,8 @@ export function LocationMarker({
       anchor="bottom"
       // style={{ zIndex: isHovered ? 999 : 100 }}
     >
-      <div className="relative w-12 h-12 bg-red-500"></div>
-      {/* <div
+      {/* <div className="relative w-12 h-12 bg-red-500"></div> */}
+      <div
         className="relative"
         onMouseEnter={() => !isMobile && setIsHovered(true)}
         onMouseLeave={() => !isMobile && setIsHovered(false)}
@@ -144,7 +144,7 @@ export function LocationMarker({
             </div>
           </div>
         )}
-      </div> */}
+      </div>
     </Marker>
   );
 }

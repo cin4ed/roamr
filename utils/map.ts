@@ -22,4 +22,7 @@ export const mapStyleRaster: StyleSpecification = {
       maxzoom: 20,
     },
   ],
+  sky: {
+    'sky-color': '#000000', // Black for a space-like effect
+  },
 };
