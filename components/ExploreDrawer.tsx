@@ -1,23 +1,9 @@
-import { Compass, Star } from 'lucide-react';
-import Image from 'next/image';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { formatDistanceToNow } from 'date-fns';
-
-interface LocationRating {
-  id: string;
-  user?: {
-    name: string;
-    image: string;
-  };
-  rating: number;
-  comment: string | null;
-  created_at: string;
-}
-
-type Location = Database['public']['Tables']['locations']['Row'] & {
-  location_ratings?: LocationRating[];
-};
+import { Compass /*Star */ } from 'lucide-react';
+// import Image from 'next/image';
+// import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+// import { ScrollArea } from '@/components/ui/scroll-area';
+// import { formatDistanceToNow } from 'date-fns';
+import type { Location } from '@/types';
 
 export default function ExploreDrawer({ location }: { location: Location }) {
   return (
@@ -29,7 +15,7 @@ export default function ExploreDrawer({ location }: { location: Location }) {
           <div className="flex justify-between items-center">
             <h2 className="text-2xl font-bold">{location.name}</h2>
             <div className="flex items-center gap-1">
-              {location.rating_stats &&
+              {/* {location.rating_stats &&
               Array.isArray(location.rating_stats) &&
               location.rating_stats.length > 0 ? (
                 <>
@@ -38,13 +24,12 @@ export default function ExploreDrawer({ location }: { location: Location }) {
                 </>
               ) : (
                 <span className="text-muted-foreground text-sm">No ratings yet</span>
-              )}
+              )} */}
             </div>
           </div>
 
-          {/* Image */}
           <div className="relative aspect-video w-full rounded-lg overflow-hidden bg-muted mb-4">
-            {location.location_images && location.location_images.length > 0 ? (
+            {/* {location.location_images && location.location_images.length > 0 ? (
               <Image
                 src={location.location_images[0].image_url}
                 alt={location.name}
@@ -55,7 +40,7 @@ export default function ExploreDrawer({ location }: { location: Location }) {
               />
             ) : (
               <div className=" inset-0 bg-gradient-to-br from-primary/20 to-primary/40" />
-            )}
+            )} */}
           </div>
 
           {/* Location */}
@@ -65,11 +50,9 @@ export default function ExploreDrawer({ location }: { location: Location }) {
             <span>{location.country}</span>
           </div>
 
-          {/* Reviews */}
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <h3 className="font-semibold">Reviews</h3>
             <ScrollArea className="h-[300px] pr-4">
-              {location.location_ratings && location.location_ratings.length > 0 ? (
                 <div className="space-y-4">
                   {location.location_ratings.map(review => (
                     <div key={review.id} className="flex flex-col gap-2 p-3 border rounded-lg">
@@ -101,7 +84,7 @@ export default function ExploreDrawer({ location }: { location: Location }) {
                 </p>
               )}
             </ScrollArea>
-          </div>
+          </div> */}
         </div>
       </div>
 

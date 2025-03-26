@@ -14,8 +14,17 @@ import roamrLogo from '@/public/roamr-logo.png';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import type { AuthError } from '@/app/auth/callback/route';
+import { Suspense } from 'react';
 
 export default function AuthErrorPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <AuthErrorContent />
+    </Suspense>
+  );
+}
+
+function AuthErrorContent() {
   const searchParams = useSearchParams();
 
   const error: AuthError = {

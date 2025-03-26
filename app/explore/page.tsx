@@ -1,11 +1,5 @@
 'use client';
 
-import { useMap } from 'react-map-gl/maplibre';
-import { Source } from 'react-map-gl/maplibre';
-import { Compass, User, PlusCircle } from 'lucide-react';
-import { LocationMarker } from '@/components/location-marker';
-// import ExploreDrawer from '@/components/ExploreDrawer';
-import Link from 'next/link';
 import LogoLinkButton from '@/components/LogoLinkButton';
 import ExploreMap from '@/components/ExploreMap';
 
@@ -38,54 +32,3 @@ export default function Explore() {
     </div>
   );
 }
-
-// function MapContent({
-//   locations,
-//   onLocationSelect,
-// }: {
-//   locations: Location[];
-//   onLocationSelect: (location: Location) => void;
-// }) {
-//   const { current: map } = useMap();
-
-//   const handleLocationClick = (location: Location) => {
-//     if (!map) return;
-//     onLocationSelect(location);
-//     map.panTo([Number(location.longitude), Number(location.latitude)], {
-//       duration: 1000,
-//       essential: true,
-//     });
-//   };
-
-//   const handleLocationDoubleClick = (location: Location) => {
-//     if (!map) return;
-//     map.flyTo({
-//       center: [Number(location.longitude), Number(location.latitude)],
-//       zoom: 14,
-//       duration: 1500,
-//       essential: true,
-//     });
-//   };
-
-//   return (
-//     <>
-//       <Source
-//         id="world-imagery"
-//         type="raster"
-//         tiles={[
-//           'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-//         ]}
-//         tileSize={256}
-//       />
-
-//       {locations.map(location => (
-//         <LocationMarker
-//           key={location.id}
-//           location={location}
-//           onLocationClick={handleLocationClick}
-//           onLocationDoubleClick={handleLocationDoubleClick}
-//         />
-//       ))}
-//     </>
-//   );
-// }

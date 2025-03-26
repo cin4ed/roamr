@@ -1,13 +1,17 @@
-import axios from 'axios';
 import { FeatureCollection } from 'geojson';
 
 export async function autocomplete(input: string): Promise<FeatureCollection> {
   try {
-    const response = await axios.get('https://photon.komoot.io/api/', {
-      params: { q: input },
+    const response = await fetch('https://photon.komoot.io/api/', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ q: input }),
     });
 
-    const features = response.data.features || [];
+    const data = await response.json();
+    const features = data.features || [];
     return {
       type: 'FeatureCollection',
       features,
