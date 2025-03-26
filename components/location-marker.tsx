@@ -5,7 +5,6 @@ import { Marker } from 'react-map-gl/maplibre';
 import { Badge } from '@/components/ui/badge';
 import { Star } from 'lucide-react';
 import { useIsMobile } from '@/hooks/useIsMobile';
-import { createClient } from '@/utils/supabase/client';
 import type { Location } from '@/types';
 import Image from 'next/image';
 
@@ -20,9 +19,10 @@ export function LocationMarker({
   onLocationClick,
   onLocationDoubleClick,
 }: LocationMarkerProps) {
-  const [isHovered, setIsHovered] = useState(false);
   const isMobile = useIsMobile();
+  const [isHovered, setIsHovered] = useState(false);
   const [media, setMedia] = useState<string | null>(null);
+
   // const rating =
   //   location.rating_stats && location.rating_stats.length > 0
   //     ? location.rating_stats[0].average_rating
@@ -54,9 +54,8 @@ export function LocationMarker({
       longitude={Number(location.longitude)}
       latitude={Number(location.latitude)}
       anchor="bottom"
-      // style={{ zIndex: isHovered ? 999 : 100 }}
+      style={{ zIndex: isHovered ? 100 : 1 }}
     >
-      {/* <div className="relative w-12 h-12 bg-red-500"></div> */}
       <div
         className="relative"
         onMouseEnter={() => !isMobile && setIsHovered(true)}

@@ -1,20 +1,37 @@
 'use client';
 
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useRef, useCallback } from 'react';
 import { useLocations } from '@/hooks/useLocations';
 import Map, { ProjectionSpecification, MapRef } from 'react-map-gl/maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { mapStyleVector, mapStyleRaster } from '@/utils/map';
-import { Map as MapIcon, Satellite } from 'lucide-react';
+import { Map as MapIcon, Satellite, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LocationMarker } from '@/components/location-marker';
 import { cn } from '@/utils/cn';
+import type { Location } from '@/types';
+import { useGlobeSpinning } from '@/hooks/useGlobeSpinning';
+import { useMapStyle } from '@/hooks/useMapStyle';
 
 export default function ExploreMap({ className }: { className?: string }) {
-  const [isVectorStyle, setIsVectorStyle] = useState(true);
-  const [userInteracted, setUserInteracted] = useState(false);
-  const { locations } = useLocations();
   const mapRef = useRef<MapRef>(null);
+  const { locations } = useLocations();
+  const { currentStyle, isVectorStyle, toggleStyle } = useMapStyle();
+  const { spinGlobe, userInteracted, handleUserInteraction, resetInteraction } =
+    useGlobeSpinning(mapRef);
+
+  const flyToLocation = useCallback((location: Location) => {
+    mapRef.current?.flyTo({
+      center: [location.longitude, location.latitude],
+      zoom: 15,
+    });
+  }, []);
+
+  const panToLocation = useCallback((location: Location) => {
+    mapRef.current?.panTo([location.longitude, location.latitude], {
+      duration: 1000,
+      easing: n => n,
+    });
+  }, []);
 
   const mapProps = {
     id: 'main',
@@ -28,18 +45,8 @@ export default function ExploreMap({ className }: { className?: string }) {
     style: { width: '100%', height: '100%' },
     cursor: 'grab',
     projection: 'globe' as ProjectionSpecification,
-    mapStyle: isVectorStyle ? mapStyleVector : mapStyleRaster,
+    mapStyle: currentStyle,
   };
-
-  const spinGlobe = useCallback(() => {
-    if (!mapRef.current || userInteracted) return;
-    console.log('LOG: spinGlobe');
-    const secondsPerRevolution = 80;
-    const distancePerSecond = 360 / secondsPerRevolution;
-    const center = mapRef.current.getCenter();
-    center.lng -= distancePerSecond;
-    mapRef.current.easeTo({ center, duration: 1000, easing: n => n });
-  }, [mapRef, userInteracted]);
 
   return (
     <div
@@ -54,33 +61,39 @@ export default function ExploreMap({ className }: { className?: string }) {
         ref={mapRef}
         onLoad={spinGlobe}
         onMoveEnd={spinGlobe}
-        onMouseDown={() => {
-          console.log('LOG: onMouseDown');
-          setUserInteracted(true);
-        }}
+        onMouseDown={handleUserInteraction}
       >
         {locations.map(location => (
-          <LocationMarker key={location.id} location={location} />
+          <LocationMarker
+            key={location.id}
+            location={location}
+            onLocationDoubleClick={flyToLocation}
+            onLocationClick={panToLocation}
+          />
         ))}
       </Map>
       <div className="absolute top-4 right-4 flex flex-col gap-2">
-        <MapStyleButton onToggle={setIsVectorStyle} />
+        <MapStyleButton isVectorStyle={isVectorStyle} onToggle={toggleStyle} />
+        {userInteracted && (
+          <Button variant="outline" onClick={resetInteraction}>
+            <RotateCcw className="w-4 h-4" />
+          </Button>
+        )}
       </div>
     </div>
   );
 }
 
-function MapStyleButton({ onToggle }: { onToggle: (isVectorStyle: boolean) => void }) {
-  const [isVectorStyle, setIsVectorStyle] = useState(true);
-
-  const handleToggle = () => {
-    setIsVectorStyle(!isVectorStyle);
-    onToggle(isVectorStyle);
-  };
-
+function MapStyleButton({
+  isVectorStyle,
+  onToggle,
+}: {
+  isVectorStyle: boolean;
+  onToggle: () => void;
+}) {
   return (
-    <Button variant="outline" onClick={handleToggle}>
-      {isVectorStyle ? <Satellite /> : <MapIcon />}
+    <Button variant="outline" onClick={onToggle}>
+      {isVectorStyle ? <MapIcon /> : <Satellite />}
     </Button>
   );
 }
