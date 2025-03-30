@@ -2,20 +2,22 @@
 
 import { useRef, useCallback } from 'react';
 import { useLocations } from '@/hooks/useLocations';
-import Map, { ProjectionSpecification, MapRef } from 'react-map-gl/maplibre';
+import Map, { MapRef } from 'react-map-gl/maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { Map as MapIcon, Satellite, RotateCcw } from 'lucide-react';
+import { Map as MapIcon, Satellite, RotateCcw, Globe, Layers } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LocationMarker } from '@/components/location-marker';
 import { cn } from '@/utils/cn';
 import type { Location } from '@/types';
 import { useGlobeSpinning } from '@/hooks/useGlobeSpinning';
 import { useMapStyle } from '@/hooks/useMapStyle';
+import { useMapProjection } from '@/hooks/useMapProjection';
 
 export default function ExploreMap({ className }: { className?: string }) {
   const mapRef = useRef<MapRef>(null);
   const { locations } = useLocations();
   const { currentStyle, isVectorStyle, toggleStyle } = useMapStyle();
+  const { currentProjection, isMercator, toggleProjection } = useMapProjection();
   const { spinGlobe, userInteracted, handleUserInteraction, resetInteraction } =
     useGlobeSpinning(mapRef);
 
@@ -45,9 +47,22 @@ export default function ExploreMap({ className }: { className?: string }) {
     maxZoom: 15.9,
     style: { width: '100%', height: '100%' },
     cursor: 'grab',
-    projection: 'globe' as ProjectionSpecification,
+    projection: currentProjection,
     mapStyle: currentStyle,
   };
+
+  // Only use spinGlobe animation when in globe projection
+  const handleMapLoad = useCallback(() => {
+    if (!isMercator) {
+      spinGlobe();
+    }
+  }, [isMercator, spinGlobe]);
+
+  const handleMapMoveEnd = useCallback(() => {
+    if (!isMercator) {
+      spinGlobe();
+    }
+  }, [isMercator, spinGlobe]);
 
   return (
     <div
@@ -60,8 +75,8 @@ export default function ExploreMap({ className }: { className?: string }) {
       <Map
         {...mapProps}
         ref={mapRef}
-        onLoad={spinGlobe}
-        onMoveEnd={spinGlobe}
+        onLoad={handleMapLoad}
+        onMoveEnd={handleMapMoveEnd}
         onTouchStart={handleUserInteraction}
         onMouseDown={handleUserInteraction}
       >
@@ -76,7 +91,8 @@ export default function ExploreMap({ className }: { className?: string }) {
       </Map>
       <div className="absolute top-4 right-4 flex flex-col gap-2">
         <MapStyleButton isVectorStyle={isVectorStyle} onToggle={toggleStyle} />
-        {userInteracted && (
+        <ProjectionButton isMercator={isMercator} onToggle={toggleProjection} />
+        {!isMercator && userInteracted && (
           <Button variant="outline" onClick={resetInteraction}>
             <RotateCcw className="w-4 h-4" />
           </Button>
@@ -95,7 +111,15 @@ function MapStyleButton({
 }) {
   return (
     <Button variant="outline" onClick={onToggle}>
-      {isVectorStyle ? <MapIcon /> : <Satellite />}
+      {isVectorStyle ? <Layers className="w-4 h-4" /> : <Satellite className="w-4 h-4" />}
+    </Button>
+  );
+}
+
+function ProjectionButton({ isMercator, onToggle }: { isMercator: boolean; onToggle: () => void }) {
+  return (
+    <Button variant="outline" onClick={onToggle}>
+      {isMercator ? <Globe className="w-4 h-4" /> : <MapIcon className="w-4 h-4" />}
     </Button>
   );
 }
