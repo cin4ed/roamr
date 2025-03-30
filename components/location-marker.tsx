@@ -7,6 +7,7 @@ import { Star } from 'lucide-react';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import type { Location } from '@/types';
 import Image from 'next/image';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 interface LocationMarkerProps {
   location: Location;
@@ -21,6 +22,7 @@ export function LocationMarker({
 }: LocationMarkerProps) {
   const isMobile = useIsMobile();
   const [isHovered, setIsHovered] = useState(false);
+  const [isTapped, setIsTapped] = useState(false);
   const [media, setMedia] = useState<string | null>(null);
 
   // const rating =
@@ -54,19 +56,22 @@ export function LocationMarker({
       longitude={Number(location.longitude)}
       latitude={Number(location.latitude)}
       anchor="bottom"
-      style={{ zIndex: isHovered ? 100 : 1 }}
+      style={{ zIndex: isHovered || isTapped ? 100 : 1 }}
     >
       <div
         className="relative"
         onMouseEnter={() => !isMobile && setIsHovered(true)}
         onMouseLeave={() => !isMobile && setIsHovered(false)}
-        style={{ zIndex: isHovered ? 999 : 1 }}
+        style={{ zIndex: isHovered || isTapped ? 999 : 1 }}
       >
         <div className="relative flex flex-col items-center">
           <div
             className="w-12 h-12 rounded-full border-2 border-black shadow-lg overflow-hidden hover:scale-110 transition-transform cursor-pointer bg-background"
             onClick={e => {
               e.stopPropagation();
+              if (isMobile) {
+                setIsTapped(!isTapped);
+              }
               onLocationClick?.(location);
             }}
             onDoubleClick={e => {
@@ -142,6 +147,52 @@ export function LocationMarker({
               </div>
             </div>
           </div>
+        )}
+
+        {isMobile && (
+          <Dialog open={isTapped} onOpenChange={setIsTapped}>
+            <DialogContent className="p-4 sm:p-6 max-h-[calc(100vh-2rem)] overflow-y-auto max-w-full sm:max-w-lg md:max-w-xl w-[calc(100vw-2rem)] sm:w-auto">
+              <DialogHeader className="mb-2">
+                <DialogTitle>{location.name}</DialogTitle>
+              </DialogHeader>
+              <div className="relative aspect-video w-full rounded-md overflow-hidden bg-muted mb-4">
+                {media ? (
+                  <Image
+                    src={media}
+                    alt={location.name}
+                    className="object-cover w-full h-full"
+                    width={425}
+                    height={239}
+                  />
+                ) : (
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/40" />
+                )}
+              </div>
+              <p className="text-sm text-muted-foreground mb-4">{location.description}</p>
+              <div className="flex items-center gap-2 flex-wrap mb-4">
+                {location.tags?.map((tag: string) => (
+                  <Badge key={tag} variant="secondary" className="text-xs">
+                    {tag}
+                  </Badge>
+                ))}
+              </div>
+              <div className="flex items-center justify-between">
+                {location.city && location.country ? (
+                  <div className="text-sm text-muted-foreground">
+                    {location.city}, {location.country}
+                  </div>
+                ) : (
+                  <div className="text-sm text-muted-foreground">
+                    <p>No location details</p>
+                  </div>
+                )}
+                <div className="flex items-center gap-1 text-sm font-medium">
+                  <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                  {rating}
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
         )}
       </div>
     </Marker>

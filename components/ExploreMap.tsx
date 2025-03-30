@@ -19,17 +19,18 @@ export default function ExploreMap({ className }: { className?: string }) {
   const { spinGlobe, userInteracted, handleUserInteraction, resetInteraction } =
     useGlobeSpinning(mapRef);
 
+  const handleOnLocationClick = useCallback((location: Location) => {
+    mapRef.current?.flyTo({
+      center: [location.longitude, location.latitude],
+      duration: 1000,
+      essential: true,
+    });
+  }, []);
+
   const flyToLocation = useCallback((location: Location) => {
     mapRef.current?.flyTo({
       center: [location.longitude, location.latitude],
       zoom: 15,
-    });
-  }, []);
-
-  const panToLocation = useCallback((location: Location) => {
-    mapRef.current?.panTo([location.longitude, location.latitude], {
-      duration: 1000,
-      easing: n => n,
     });
   }, []);
 
@@ -38,9 +39,9 @@ export default function ExploreMap({ className }: { className?: string }) {
     initialViewState: {
       longitude: -100,
       latitude: 40,
-      zoom: 2,
+      zoom: 0.7,
     },
-    minZoom: 2,
+    minZoom: 0.7,
     maxZoom: 15.9,
     style: { width: '100%', height: '100%' },
     cursor: 'grab',
@@ -61,6 +62,7 @@ export default function ExploreMap({ className }: { className?: string }) {
         ref={mapRef}
         onLoad={spinGlobe}
         onMoveEnd={spinGlobe}
+        onTouchStart={handleUserInteraction}
         onMouseDown={handleUserInteraction}
       >
         {locations.map(location => (
@@ -68,7 +70,7 @@ export default function ExploreMap({ className }: { className?: string }) {
             key={location.id}
             location={location}
             onLocationDoubleClick={flyToLocation}
-            onLocationClick={panToLocation}
+            onLocationClick={handleOnLocationClick}
           />
         ))}
       </Map>
