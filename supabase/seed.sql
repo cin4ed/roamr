@@ -1,10 +1,10 @@
--- -- Seed data for Roamr App
--- -- This seeder populates the database with sample data
+-- Seed data for Roamr App
+-- This seeder populates the database with sample data
 
--- -- ------------------------------------------------------------------------------------------------
--- -- First, insert some test users
--- -- Note: In a real Supabase project, you would typically create these users through the auth API
--- -- These are placeholder UUIDs for test users
+-- ------------------------------------------------------------------------------------------------
+-- First, insert some test users
+-- Note: In a real Supabase project, you would typically create these users through the auth API
+-- These are placeholder UUIDs for test users
 insert into auth.users (id, email, raw_user_meta_data)
 values
   ('d0d54cc1-32f7-4eaa-9e3b-b27cde9f3b18', 'alice@example.com', '{"name": "Alice Smith"}'),
@@ -13,8 +13,8 @@ values
   ('0c31d49c-5cb3-4cfa-a7b0-9dbcb8d89e68', 'diana@example.com', '{"name": "Diana Prince"}')
 on conflict do nothing;
 
--- -- ------------------------------------------------------------------------------------------------
--- -- Insert sample locations
+-- ------------------------------------------------------------------------------------------------
+-- Insert sample locations
 insert into public.locations (id, name, description, longitude, latitude, tags, creator_id)
 values
   (

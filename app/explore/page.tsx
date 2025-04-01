@@ -1,15 +1,10 @@
 'use client';
 
-import LogoLinkButton from '@/components/LogoLinkButton';
 import ExploreMap from '@/components/ExploreMap';
 
 export default function Explore() {
   return (
     <div className="h-screen w-screen font-[family-name:var(--font-geist-sans)]">
-      <LogoLinkButton
-        className="fixed top-4 left-1/2 -translate-x-1/2 z-[60] drop-shadow-lg"
-        width={175}
-      />
       <ExploreMap className="fixed inset-0" />
       {/* <div className="fixed bottom-0 left-0 right-0 bg-background border-t flex justify-around items-center h-24 px-4 z-[102]">
         <button className="flex flex-col items-center gap-1 text-primary">
