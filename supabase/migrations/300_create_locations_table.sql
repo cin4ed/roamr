@@ -18,12 +18,11 @@ create table public.locations (
   city text null,
   country text null,
   tags text[] null,
-  safety_info text null,
-  accessibility text null,
   creator_id uuid not null default auth.uid (),
   verification_status public.verification_status default 'pending'::verification_status,
   created_at timestamp with time zone null default now(),
   updated_at timestamp with time zone null default now(),
+  latest_revision_id uuid not null,
   constraint locations_pkey primary key (id),
   constraint locations_creator_id_fkey foreign KEY (creator_id) references auth.users (id)
 ) TABLESPACE pg_default;

@@ -11,13 +11,31 @@ import { cn } from '@/utils/cn';
 import type { Location } from '@/types';
 import { useGlobeSpinning } from '@/hooks/useGlobeSpinning';
 import { useMapStyle } from '@/hooks/useMapStyle';
+import { useMapProjection } from '@/hooks/useMapProjection';
 
-export default function ExploreMap({ className }: { className?: string }) {
+interface ExploreMapProps extends React.HTMLAttributes<HTMLDivElement> {
+  onLocationClick: (location: Location) => void;
+}
+
+export default function ExploreMap({ className, onLocationClick }: ExploreMapProps) {
   const mapRef = useRef<MapRef>(null);
   const { locations } = useLocations();
   const { currentStyle, isVectorStyle, toggleStyle } = useMapStyle();
   const { spinGlobe, userInteracted, handleUserInteraction, resetInteraction } =
     useGlobeSpinning(mapRef);
+
+  const handleOnLocationClick = useCallback(
+    (location: Location) => {
+      mapRef.current?.flyTo({
+        center: [location.longitude, location.latitude],
+        duration: 1000,
+        essential: true,
+      });
+
+      onLocationClick(location);
+    },
+    [onLocationClick]
+  );
 
   const flyToLocation = useCallback((location: Location) => {
     mapRef.current?.flyTo({
