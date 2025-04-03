@@ -53,6 +53,21 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
         'container mx-auto min-h-screen max-w-5xl space-y-4 bg-white font-[family-name:var(--font-geist-sans)]'
       )}
     >
+      <div className="flex justify-between bg-primary px-4 py-2 pb-3 text-white">
+        <div className="bg-white px-3 text-primary">
+          <Link href="/" className="text-sm font-bold">
+            Roamr
+          </Link>
+        </div>
+        <div className="flex gap-4">
+          <Link href="/" className="text-sm underline underline-offset-[.22rem]">
+            Home
+          </Link>
+          <Link href="/locations/explore" className="text-sm underline underline-offset-[.22rem]">
+            Map
+          </Link>
+        </div>
+      </div>
       <div className="relative h-96">
         <Image
           src={location.featured_image || '/placeholder-image.jpg'}
