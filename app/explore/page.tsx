@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react';
 import ExploreMap from '@/components/ExploreMap';
 import type { Location } from '@/types';
 import LocationCard from '@/components/LocationCard';
+import ExploreDrawer from '@/components/ExploreDrawer';
 
 export default function Explore() {
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
@@ -12,28 +13,35 @@ export default function Explore() {
     setSelectedLocation(location);
   }, []);
 
+  const handleCloseDrawer = useCallback(() => {
+    setSelectedLocation(null);
+  }, []);
+
   return (
     <div className="h-screen w-screen font-[family-name:var(--font-geist-sans)]">
-      <ExploreMap className="fixed inset-0" onLocationClick={handleLocationClick} />
-      {selectedLocation && <LocationCard location={selectedLocation} className="fixed inset-0" />}
-      {/* <div className="fixed bottom-0 left-0 right-0 bg-background border-t flex justify-around items-center h-24 px-4 z-[102]">
-        <button className="flex flex-col items-center gap-1 text-primary">
-          <Compass className="w-6 h-6" />
-          <span className="text-xs">Explore</span>
-        </button>
-        <button className="flex flex-col items-center gap-1 text-muted-foreground">
-          <User className="w-6 h-6" />
-          <span className="text-xs">You</span>
-        </button>
-        <Link href="/locations/create">
-          <button className="flex flex-col items-center gap-1 text-muted-foreground">
-            <PlusCircle className="w-6 h-6" />
-            <span className="text-xs">Contribute</span>
-          </button>
-        </Link>
-      </div> */}
+      {/* Desktop Layout */}
+      <div className="hidden md:flex h-full">
+        {selectedLocation && <LocationCard location={selectedLocation} className="w-2/6 p-6" />}
+        <div className={`${selectedLocation ? 'w-4/6' : 'w-full'} transition-all duration-300`}>
+          <ExploreMap className="h-full w-full" onLocationClick={handleLocationClick} />
+        </div>
+      </div>
 
-      {/* {selectedLocation && <ExploreDrawer location={selectedLocation} />} */}
+      {/* Mobile Layout */}
+      <div className="md:hidden h-full">
+        <div className="h-full">
+          <ExploreMap className="h-full w-full" onLocationClick={handleLocationClick} />
+        </div>
+        {selectedLocation && (
+          <>
+            <div
+              className="fixed inset-0 bg-black/50 z-[101] md:hidden"
+              onClick={handleCloseDrawer}
+            />
+            <ExploreDrawer location={selectedLocation} onClose={handleCloseDrawer} />
+          </>
+        )}
+      </div>
     </div>
   );
 }

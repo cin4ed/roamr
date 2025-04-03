@@ -1,13 +1,15 @@
-import { MapPin } from 'lucide-react'; // Example icon import
 import Image from 'next/image';
-import Link from 'next/link';
 import { createClient } from '@/utils/supabase/server';
 import type { Location } from '@/types';
 
 async function fetchLocationById(id: string): Promise<Location | null> {
   const supabase = await createClient();
 
-  const { data, error } = await supabase.from('locations').select('*').eq('id', id).single();
+  const { data, error } = await supabase
+    .from('locations')
+    .select('*, location_media(*)')
+    .eq('id', id)
+    .single();
 
   if (error) {
     console.error('Error fetching location:', error);
@@ -17,30 +19,10 @@ async function fetchLocationById(id: string): Promise<Location | null> {
   return data;
 }
 
-// Helper component for rating bars
-const RatingBar = ({
-  label,
-  value,
-  colorClass,
-}: {
-  label: string;
-  value: number;
-  colorClass: string;
-}) => (
-  <div className="mb-2">
-    <div className="flex justify-between text-xs text-gray-600 mb-1">
-      <span>{label}</span>
-      {/* Optional: display value */}
-      {/* <span>{value}%</span> */}
-    </div>
-    <div className="w-full bg-gray-200 rounded-full h-1.5">
-      <div className={`${colorClass} h-1.5 rounded-full`} style={{ width: `${value}%` }}></div>
-    </div>
-  </div>
-);
+export default async function LocationDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
 
-export default async function LocationDetailPage({ params }: { params: { id: string } }) {
-  const location = await fetchLocationById(params.id);
+  const location = await fetchLocationById(id);
 
   if (!location) {
     return <div className="container mx-auto p-6 text-center">Location not found.</div>;

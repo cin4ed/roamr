@@ -115,7 +115,7 @@ importers:
         version: 3.24.2
     devDependencies:
       '@eslint/eslintrc':
-        specifier: ^3
+        specifier: ^3.2.0
         version: 3.2.0
       '@postgrestools/postgrestools':
         specifier: ^0.2.1
@@ -136,16 +136,16 @@ importers:
         specifier: ^29.5.14
         version: 29.5.14
       '@types/node':
-        specifier: ^20
+        specifier: ^20.17.19
         version: 20.17.19
       '@types/react':
-        specifier: ^19
+        specifier: ^19.0.9
         version: 19.0.9
       '@types/react-dom':
-        specifier: ^19
+        specifier: ^19.0.3
         version: 19.0.3(@types/react@19.0.9)
       eslint:
-        specifier: ^9
+        specifier: ^9.20.1
         version: 9.20.1(jiti@1.21.7)
       eslint-config-next:
         specifier: 15.1.7
@@ -157,19 +157,19 @@ importers:
         specifier: ^29.7.0
         version: 29.7.0
       postcss:
-        specifier: ^8
+        specifier: ^8.5.2
         version: 8.5.2
       prettier:
         specifier: ^3.5.3
         version: 3.5.3
       tailwindcss:
-        specifier: ^3.4.1
+        specifier: ^3.4.17
         version: 3.4.17(ts-node@10.9.2(@types/node@20.17.19)(typescript@5.7.3))
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@types/node@20.17.19)(typescript@5.7.3)
       typescript:
-        specifier: ^5
+        specifier: ^5.7.3
         version: 5.7.3
 
 packages:

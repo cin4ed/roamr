@@ -13,14 +13,10 @@ export default function LocationCard({
   className?: string;
 }) {
   return (
-    <div
-      className={cn(
-        'bg-white rounded-lg shadow-lg p-6 max-w-[550px] font-[family-name:var(--font-geist-sans)]',
-        className
-      )}
-    >
+    <div className={cn('bg-white font-[family-name:var(--font-geist-sans)]', className)}>
       {/* Image Container */}
       <div className="relative mb-2">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={location.featured_image || '/placeholder-image.jpg'}
           alt={location.name}
