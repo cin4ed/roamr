@@ -20,34 +20,34 @@ export default function LocationCard({
         <img
           src={location.featured_image || '/placeholder-image.jpg'}
           alt={location.name}
-          className="w-full h-72 object-cover rounded-md"
+          className="h-72 w-full rounded-md object-cover"
         />
-        <div className="absolute top-2 right-2">
-          <div className="bg-white/90 rounded px-2 py-1 text-sm">#{location.id.slice(0, 8)}</div>
+        <div className="absolute right-2 top-2">
+          <div className="rounded bg-white/90 px-2 py-1 text-sm">#{location.id.slice(0, 8)}</div>
         </div>
       </div>
 
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <Link
           href={`/locations/${location.id}/edit`}
-          className="text-primary underline text-sm underline-offset-[.22rem] hover:no-underline"
+          className="text-sm text-primary underline underline-offset-[.22rem] hover:no-underline"
         >
           Edit
         </Link>
         <Link
           href={`/locations/${location.id}`}
-          className="text-primary underline text-sm underline-offset-[.22rem] hover:no-underline"
+          className="text-sm text-primary underline underline-offset-[.22rem] hover:no-underline"
         >
           See More
         </Link>
       </div>
 
-      <hr className="my-4 border-primary border-dashed" />
+      <hr className="my-4 border-dashed border-primary" />
 
       {/* Tags */}
-      <div className="flex flex-wrap gap-2 mb-4">
+      <div className="mb-4 flex flex-wrap gap-2">
         {location.tags?.map(tag => (
-          <span key={tag} className="bg-primary text-white px-3 py-1 rounded-md text-sm italic">
+          <span key={tag} className="rounded-md bg-primary px-3 py-1 text-sm italic text-white">
             #{tag}
           </span>
         ))}
@@ -55,28 +55,28 @@ export default function LocationCard({
 
       {/* Location Name */}
       <h2
-        className="font-900 text-balance text-[3.5rem] leading-[1] mb-2 text-primary antialiased"
+        className="font-900 mb-2 text-balance text-[3.5rem] leading-[1] text-primary antialiased"
         style={{ fontFamily: '"Koh Santepheap"', fontWeight: 700 }}
       >
         {location.name}
       </h2>
 
       {/* Location Subtitle */}
-      <p className="text-gray-600 font- mb-4">
+      <p className="font- mb-4 text-gray-600">
         {location.city && location.country
           ? `${location.city}, ${location.country}`
           : 'Location details unavailable'}
       </p>
 
       {/* Description */}
-      <p className="text-gray-700 mb-6 italic">
+      <p className="mb-6 italic text-gray-700">
         {location.description || 'No description available'}
       </p>
 
       {/* View Full Page Button */}
       <Link
         href={`/locations/${location.id}`}
-        className="bg-primary text-white px-6 py-2 rounded hover:bg-primary/90 transition-colors"
+        className="rounded bg-primary px-6 py-2 text-white transition-colors hover:bg-primary/90"
       >
         View Full Page
       </Link>

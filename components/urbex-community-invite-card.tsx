@@ -10,7 +10,7 @@ export function UrbexCommunityInviteCard({
   return (
     <div
       className={cn(
-        'space-y-10 border p-4 rounded-md bg-zinc-900 xl:text-sm 2xl:text-base',
+        'space-y-10 rounded-md border bg-zinc-900 p-4 xl:text-sm 2xl:text-base',
         className
       )}
       {...props}
@@ -25,12 +25,12 @@ export function UrbexCommunityInviteCard({
         </div>
         <div className="mt-2">
           <p>With an account, you can:</p>
-          <ul className="list-disc list-inside space-y-1 mt-2">
+          <ul className="mt-2 list-inside list-disc space-y-1">
             <li>📍 Contribute to the map by adding new locations.</li>
             <li>⭐️ Rate, review, and leave comments on urbex spots.</li>
             <li>👥 Connect with fellow explorers and plan trips together.</li>
           </ul>
-          <div className="flex justify-end   mt-5">
+          <div className="mt-5 flex justify-end">
             <Button type="button">
               <Link href="/login">👉 Sign In | Log In</Link>
             </Button>

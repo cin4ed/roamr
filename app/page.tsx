@@ -68,18 +68,18 @@ export default function Home() {
 
   return (
     <div>
-      <header className="flex justify-between items-center px-6 py-4 border-b">
+      <header className="flex items-center justify-between border-b px-6 py-4">
         {/* Left side - Logo */}
         <div className="text-2xl font-bold">Roamr</div>
         {/* Mobile Menu Button */}
-        <button className="md:hidden p-2" onClick={toggleMenu} aria-label="Toggle menu">
+        <button className="p-2 md:hidden" onClick={toggleMenu} aria-label="Toggle menu">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-6 h-6"
+            className="h-6 w-6"
           >
             <path
               strokeLinecap="round"
@@ -92,7 +92,7 @@ export default function Home() {
         </button>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-6">
+        <nav className="hidden items-center gap-6 md:flex">
           <Button variant="ghost" asChild>
             <Link href="/explore">Explore</Link>
           </Button>
@@ -104,35 +104,35 @@ export default function Home() {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="absolute top-[65px] left-0 right-0 bg-black/90 border-b md:hidden z-50">
+          <div className="absolute left-0 right-0 top-[65px] z-50 border-b bg-black/90 md:hidden">
             <nav className="flex flex-col p-4">
               <Link
                 href="/explore"
-                className="px-4 py-3 hover:bg-zinc-50 rounded-lg"
+                className="rounded-lg px-4 py-3 hover:bg-zinc-50"
                 onClick={toggleMenu}
               >
                 Explore
               </Link>
               <button
-                className="px-4 py-3 text-left hover:bg-zinc-50 rounded-lg"
+                className="rounded-lg px-4 py-3 text-left hover:bg-zinc-50"
                 onClick={toggleMenu}
               >
                 Create
               </button>
               <button
-                className="px-4 py-3 text-left hover:bg-zinc-50 rounded-lg"
+                className="rounded-lg px-4 py-3 text-left hover:bg-zinc-50"
                 onClick={toggleMenu}
               >
                 Invite
               </button>
               <button
-                className="px-4 py-3 text-left hover:bg-zinc-50 rounded-lg"
+                className="rounded-lg px-4 py-3 text-left hover:bg-zinc-50"
                 onClick={toggleMenu}
               >
                 Log in
               </button>
               <button
-                className="px-4 py-3 text-left bg-zinc-900 text-white rounded-lg mt-2"
+                className="mt-2 rounded-lg bg-zinc-900 px-4 py-3 text-left text-white"
                 onClick={toggleMenu}
               >
                 Sign up
@@ -142,10 +142,10 @@ export default function Home() {
         )}
       </header>
       <main>
-        <section className="relative h-[600px] flex items-center justify-center">
+        <section className="relative flex h-[600px] items-center justify-center">
           {/* Background Image */}
           <div
-            className="absolute inset-0 w-full h-full"
+            className="absolute inset-0 h-full w-full"
             style={{
               backgroundImage:
                 'url("https://cdn.usegalileo.ai/sdxl10/1f6a1612-9b4c-4659-972e-c9cf05bfd087.png")',
@@ -156,24 +156,24 @@ export default function Home() {
           />
 
           {/* Content */}
-          <div className="relative z-10 max-w-5xl mx-auto text-center px-4">
-            <h1 className="text-4xl md:text-6xl font-black text-white mb-8 tracking-tight text-balance">
+          <div className="relative z-10 mx-auto max-w-5xl px-4 text-center">
+            <h1 className="mb-8 text-balance text-4xl font-black tracking-tight text-white md:text-6xl">
               Discover abandoned places and hidden gems around the world
             </h1>
 
             {/* Search Bar */}
-            <div className="flex w-full max-w-3xl mx-auto px-4 md:px-0">
-              <div className="flex w-full bg-black/30 backdrop-blur-sm border border-white/10 rounded-full overflow-hidden">
+            <div className="mx-auto flex w-full max-w-3xl px-4 md:px-0">
+              <div className="flex w-full overflow-hidden rounded-full border border-white/10 bg-black/30 backdrop-blur-sm">
                 <Input
                   type="text"
                   placeholder={
                     `${placeholderText}${showCursor ? '|' : ' '}` || 'Search for locations...'
                   }
-                  className="border-0 bg-transparent text-white placeholder:text-white/80 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0 !text-base md:!text-lg h-12 md:h-16 px-4 md:px-8 [&:not(:placeholder-shown)]:!text-base md:[&:not(:placeholder-shown)]:!text-lg"
+                  className="h-12 rounded-none border-0 bg-transparent px-4 !text-base text-white placeholder:text-white/80 focus-visible:ring-0 focus-visible:ring-offset-0 md:h-16 md:px-8 md:!text-lg [&:not(:placeholder-shown)]:!text-base md:[&:not(:placeholder-shown)]:!text-lg"
                 />
                 <Button
                   variant="ghost"
-                  className="text-white hover:bg-white/10 rounded-none px-6 md:px-12 text-base md:text-lg h-12 md:h-16"
+                  className="h-12 rounded-none px-6 text-base text-white hover:bg-white/10 md:h-16 md:px-12 md:text-lg"
                 >
                   Search
                 </Button>
@@ -182,11 +182,11 @@ export default function Home() {
           </div>
         </section>
         {/* Latest Additions */}
-        <section className="py-24 px-4">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex justify-between items-end mb-12">
+        <section className="px-4 py-24">
+          <div className="mx-auto max-w-7xl">
+            <div className="mb-12 flex items-end justify-between">
               <div>
-                <h2 className="text-3xl font-bold mb-2">Latest Additions</h2>
+                <h2 className="mb-2 text-3xl font-bold">Latest Additions</h2>
                 <p className="text-zinc-600">Recently discovered locations by our community</p>
               </div>
               <Button variant="outline" asChild>
@@ -194,21 +194,21 @@ export default function Home() {
               </Button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
               {/* Location Card 1 */}
               <div className="group relative overflow-hidden rounded-xl">
-                <div className="aspect-[4/3] overflow-hidden relative">
+                <div className="relative aspect-[4/3] overflow-hidden">
                   <Image
                     src="https://images.unsplash.com/photo-1518656306295-aa28b28b2504?q=80&w=2940&auto=format&fit=crop"
                     alt="Abandoned Factory in Detroit"
                     fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent">
                   <div className="absolute bottom-0 p-6 text-white">
-                    <h3 className="text-xl font-semibold mb-2">Abandoned Factory</h3>
-                    <p className="text-white/80 text-sm mb-3">Detroit, Michigan</p>
+                    <h3 className="mb-2 text-xl font-semibold">Abandoned Factory</h3>
+                    <p className="mb-3 text-sm text-white/80">Detroit, Michigan</p>
                     <div className="flex items-center gap-4 text-sm">
                       <span className="flex items-center gap-1">
                         <span>Added 2 days ago</span>
@@ -222,18 +222,18 @@ export default function Home() {
               </div>
               {/* Location Card 2 */}
               <div className="group relative overflow-hidden rounded-xl">
-                <div className="aspect-[4/3] overflow-hidden relative">
+                <div className="relative aspect-[4/3] overflow-hidden">
                   <Image
                     src="https://images.unsplash.com/photo-1548021029-d6cf0f5b9c91?q=80&w=2940&auto=format&fit=crop"
                     alt="Lost Temple in Cambodia"
                     fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent">
                   <div className="absolute bottom-0 p-6 text-white">
-                    <h3 className="text-xl font-semibold mb-2">Ancient Temple Ruins</h3>
-                    <p className="text-white/80 text-sm mb-3">Siem Reap, Cambodia</p>
+                    <h3 className="mb-2 text-xl font-semibold">Ancient Temple Ruins</h3>
+                    <p className="mb-3 text-sm text-white/80">Siem Reap, Cambodia</p>
                     <div className="flex items-center gap-4 text-sm">
                       <span className="flex items-center gap-1">
                         <span>Added 5 days ago</span>
@@ -248,18 +248,18 @@ export default function Home() {
 
               {/* Location Card 3 */}
               <div className="group relative overflow-hidden rounded-xl">
-                <div className="aspect-[4/3] overflow-hidden relative">
+                <div className="relative aspect-[4/3] overflow-hidden">
                   <Image
                     src="https://images.unsplash.com/photo-1533031685597-3e51ecd5bb3e?q=80&w=2940&auto=format&fit=crop"
                     alt="Ghost Hotel in Paris"
                     fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent">
                   <div className="absolute bottom-0 p-6 text-white">
-                    <h3 className="text-xl font-semibold mb-2">Forgotten Hotel</h3>
-                    <p className="text-white/80 text-sm mb-3">Paris, France</p>
+                    <h3 className="mb-2 text-xl font-semibold">Forgotten Hotel</h3>
+                    <p className="mb-3 text-sm text-white/80">Paris, France</p>
                     <div className="flex items-center gap-4 text-sm">
                       <span className="flex items-center gap-1">
                         <span>Added 1 week ago</span>
@@ -275,15 +275,15 @@ export default function Home() {
           </div>
         </section>
         {/* How It Works */}
-        <section className="py-24 bg-gradient-to-b from-zinc-900 to-zinc-800 text-white">
-          <div className="max-w-7xl mx-auto px-4">
-            <h2 className="text-3xl font-bold mb-12 text-center">How Roamr Works</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+        <section className="bg-gradient-to-b from-zinc-900 to-zinc-800 py-24 text-white">
+          <div className="mx-auto max-w-7xl px-4">
+            <h2 className="mb-12 text-center text-3xl font-bold">How Roamr Works</h2>
+            <div className="grid grid-cols-1 gap-12 md:grid-cols-3">
               <div className="text-center">
-                <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-white/10">
                   <span className="text-2xl">1</span>
                 </div>
-                <h3 className="text-xl font-semibold mb-4">Discover</h3>
+                <h3 className="mb-4 text-xl font-semibold">Discover</h3>
                 <p className="text-white/70">
                   Browse our curated collection of abandoned places and hidden gems
                 </p>
@@ -294,11 +294,11 @@ export default function Home() {
         </section>
         {/* Categories */}
         <section className="py-24">
-          <div className="max-w-7xl mx-auto px-4">
-            <h2 className="text-3xl font-bold mb-12 text-center">Explore by Category</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              <div className="group relative aspect-square rounded-2xl overflow-hidden">
-                <div className="relative w-full h-full">
+          <div className="mx-auto max-w-7xl px-4">
+            <h2 className="mb-12 text-center text-3xl font-bold">Explore by Category</h2>
+            <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
+              <div className="group relative aspect-square overflow-hidden rounded-2xl">
+                <div className="relative h-full w-full">
                   <Image
                     src="https://images.unsplash.com/photo-1518656306295-aa28b28b2504"
                     alt="Industrial"
@@ -306,7 +306,7 @@ export default function Home() {
                     className="object-cover"
                   />
                 </div>
-                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors">
+                <div className="absolute inset-0 bg-black/40 transition-colors group-hover:bg-black/50">
                   <div className="absolute inset-0 flex items-center justify-center">
                     <span className="text-xl font-semibold text-white">Industrial</span>
                   </div>
@@ -318,19 +318,19 @@ export default function Home() {
         </section>
         {/* Community Highlights */}
         <section className="py-24">
-          <div className="max-w-7xl mx-auto px-4">
-            <h2 className="text-3xl font-bold mb-2">Featured Explorers</h2>
-            <p className="text-zinc-600 mb-12">Meet our most active community members</p>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div className="mx-auto max-w-7xl px-4">
+            <h2 className="mb-2 text-3xl font-bold">Featured Explorers</h2>
+            <p className="mb-12 text-zinc-600">Meet our most active community members</p>
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
               <div className="text-center">
-                <div className="relative w-32 h-32 mx-auto mb-4">
+                <div className="relative mx-auto mb-4 h-32 w-32">
                   <Image
                     src="/photographer-1.jpg"
                     alt="Photographer name"
                     fill
                     className="rounded-full object-cover"
                   />
-                  <div className="absolute -bottom-2 -right-2 bg-blue-500 text-white px-2 py-1 rounded-full text-sm">
+                  <div className="absolute -bottom-2 -right-2 rounded-full bg-blue-500 px-2 py-1 text-sm text-white">
                     Pro
                   </div>
                 </div>
@@ -343,14 +343,14 @@ export default function Home() {
         </section>
 
         {/* Safety First */}
-        <section className="py-24 bg-orange-800">
-          <div className="max-w-7xl mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        <section className="bg-orange-800 py-24">
+          <div className="mx-auto max-w-7xl px-4">
+            <div className="grid grid-cols-1 items-center gap-12 md:grid-cols-2">
               <div>
-                <h2 className="text-3xl font-bold mb-6">Explore Safely</h2>
+                <h2 className="mb-6 text-3xl font-bold">Explore Safely</h2>
                 <div className="space-y-4">
                   <div className="flex gap-4">
-                    <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center shrink-0">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-orange-100">
                       <span>✓</span>
                     </div>
                     <p>Always check local regulations and obtain necessary permits</p>
@@ -358,7 +358,7 @@ export default function Home() {
                   {/* Repeat for other safety tips */}
                 </div>
               </div>
-              <div className="relative aspect-video rounded-2xl overflow-hidden">
+              <div className="relative aspect-video overflow-hidden rounded-2xl">
                 <Image
                   src="/safety-image.jpg"
                   alt="Safety equipment"
@@ -371,12 +371,12 @@ export default function Home() {
         </section>
         {/* Testimonials */}
         <section className="py-24">
-          <div className="max-w-7xl mx-auto px-4">
-            <h2 className="text-3xl font-bold mb-12 text-center">What Explorers Say</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="bg-white p-6 rounded-xl shadow-sm">
-                <div className="flex gap-4 mb-4">
-                  <div className="relative w-12 h-12">
+          <div className="mx-auto max-w-7xl px-4">
+            <h2 className="mb-12 text-center text-3xl font-bold">What Explorers Say</h2>
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+              <div className="rounded-xl bg-white p-6 shadow-sm">
+                <div className="mb-4 flex gap-4">
+                  <div className="relative h-12 w-12">
                     <Image
                       src="/user-1.jpg"
                       alt="User"
@@ -398,8 +398,8 @@ export default function Home() {
           </div>
         </section>
       </main>
-      <footer className="text-white/80 py-16 mt-20">
-        <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-12">
+      <footer className="mt-20 py-16 text-white/80">
+        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-12 px-4 md:grid-cols-4">
           {/* Brand Section */}
           <div className="space-y-4">
             <h3 className="text-2xl font-bold text-white">Roamr</h3>
@@ -414,22 +414,22 @@ export default function Home() {
             <h4 className="text-lg font-semibold text-white">Quick Links</h4>
             <ul className="space-y-2">
               <li>
-                <Link href="/explore" className="hover:text-white transition-colors">
+                <Link href="/explore" className="transition-colors hover:text-white">
                   Explore
                 </Link>
               </li>
               <li>
-                <Link href="/popular" className="hover:text-white transition-colors">
+                <Link href="/popular" className="transition-colors hover:text-white">
                   Popular Places
                 </Link>
               </li>
               <li>
-                <Link href="/submit" className="hover:text-white transition-colors">
+                <Link href="/submit" className="transition-colors hover:text-white">
                   Submit Location
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="hover:text-white transition-colors">
+                <Link href="/about" className="transition-colors hover:text-white">
                   About Us
                 </Link>
               </li>
@@ -441,22 +441,22 @@ export default function Home() {
             <h4 className="text-lg font-semibold text-white">Resources</h4>
             <ul className="space-y-2">
               <li>
-                <Link href="/safety" className="hover:text-white transition-colors">
+                <Link href="/safety" className="transition-colors hover:text-white">
                   Safety Guidelines
                 </Link>
               </li>
               <li>
-                <Link href="/photography" className="hover:text-white transition-colors">
+                <Link href="/photography" className="transition-colors hover:text-white">
                   Photography Tips
                 </Link>
               </li>
               <li>
-                <Link href="/community" className="hover:text-white transition-colors">
+                <Link href="/community" className="transition-colors hover:text-white">
                   Community
                 </Link>
               </li>
               <li>
-                <Link href="/faq" className="hover:text-white transition-colors">
+                <Link href="/faq" className="transition-colors hover:text-white">
                   FAQ
                 </Link>
               </li>
@@ -468,22 +468,22 @@ export default function Home() {
             <h4 className="text-lg font-semibold text-white">Legal</h4>
             <ul className="space-y-2">
               <li>
-                <Link href="/privacy" className="hover:text-white transition-colors">
+                <Link href="/privacy" className="transition-colors hover:text-white">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="hover:text-white transition-colors">
+                <Link href="/terms" className="transition-colors hover:text-white">
                   Terms of Service
                 </Link>
               </li>
               <li>
-                <Link href="/guidelines" className="hover:text-white transition-colors">
+                <Link href="/guidelines" className="transition-colors hover:text-white">
                   Community Guidelines
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="hover:text-white transition-colors">
+                <Link href="/contact" className="transition-colors hover:text-white">
                   Contact Us
                 </Link>
               </li>
@@ -492,21 +492,21 @@ export default function Home() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="max-w-7xl mx-auto px-4 mt-16 pt-8 border-t border-white/10">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="mx-auto mt-16 max-w-7xl border-t border-white/10 px-4 pt-8">
+          <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
             <p className="text-sm">© 2024 Roamr. All rights reserved.</p>
             {/* Social Links */}
             <div className="flex items-center gap-6">
-              <Link href="#" className="hover:text-white transition-colors">
+              <Link href="#" className="transition-colors hover:text-white">
                 Twitter
               </Link>
-              <Link href="#" className="hover:text-white transition-colors">
+              <Link href="#" className="transition-colors hover:text-white">
                 Instagram
               </Link>
-              <Link href="#" className="hover:text-white transition-colors">
+              <Link href="#" className="transition-colors hover:text-white">
                 Facebook
               </Link>
-              <Link href="#" className="hover:text-white transition-colors">
+              <Link href="#" className="transition-colors hover:text-white">
                 YouTube
               </Link>
             </div>

@@ -52,7 +52,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                       <Input
                         placeholder="m@example.com"
                         type="email"
-                        className="h-11 sm:h-10 bg-background"
+                        className="h-11 bg-background sm:h-10"
                         {...field}
                       />
                     </FormControl>
@@ -81,7 +81,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                       <Input
                         placeholder="***********"
                         type="password"
-                        className="h-11 sm:h-10 bg-background"
+                        className="h-11 bg-background sm:h-10"
                         {...field}
                       />
                     </FormControl>
@@ -90,7 +90,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                 )}
               />
             </div>
-            <Button type="submit" className="w-full h-12 sm:h-10 text-base">
+            <Button type="submit" className="h-12 w-full text-base sm:h-10">
               Login
             </Button>
             <Separator className="bg-zinc-400" />

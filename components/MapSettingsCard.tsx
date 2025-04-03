@@ -40,10 +40,10 @@ export default function MapSettingsCard({
   };
 
   return (
-    <div className={cn('bg-white text-primary px-4 py-3 rounded-lg w-52', className)}>
+    <div className={cn('w-52 rounded-lg bg-white px-4 py-3 text-primary', className)}>
       <div className="space-y-4">
         <h3 className="text-sm font-medium">Map Settings</h3>
-        <fieldset className="border border-primary/50 space-y-2 px-3 py-1 rounded-lg">
+        <fieldset className="space-y-2 rounded-lg border border-primary/50 px-3 py-1">
           <legend className="text-xs font-medium">Projection</legend>
           <div className="space-y-1">
             <div className="space-x-1">
@@ -69,7 +69,7 @@ export default function MapSettingsCard({
           </div>
         </fieldset>
 
-        <fieldset className="border border-primary/50 space-y-2 px-3 py-1 rounded-lg">
+        <fieldset className="space-y-2 rounded-lg border border-primary/50 px-3 py-1">
           <legend className="text-xs font-medium">Style</legend>
           <div className="space-y-1">
             <div className="space-x-1">
@@ -98,7 +98,7 @@ export default function MapSettingsCard({
         {settings.projection === 'globe' && userInteracted && (
           <div>
             <Button variant="outline" size="sm" onClick={resetInteraction} className="w-full">
-              <RotateCcw className="w-3 h-3 mr-2" />
+              <RotateCcw className="mr-2 h-3 w-3" />
               Resume Spinning
             </Button>
           </div>

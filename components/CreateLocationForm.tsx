@@ -178,7 +178,7 @@ export const CreateLocationForm = ({ className }: { className: string }) => {
                       {...field}
                       maxLength={MAX_DESCRIPTION_LENGTH}
                     />
-                    <div className="absolute right-3 bottom-3 text-xs text-muted-foreground">
+                    <div className="absolute bottom-3 right-3 text-xs text-muted-foreground">
                       {field.value.length}/{MAX_DESCRIPTION_LENGTH}
                     </div>
                   </div>
@@ -229,7 +229,7 @@ export const CreateLocationForm = ({ className }: { className: string }) => {
                   </div>
                 </Form.FormControl>
                 {field.value && field.value.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-2">
+                  <div className="mt-2 flex flex-wrap gap-2">
                     {field.value.map((tag: string, index: number) => (
                       <Badge key={index} variant="secondary" className="px-3 py-1">
                         {tag}
@@ -248,7 +248,7 @@ export const CreateLocationForm = ({ className }: { className: string }) => {
         </div>
         <div className="space-y-2">
           <Form.FormLabel>Location</Form.FormLabel>
-          <div className="relative h-52 w-full rounded-md border-4 border-background overflow-hidden">
+          <div className="relative h-52 w-full overflow-hidden rounded-md border-4 border-background">
             <ChooseLocationMap
               onLocationChange={handleLocationChange}
               initialLatitude={0}
@@ -256,14 +256,14 @@ export const CreateLocationForm = ({ className }: { className: string }) => {
               initialZoom={3.5}
             />
           </div>
-          <div className="grid grid-cols-2 text-sm gap-2">
-            <div className="grid grid-cols-4 bg-background divide-x divide-muted rounded">
-              <div className="px-2 py-1 text-muted-foreground flex-shrink-0">lat</div>
-              <div className="px-2 col-span-3 py-1 text-muted-foreground truncate">{latitude}</div>
+          <div className="grid grid-cols-2 gap-2 text-sm">
+            <div className="grid grid-cols-4 divide-x divide-muted rounded bg-background">
+              <div className="flex-shrink-0 px-2 py-1 text-muted-foreground">lat</div>
+              <div className="col-span-3 truncate px-2 py-1 text-muted-foreground">{latitude}</div>
             </div>
-            <div className="grid grid-cols-4 bg-background divide-x divide-muted rounded">
-              <div className="px-2 py-1 text-muted-foreground flex-shrink-0">lng</div>
-              <div className="px-2 col-span-3 py-1 text-muted-foreground truncate">{longitude}</div>
+            <div className="grid grid-cols-4 divide-x divide-muted rounded bg-background">
+              <div className="flex-shrink-0 px-2 py-1 text-muted-foreground">lng</div>
+              <div className="col-span-3 truncate px-2 py-1 text-muted-foreground">{longitude}</div>
             </div>
           </div>
           <Form.FormDescription>
@@ -284,7 +284,7 @@ export const CreateLocationForm = ({ className }: { className: string }) => {
           </ImageDropzone>
         </div>
         <div>
-          <Button type="submit" className="w-full mt-4">
+          <Button type="submit" className="mt-4 w-full">
             Create Location
           </Button>
         </div>

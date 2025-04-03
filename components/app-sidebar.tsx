@@ -24,7 +24,7 @@ export function AppSidebar({ session, onTabChange, className, ...props }: AppSid
   return (
     <div
       className={cn(
-        'flex flex-col py-6 justify-between items-center border-r bg-zinc-900',
+        'flex flex-col items-center justify-between border-r bg-zinc-900 py-6',
         className
       )}
       {...props}

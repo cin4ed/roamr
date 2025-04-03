@@ -37,7 +37,7 @@ export function ChooseLocationMap({
   };
 
   return (
-    <div className="relative w-full h-full">
+    <div className="relative h-full w-full">
       <Map
         ref={mapRef}
         initialViewState={{
@@ -55,7 +55,7 @@ export function ChooseLocationMap({
       </Map>
 
       {/* Fixed centered marker */}
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-full pointer-events-none">
+      <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-full transform">
         <MarkerIcon />
       </div>
     </div>

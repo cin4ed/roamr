@@ -84,16 +84,16 @@ export default function ExploreMap({ className, onLocationClick }: ExploreMapPro
       </Map>
       <button
         onClick={() => setShowSettings(!showSettings)}
-        className="fixed top-4 right-4 z-20 p-2 bg-background rounded-full shadow-lg"
+        className="fixed right-4 top-4 z-20 rounded-full bg-background p-2 shadow-lg"
         aria-label="Toggle map settings"
       >
-        <Settings className="w-5 h-5 text-primary" />
+        <Settings className="h-5 w-5 text-primary" />
       </button>
       {showSettings && (
         <MapSettingsCard
           settings={mapSettings}
           onSettingsChange={setMapSettings}
-          className="fixed top-16 right-4 z-10 shadow"
+          className="fixed right-4 top-16 z-10 shadow"
         />
       )}
     </div>

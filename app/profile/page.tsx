@@ -13,9 +13,9 @@ export default function ProfilePage() {
   const { session, loading } = useAuth();
 
   return (
-    <div className="w-full flex justify-center h-screen">
+    <div className="flex h-screen w-full justify-center">
       <div>
-        <div className="flex gap-3 mt-5">
+        <div className="mt-5 flex gap-3">
           <Button variant="link">
             <Link href="/">Home</Link>
           </Button>
@@ -26,16 +26,16 @@ export default function ProfilePage() {
         <Separator />
         {loading && <span>Loading...</span>}
         {session && (
-          <div className="space-y-5 mt-5">
-            <div className="flex justify-between items-center">
-              <div className="flex gap-3 items-center">
-                <Avatar className="w-20 h-20">
+          <div className="mt-5 space-y-5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Avatar className="h-20 w-20">
                   <AvatarImage src={session.user.user_metadata.picture} alt="User picture" />
                   <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
                 <div>
                   <p className="text-xl font-semibold">Kenneth Quintero</p>
-                  <p className="text-muted-foreground text-sm">
+                  <p className="text-sm text-muted-foreground">
                     @{session.user.user_metadata.full_name}
                   </p>
                 </div>
@@ -50,7 +50,7 @@ export default function ProfilePage() {
             <div>
               <h2 className="text-muted-foreground">📊 Statistics</h2>
               <div className="coming-soon">
-                <div className="grid grid-cols-3 gap-4 mt-5 content">
+                <div className="content mt-5 grid grid-cols-3 gap-4">
                   <Card>
                     <CardHeader>
                       <CardTitle className="tracking-light text-ms font-normal">

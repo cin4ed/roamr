@@ -82,37 +82,37 @@ export default function ImageDropzone({
 
   return (
     <div className={cn('space-y-2', className)}>
-      <div className="bg-background rounded-md p-2">
+      <div className="rounded-md bg-background p-2">
         <div
           {...getRootProps()}
           className={cn(
-            'h-24 relative rounded-md p-6 text-center cursor-pointer flex flex-col items-center justify-center',
+            'relative flex h-24 cursor-pointer flex-col items-center justify-center rounded-md p-6 text-center',
             'border-2 border-dashed border-muted-foreground/30',
-            'hover:bg-muted/20 transition-colors duration-200',
+            'transition-colors duration-200 hover:bg-muted/20',
             isDragActive && 'bg-primary/5',
-            files.length >= maxFiles && 'opacity-50 cursor-not-allowed dz-max-files-reached'
+            files.length >= maxFiles && 'dz-max-files-reached cursor-not-allowed opacity-50'
           )}
         >
           <input {...getInputProps()} />
           {isDragActive ? (
-            <p className="text-sm text-balance text-muted-foreground">Drop the images here...</p>
+            <p className="text-balance text-sm text-muted-foreground">Drop the images here...</p>
           ) : files.length >= maxFiles ? (
-            <p className="text-sm text-balance text-muted-foreground">
+            <p className="text-balance text-sm text-muted-foreground">
               Maximum number of files reached
             </p>
           ) : (
-            <p className="text-sm text-balance text-muted-foreground">
+            <p className="text-balance text-sm text-muted-foreground">
               Drag and drop images or click to select images
             </p>
           )}
-          <p className="text-xs mt-1 text-muted-foreground">
+          <p className="mt-1 text-xs text-muted-foreground">
             {files.length}/{maxFiles} images (JPG, PNG only)
           </p>
         </div>
       </div>
 
       {fileRejections.length > 0 && (
-        <div className="text-xs text-red-500 mt-1 p-2 bg-red-50 rounded-md">
+        <div className="mt-1 rounded-md bg-red-50 p-2 text-xs text-red-500">
           {fileRejections.map((rejection, index) => (
             <div key={index}>
               {rejection.errors.map((error: FileError, errorIndex) => (
@@ -127,19 +127,19 @@ export default function ImageDropzone({
 
       {files.length > 0 && (
         <div className="mt-4">
-          <div className="grid grid-cols-3 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-3 sm:grid-cols-3">
             {files.map((file, index) => (
               <div
                 key={index}
-                className="relative group aspect-square rounded-md overflow-hidden border border-muted"
+                className="group relative aspect-square overflow-hidden rounded-md border border-muted"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={file.preview} alt={file.name} className="w-full h-full object-cover" />
+                <img src={file.preview} alt={file.name} className="h-full w-full object-cover" />
                 <Button
                   type="button"
                   variant="outline"
                   size="icon"
-                  className="absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="absolute right-1 top-1 h-6 w-6 opacity-0 transition-opacity group-hover:opacity-100"
                   onClick={e => {
                     e.stopPropagation();
                     removeFile(index);
@@ -147,7 +147,7 @@ export default function ImageDropzone({
                 >
                   <X className="h-3 w-3" />
                 </Button>
-                <div className="absolute inset-x-0 bottom-0 bg-black/60 text-white text-xs truncate px-2 py-1">
+                <div className="absolute inset-x-0 bottom-0 truncate bg-black/60 px-2 py-1 text-xs text-white">
                   {file.name}
                 </div>
               </div>

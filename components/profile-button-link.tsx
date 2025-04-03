@@ -11,7 +11,7 @@ export function ProfileButtonLink({ session }: ProfileButtonLinkProps) {
     <Link href="/profile">
       <div
         className={
-          'aspect-square border rounded-full overflow-hidden h-10 w-10 cursor-pointer hover:ring-1 ring-zinc-400'
+          'aspect-square h-10 w-10 cursor-pointer overflow-hidden rounded-full border ring-zinc-400 hover:ring-1'
         }
       >
         <Image

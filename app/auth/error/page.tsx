@@ -33,10 +33,10 @@ function AuthErrorContent() {
   };
 
   return (
-    <div className="relative flex min-h-svh w-full items-center justify-center p-6 md:p-10 bg-zinc-100 overflow-hidden">
+    <div className="relative flex min-h-svh w-full items-center justify-center overflow-hidden bg-zinc-100 p-6 md:p-10">
       {/* Background texture overlay */}
       <div
-        className="absolute inset-0 z-0 pointer-events-none"
+        className="pointer-events-none absolute inset-0 z-0"
         style={{
           opacity: 0.8,
           backgroundRepeat: 'repeat',
@@ -47,7 +47,7 @@ function AuthErrorContent() {
         aria-hidden="true"
       ></div>
 
-      <div className="w-full max-w-sm relative z-10">
+      <div className="relative z-10 w-full max-w-sm">
         <div className="flex flex-col items-center gap-7">
           <Image src={roamrLogo} alt="Roamr Logo" width={175} />
           <Card className="w-full max-w-md">

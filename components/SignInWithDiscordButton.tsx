@@ -6,7 +6,7 @@ export default function SignInWithDiscordButton() {
     <Button
       type="button"
       variant="outline"
-      className="w-full h-12 sm:h-10 text-base"
+      className="h-12 w-full text-base sm:h-10"
       onClick={() => signInWithDiscord()}
     >
       <span className="flex items-center justify-center gap-2">

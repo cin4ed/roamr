@@ -17,10 +17,10 @@ export default async function CreateLocationPage() {
   }
 
   return (
-    <div className="relative flex min-h-svh w-full items-center justify-center p-6 md:p-10 bg-zinc-100 overflow-hidden">
+    <div className="relative flex min-h-svh w-full items-center justify-center overflow-hidden bg-zinc-100 p-6 md:p-10">
       {/* Background texture overlay */}
       <div
-        className="absolute inset-0 z-0 pointer-events-none"
+        className="pointer-events-none absolute inset-0 z-0"
         style={{
           opacity: 0.8,
           backgroundRepeat: 'repeat',
@@ -31,9 +31,9 @@ export default async function CreateLocationPage() {
         aria-hidden="true"
       ></div>
 
-      <div className="w-full max-w-sm relative z-10">
+      <div className="relative z-10 w-full max-w-sm">
         <Image src={newLocationImage} alt="New Location" width={250} height={250} priority />
-        <CreateLocationForm className="space-y-5 mt-5" />
+        <CreateLocationForm className="mt-5 space-y-5" />
       </div>
     </div>
   );
