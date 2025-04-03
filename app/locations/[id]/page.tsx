@@ -63,7 +63,7 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
           <Link href="/" className="text-sm underline underline-offset-[.22rem]">
             Home
           </Link>
-          <Link href="/locations/explore" className="text-sm underline underline-offset-[.22rem]">
+          <Link href="/explore" className="text-sm underline underline-offset-[.22rem]">
             Map
           </Link>
         </div>
