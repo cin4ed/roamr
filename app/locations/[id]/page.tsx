@@ -5,7 +5,6 @@ import Markdown from 'react-markdown';
 import breakPlugin from 'remark-breaks';
 import '@fontsource/koh-santepheap/900.css';
 import Link from 'next/link';
-import { cn } from '@/utils/cn';
 
 async function fetchLocationById(id: string): Promise<Location | null> {
   const supabase = await createClient();
@@ -48,26 +47,7 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
   }
 
   return (
-    <div
-      className={cn(
-        'container mx-auto min-h-screen max-w-5xl space-y-4 bg-white font-[family-name:var(--font-geist-sans)]'
-      )}
-    >
-      <div className="flex justify-between bg-primary px-4 py-2 pb-3 text-white">
-        <div className="bg-white px-3 text-primary">
-          <Link href="/" className="text-sm font-bold">
-            Roamr
-          </Link>
-        </div>
-        <div className="flex gap-4">
-          <Link href="/" className="text-sm underline underline-offset-[.22rem]">
-            Home
-          </Link>
-          <Link href="/explore" className="text-sm underline underline-offset-[.22rem]">
-            Map
-          </Link>
-        </div>
-      </div>
+    <>
       <div className="relative h-96">
         <Image
           src={location.featured_image || '/placeholder-image.jpg'}
@@ -76,19 +56,6 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
           objectFit="cover"
           className="brightness-75"
         />
-        {/* <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/30 p-4 text-center text-background">
-          <h1
-            className="mb-2 max-w-2xl text-balance text-[3.5rem] leading-[1] antialiased md:text-[4.5rem]"
-            style={{ fontFamily: '"Koh Santepheap"', fontWeight: 700 }}
-          >
-            {location.name}
-          </h1>
-          <p className="text-xl font-light md:text-2xl">
-            {location.city
-              ? `${location.city}, ${location.country}`
-              : 'Location details unavailable'}
-          </p>
-        </div> */}
       </div>
       <div className="flex justify-between">
         <div>
@@ -115,31 +82,12 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
           </Link>
         </div>
       </div>
-
       <hr className="my-4 border-dashed border-primary" />
-
-      <div className="container relative mx-auto max-w-5xl">
-        <div className="flex flex-col gap-4">
-          {/* <div className="flex flex-wrap gap-2">
-            {location.tags.map(tag => (
-              <span
-                key={tag.id}
-                className="rounded-md bg-primary px-3 py-1 text-sm italic text-white"
-              >
-                #{tag.name}
-              </span>
-            ))}
-          </div>
-          <p className="italic text-gray-700">
-            {location.description || 'No description available'}
-          </p> */}
-          <div className="markdown">
-            <Markdown remarkPlugins={[breakPlugin]}>
-              {location.content?.content?.replace(/\\n/g, '\n') || ''}
-            </Markdown>
-          </div>
-        </div>
+      <div className="markdown">
+        <Markdown remarkPlugins={[breakPlugin]}>
+          {location.content?.content?.replace(/\\n/g, '\n') || ''}
+        </Markdown>
       </div>
-    </div>
+    </>
   );
 }
