@@ -1,6 +1,8 @@
 import Image from 'next/image';
 import { createClient } from '@/utils/supabase/server';
 import type { Location } from '@/types';
+import Markdown from 'react-markdown';
+import breakPlugin from 'remark-breaks';
 import '@fontsource/koh-santepheap/900.css';
 
 async function fetchLocationById(id: string): Promise<Location | null> {
@@ -8,18 +10,30 @@ async function fetchLocationById(id: string): Promise<Location | null> {
 
   const { data, error } = await supabase
     .from('locations')
-    .select('*, location_media(*), tags(*)')
+    .select('*, location_media(*), location_revisions!fk_latest_revision(*), tags(*)')
     .eq('id', id)
     .single();
-
-  console.log(data);
 
   if (error) {
     console.error('Error fetching location:', error);
     return null;
   }
 
-  return data;
+  const { data: content, error: contentError } = await supabase
+    .from('location_content')
+    .select('*')
+    .eq('id', data!.location_revisions!.location_content_id)
+    .single();
+
+  if (contentError) {
+    console.error('Error fetching location content:', contentError);
+    return null;
+  }
+
+  return {
+    ...data,
+    content: content,
+  };
 }
 
 export default async function LocationDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -30,6 +44,8 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
   if (!location) {
     return <div className="container mx-auto p-6 text-center">Location not found.</div>;
   }
+
+  console.log(location);
 
   return (
     <div className="min-h-screen bg-background">
@@ -68,7 +84,12 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
               </span>
             ))}
           </div>
-          <p className="">{location.description || 'No description available'}</p>
+          <p>{location.description || 'No description available'}</p>
+          <div className="markdown">
+            <Markdown remarkPlugins={[breakPlugin]}>
+              {location.content?.content?.replace(/\\n/g, '\n') || ''}
+            </Markdown>
+          </div>
         </div>
       </div>
     </div>
