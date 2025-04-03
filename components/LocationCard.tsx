@@ -47,8 +47,8 @@ export default function LocationCard({
       {/* Tags */}
       <div className="mb-4 flex flex-wrap gap-2">
         {location.tags?.map(tag => (
-          <span key={tag} className="rounded-md bg-primary px-3 py-1 text-sm italic text-white">
-            #{tag}
+          <span key={tag.id} className="rounded-md bg-primary px-3 py-1 text-sm italic text-white">
+            #{tag.name}
           </span>
         ))}
       </div>
