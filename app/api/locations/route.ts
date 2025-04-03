@@ -108,6 +108,9 @@ export async function POST(req: Request) {
         .insert({
           location_id: location.id,
           media_url: fileName,
+          media_type: 'photo',
+          caption: '',
+          uploaded_by: user.user.id,
         })
         .select()
         .single();
