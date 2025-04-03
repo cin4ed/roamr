@@ -104,6 +104,12 @@ body {
   pointer-events: none;
 }
 
-.markdown > * {
-  all: revert;
+.markdown > h1 {
+  @apply text-2xl font-bold text-primary;
+  @apply border-b border-primary/50 pb-2;
+}
+
+.markdown > h2 {
+  @apply text-xl font-bold text-primary;
+  @apply my-3;
 }
