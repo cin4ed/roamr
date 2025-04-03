@@ -1,12 +1,13 @@
 import { useState } from 'react';
-import { ProjectionSpecification } from 'react-map-gl/maplibre';
+import type { ProjectionSpecification } from 'react-map-gl/maplibre';
+
+type MapProjection = ProjectionSpecification | 'globe' | null;
 
 export const useMapProjection = () => {
-  const [isMercator, setIsMercator] = useState(true);
+  const [projection, setProjection] = useState<MapProjection>(null);
 
   return {
-    currentProjection: (isMercator ? 'mercator' : 'globe') as 'mercator' | 'globe',
-    isMercator,
-    toggleProjection: () => setIsMercator(prev => !prev),
+    projection,
+    setProjection,
   };
 };

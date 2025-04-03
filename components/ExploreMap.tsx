@@ -1,33 +1,42 @@
 'use client';
 
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback, useState } from 'react';
 import { useLocations } from '@/hooks/useLocations';
 import Map, { MapRef } from 'react-map-gl/maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { Map as MapIcon, Satellite, RotateCcw, Globe, Layers } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { LocationMarker } from '@/components/location-marker';
-import { cn } from '@/utils/cn';
 import type { Location } from '@/types';
-import { useGlobeSpinning } from '@/hooks/useGlobeSpinning';
-import { useMapStyle } from '@/hooks/useMapStyle';
-import { useMapProjection } from '@/hooks/useMapProjection';
+import type { MapSettings } from '@/components/MapSettingsCard';
+import MapSettingsCard from '@/components/MapSettingsCard';
+import { cn } from '@/utils/cn';
+import { mapStyleVector, mapStyleRaster } from '@/utils/map';
+import { Settings } from 'lucide-react';
 
-export default function ExploreMap({ className }: { className?: string }) {
+interface ExploreMapProps extends React.HTMLAttributes<HTMLDivElement> {
+  onLocationClick: (location: Location) => void;
+}
+
+export default function ExploreMap({ className, onLocationClick }: ExploreMapProps) {
+  const [mapSettings, setMapSettings] = useState<MapSettings>({
+    projection: 'mercator',
+    style: 'vector',
+  });
+  const [showSettings, setShowSettings] = useState(false);
+
   const mapRef = useRef<MapRef>(null);
   const { locations } = useLocations();
-  const { currentStyle, isVectorStyle, toggleStyle } = useMapStyle();
-  const { currentProjection, isMercator, toggleProjection } = useMapProjection();
-  const { spinGlobe, userInteracted, handleUserInteraction, resetInteraction } =
-    useGlobeSpinning(mapRef);
 
-  const handleOnLocationClick = useCallback((location: Location) => {
-    mapRef.current?.flyTo({
-      center: [location.longitude, location.latitude],
-      duration: 1000,
-      essential: true,
-    });
-  }, []);
+  const handleOnLocationClick = useCallback(
+    (location: Location) => {
+      mapRef.current?.panTo([location.longitude, location.latitude], {
+        duration: 1000,
+        easing: n => n,
+      });
+
+      onLocationClick(location);
+    },
+    [onLocationClick]
+  );
 
   const flyToLocation = useCallback((location: Location) => {
     mapRef.current?.flyTo({
@@ -35,6 +44,10 @@ export default function ExploreMap({ className }: { className?: string }) {
       zoom: 15,
     });
   }, []);
+
+  const getMapStyle = (): string => {
+    return mapSettings.style === 'vector' ? mapStyleVector : mapStyleRaster;
+  };
 
   const mapProps = {
     id: 'main',
@@ -47,22 +60,9 @@ export default function ExploreMap({ className }: { className?: string }) {
     maxZoom: 15.9,
     style: { width: '100%', height: '100%' },
     cursor: 'grab',
-    projection: currentProjection,
-    mapStyle: currentStyle,
+    projection: mapSettings.projection,
+    mapStyle: getMapStyle(),
   };
-
-  // Only use spinGlobe animation when in globe projection
-  const handleMapLoad = useCallback(() => {
-    if (!isMercator) {
-      spinGlobe();
-    }
-  }, [isMercator, spinGlobe]);
-
-  const handleMapMoveEnd = useCallback(() => {
-    if (!isMercator) {
-      spinGlobe();
-    }
-  }, [isMercator, spinGlobe]);
 
   return (
     <div
@@ -72,14 +72,7 @@ export default function ExploreMap({ className }: { className?: string }) {
           'radial-gradient(circle, rgba(0,53,201,1) 8%, rgba(0,32,103,1) 17%, rgba(8,15,56,1) 30%, rgba(0,7,28,1) 80%)',
       }}
     >
-      <Map
-        {...mapProps}
-        ref={mapRef}
-        onLoad={handleMapLoad}
-        onMoveEnd={handleMapMoveEnd}
-        onTouchStart={handleUserInteraction}
-        onMouseDown={handleUserInteraction}
-      >
+      <Map {...mapProps} ref={mapRef}>
         {locations.map(location => (
           <LocationMarker
             key={location.id}
@@ -89,37 +82,20 @@ export default function ExploreMap({ className }: { className?: string }) {
           />
         ))}
       </Map>
-      <div className="absolute top-4 right-4 flex flex-col gap-2">
-        <MapStyleButton isVectorStyle={isVectorStyle} onToggle={toggleStyle} />
-        <ProjectionButton isMercator={isMercator} onToggle={toggleProjection} />
-        {!isMercator && userInteracted && (
-          <Button variant="outline" onClick={resetInteraction}>
-            <RotateCcw className="w-4 h-4" />
-          </Button>
-        )}
-      </div>
+      <button
+        onClick={() => setShowSettings(!showSettings)}
+        className="fixed top-4 right-4 z-20 p-2 bg-white rounded-full shadow-lg hover:bg-gray-100 transition-colors"
+        aria-label="Toggle map settings"
+      >
+        <Settings className="w-5 h-5 text-gray-700" />
+      </button>
+      {showSettings && (
+        <MapSettingsCard
+          settings={mapSettings}
+          onSettingsChange={setMapSettings}
+          className="fixed top-16 right-4 z-10 shadow"
+        />
+      )}
     </div>
-  );
-}
-
-function MapStyleButton({
-  isVectorStyle,
-  onToggle,
-}: {
-  isVectorStyle: boolean;
-  onToggle: () => void;
-}) {
-  return (
-    <Button variant="outline" onClick={onToggle}>
-      {isVectorStyle ? <Layers className="w-4 h-4" /> : <Satellite className="w-4 h-4" />}
-    </Button>
-  );
-}
-
-function ProjectionButton({ isMercator, onToggle }: { isMercator: boolean; onToggle: () => void }) {
-  return (
-    <Button variant="outline" onClick={onToggle}>
-      {isMercator ? <Globe className="w-4 h-4" /> : <MapIcon className="w-4 h-4" />}
-    </Button>
   );
 }
