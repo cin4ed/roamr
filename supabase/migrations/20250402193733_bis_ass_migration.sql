@@ -157,10 +157,21 @@ create policy "All users can view locations"
     for select
     using (true);
 
-create trigger update_locations_updated_at
-    before update on public.locations
-    for each row
-    execute function update_updated_at_column();
+create policy "All users can update locations"
+    on public.locations
+    for update
+    using (true);
+
+-- create policy "Authenticated users can update locations"
+--     on public.locations
+--     for update
+--     to authenticated
+--     with check (true);
+
+-- create trigger update_locations_updated_at
+--     before update on public.locations
+--     for each row
+--     execute function update_updated_at_column();
 
 
 -- create location_tags table

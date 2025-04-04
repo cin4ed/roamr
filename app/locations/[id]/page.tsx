@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import Image from 'next/image';
 import { createClient } from '@/utils/supabase/server';
 import type { Location } from '@/types';
