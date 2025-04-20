@@ -2,6 +2,7 @@
 
 import { useRef, useCallback, useState } from 'react';
 import { useLocations } from '@/hooks/useLocations';
+import { useClickOutside } from '@/hooks/useClickOutside';
 import Map, { MapRef } from 'react-map-gl/maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { LocationMarker } from '@/components/location-marker';
@@ -10,7 +11,8 @@ import type { MapSettings } from '@/components/MapSettingsCard';
 import MapSettingsCard from '@/components/MapSettingsCard';
 import { cn } from '@/utils/cn';
 import { mapStyleVector, mapStyleRaster } from '@/utils/map';
-import { Settings } from 'lucide-react';
+import { Settings, MapPinPlusInsideIcon } from 'lucide-react';
+import Link from 'next/link';
 
 interface ExploreMapProps extends React.HTMLAttributes<HTMLDivElement> {
   onLocationClick: (location: Location) => void;
@@ -21,10 +23,14 @@ export default function ExploreMap({ className, onLocationClick }: ExploreMapPro
     projection: 'mercator',
     style: 'vector',
   });
-  const [showSettings, setShowSettings] = useState(false);
 
+  const [showSettings, setShowSettings] = useState(false);
+  const [mapLongitude, setMapLongitude] = useState(16.0589);
+  const [mapLatitude, setMapLatitude] = useState(34.42);
+  const [mapZoom, setMapZoom] = useState(1.68);
   const mapRef = useRef<MapRef>(null);
   const { locations } = useLocations();
+  const settingsRef = useClickOutside<HTMLDivElement>(() => setShowSettings(false));
 
   const handleOnLocationClick = useCallback(
     (location: Location) => {
@@ -52,9 +58,9 @@ export default function ExploreMap({ className, onLocationClick }: ExploreMapPro
   const mapProps = {
     id: 'main',
     initialViewState: {
-      longitude: -100,
-      latitude: 40,
-      zoom: 0.7,
+      longitude: mapLongitude,
+      latitude: mapLatitude,
+      zoom: mapZoom,
     },
     minZoom: 0.7,
     maxZoom: 15.9,
@@ -62,6 +68,13 @@ export default function ExploreMap({ className, onLocationClick }: ExploreMapPro
     cursor: 'grab',
     projection: mapSettings.projection,
     mapStyle: getMapStyle(),
+    onMove: (evt: { viewState: { longitude: number; latitude: number } }) => {
+      setMapLongitude(evt.viewState.longitude);
+      setMapLatitude(evt.viewState.latitude);
+    },
+    onZoom: (evt: { viewState: { zoom: number } }) => {
+      setMapZoom(evt.viewState.zoom);
+    },
   };
 
   return (
@@ -72,6 +85,7 @@ export default function ExploreMap({ className, onLocationClick }: ExploreMapPro
           'radial-gradient(circle, rgba(0,53,201,1) 8%, rgba(0,32,103,1) 17%, rgba(8,15,56,1) 30%, rgba(0,7,28,1) 80%)',
       }}
     >
+      {/* Map */}
       <Map {...mapProps} ref={mapRef}>
         {locations.map(location => (
           <LocationMarker
@@ -82,18 +96,28 @@ export default function ExploreMap({ className, onLocationClick }: ExploreMapPro
           />
         ))}
       </Map>
-      <button
-        onClick={() => setShowSettings(!showSettings)}
-        className="fixed right-4 top-4 z-20 rounded-full bg-background p-2 shadow-lg"
-        aria-label="Toggle map settings"
-      >
-        <Settings className="h-5 w-5 text-primary" />
-      </button>
+      {/* Map Overlay */}
+      <div className="fixed right-4 top-4 z-20 flex flex-col gap-2">
+        <button
+          onMouseDown={e => {
+            e.stopPropagation();
+            setShowSettings(!showSettings);
+          }}
+          className="rounded-full bg-primary p-2 shadow-lg"
+          aria-label="Toggle map settings"
+        >
+          <Settings className="h-5 w-5 text-primary-foreground" />
+        </button>
+        <Link href="/locations/create" className="rounded-full bg-primary p-2 shadow-lg">
+          <MapPinPlusInsideIcon className="h-5 w-5 text-primary-foreground" />
+        </Link>
+      </div>
       {showSettings && (
         <MapSettingsCard
+          ref={settingsRef}
           settings={mapSettings}
           onSettingsChange={setMapSettings}
-          className="fixed right-4 top-16 z-10 shadow"
+          className="fixed right-4 top-16 z-20 shadow"
         />
       )}
     </div>
