@@ -1,0 +1,38 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# DaisyUI Configuration and Usage Guide
+
+## Configuration
+The project uses DaisyUI for component styling and theming. The configuration is defined in [tailwind.config.ts](mdc:tailwind.config.ts).
+
+Key configuration points:
+- All DaisyUI themes are enabled
+- Default dark theme is set to "dark"
+- Base styles and styled components are enabled
+- No prefix is used for DaisyUI classes
+- Logging is disabled for cleaner development output
+
+## Component Usage
+When building components:
+1. Use DaisyUI's built-in classes for consistent styling
+2. Combine with Tailwind's utility classes when needed
+3. Prefer DaisyUI components over custom implementations for:
+   - Buttons (`btn` classes)
+   - Cards (`card` classes)
+   - Modals (`modal` classes)
+   - Forms (`form-control` classes)
+   - Navigation (`navbar` classes)
+
+## Theme System
+- DaisyUI themes are globally available
+- Use data-theme attribute to change themes
+- Theme changes should be managed through a theme context/provider
+
+## Best Practices
+1. Always check DaisyUI's documentation for available components
+2. Use semantic class names (e.g., `btn-primary` over custom color utilities)
+3. Leverage DaisyUI's modifier classes (e.g., `btn-sm`, `btn-lg`)
+4. Combine with [components/**/*.tsx](mdc:components) for reusable UI elements

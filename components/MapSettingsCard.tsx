@@ -1,7 +1,7 @@
-import { useState, forwardRef } from 'react';
-import { cn } from '@/utils/cn';
+import { useState, forwardRef, useEffect } from 'react';
+import { cn } from '@/lib/cn';
 import { RotateCcw } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { motion } from 'framer-motion';
 
 export interface MapSettings {
   projection: 'mercator' | 'globe';
@@ -11,11 +11,23 @@ export interface MapSettings {
 interface MapSettingsCardProps extends React.HTMLAttributes<HTMLDivElement> {
   settings: MapSettings;
   onSettingsChange: (settings: MapSettings) => void;
+  buttonRef: React.RefObject<HTMLButtonElement>;
 }
 
 const MapSettingsCard = forwardRef<HTMLDivElement, MapSettingsCardProps>(
-  ({ settings, onSettingsChange, className }, ref) => {
+  ({ settings, onSettingsChange, className, buttonRef }, ref) => {
     const [userInteracted, setUserInteracted] = useState(false);
+    const [buttonPosition, setButtonPosition] = useState({ x: 0, y: 0 });
+
+    useEffect(() => {
+      if (buttonRef.current) {
+        const rect = buttonRef.current.getBoundingClientRect();
+        setButtonPosition({
+          x: rect.left,
+          y: rect.top,
+        });
+      }
+    }, [buttonRef]);
 
     const handleProjectionChange = (newProjection: 'mercator' | 'globe') => {
       setUserInteracted(true);
@@ -37,7 +49,29 @@ const MapSettingsCard = forwardRef<HTMLDivElement, MapSettingsCardProps>(
     };
 
     return (
-      <div ref={ref} className={cn('w-52 rounded-lg bg-white px-4 py-3 text-primary', className)}>
+      <motion.div
+        ref={ref}
+        initial={{
+          opacity: 0,
+          scale: 0,
+          originX: 1,
+          originY: 0,
+        }}
+        animate={{
+          opacity: 1,
+          scale: 1,
+        }}
+        exit={{
+          opacity: 0,
+          scale: 0,
+        }}
+        transition={{
+          type: 'spring',
+          stiffness: 400,
+          damping: 25,
+        }}
+        className={cn('w-52 rounded-lg bg-white px-4 py-3 text-primary', className)}
+      >
         <div className="space-y-4">
           <h3 className="text-sm font-medium">Map Settings</h3>
           <fieldset className="space-y-2 rounded-lg border border-primary/50 px-3 py-1">
@@ -94,14 +128,14 @@ const MapSettingsCard = forwardRef<HTMLDivElement, MapSettingsCardProps>(
 
           {settings.projection === 'globe' && userInteracted && (
             <div>
-              <Button variant="outline" size="sm" onClick={resetInteraction} className="w-full">
+              <button onClick={resetInteraction} className="w-full">
                 <RotateCcw className="mr-2 h-3 w-3" />
                 Resume Spinning
-              </Button>
+              </button>
             </div>
           )}
         </div>
-      </div>
+      </motion.div>
     );
   }
 );

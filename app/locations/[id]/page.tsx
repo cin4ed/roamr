@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic';
 
 import Image from 'next/image';
-import { createClient } from '@/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import type { Location } from '@/types';
 import Markdown from 'react-markdown';
 import breakPlugin from 'remark-breaks';

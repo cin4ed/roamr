@@ -9,10 +9,12 @@ import { LocationMarker } from '@/components/location-marker';
 import type { Location } from '@/types';
 import type { MapSettings } from '@/components/MapSettingsCard';
 import MapSettingsCard from '@/components/MapSettingsCard';
-import { cn } from '@/utils/cn';
-import { mapStyleVector, mapStyleRaster } from '@/utils/map';
+import { cn } from '@/lib/cn';
+import { mapStyleVector, mapStyleRaster } from '@/lib/map';
 import { Settings, MapPinPlusInsideIcon } from 'lucide-react';
 import Link from 'next/link';
+import { AnimatePresence } from 'framer-motion';
+import { useAuth } from '@/hooks/useAuth';
 
 interface ExploreMapProps extends React.HTMLAttributes<HTMLDivElement> {
   onLocationClick: (location: Location) => void;
@@ -23,12 +25,13 @@ export default function ExploreMap({ className, onLocationClick }: ExploreMapPro
     projection: 'mercator',
     style: 'vector',
   });
-
+  const { session } = useAuth();
   const [showSettings, setShowSettings] = useState(false);
   const [mapLongitude, setMapLongitude] = useState(16.0589);
   const [mapLatitude, setMapLatitude] = useState(34.42);
   const [mapZoom, setMapZoom] = useState(1.68);
   const mapRef = useRef<MapRef>(null);
+  const settingsButtonRef = useRef<HTMLButtonElement>(null);
   const { locations } = useLocations();
   const settingsRef = useClickOutside<HTMLDivElement>(() => setShowSettings(false));
 
@@ -97,29 +100,46 @@ export default function ExploreMap({ className, onLocationClick }: ExploreMapPro
         ))}
       </Map>
       {/* Map Overlay */}
-      <div className="fixed right-4 top-4 z-20 flex flex-col gap-2">
+      <div className="fixed top-4 right-4 z-20 flex flex-col gap-2">
+        {session && (
+          <Link href="/profile" className="h-12 w-12">
+            <div className="border-primary-content h-full w-full overflow-hidden rounded-full border">
+              <img
+                src={session.user.user_metadata.avatar_url}
+                className="h-full w-full object-cover"
+              />
+            </div>
+          </Link>
+        )}
         <button
+          ref={settingsButtonRef}
           onMouseDown={e => {
             e.stopPropagation();
             setShowSettings(!showSettings);
           }}
-          className="rounded-full bg-primary p-2 shadow-lg"
+          className="bg-primary-content text-base-100 flex h-12 w-12 items-center justify-center rounded-full p-2 shadow-lg"
           aria-label="Toggle map settings"
         >
-          <Settings className="h-5 w-5 text-primary-foreground" />
+          <Settings className="text-primary-foreground h-6 w-6" />
         </button>
-        <Link href="/locations/create" className="rounded-full bg-primary p-2 shadow-lg">
-          <MapPinPlusInsideIcon className="h-5 w-5 text-primary-foreground" />
+        <Link
+          href="/locations/create"
+          className="bg-primary-content text-base-100 flex h-12 w-12 items-center justify-center rounded-full p-2 shadow-lg"
+        >
+          <MapPinPlusInsideIcon className="text-primary-foreground h-6 w-6" />
         </Link>
       </div>
-      {showSettings && (
-        <MapSettingsCard
-          ref={settingsRef}
-          settings={mapSettings}
-          onSettingsChange={setMapSettings}
-          className="fixed right-4 top-16 z-20 shadow"
-        />
-      )}
+      <AnimatePresence>
+        {showSettings && (
+          <MapSettingsCard
+            ref={settingsRef}
+            settings={mapSettings}
+            onSettingsChange={setMapSettings}
+            className="fixed top-16 right-4 z-20 shadow"
+            buttonRef={settingsButtonRef}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

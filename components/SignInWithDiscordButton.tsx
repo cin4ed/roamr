@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { signInWithDiscord } from '@/utils/auth';
+import { signInWithDiscord } from '@/lib/auth';
 
 export default function SignInWithDiscordButton() {
   return (

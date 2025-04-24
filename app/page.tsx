@@ -1,7 +1,5 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useEffect, useCallback, useMemo } from 'react';
@@ -93,13 +91,13 @@ export default function Home() {
 
         {/* Desktop Navigation */}
         <nav className="hidden items-center gap-6 md:flex">
-          <Button variant="ghost" asChild>
+          <button>
             <Link href="/explore">Explore</Link>
-          </Button>
-          <Button variant="ghost">Create</Button>
-          <Button variant="ghost">Invite</Button>
-          <Button variant="ghost">Log in</Button>
-          <Button>Sign up</Button>
+          </button>
+          <button>Create</button>
+          <button>Invite</button>
+          <button>Log in</button>
+          <button>Sign up</button>
         </nav>
 
         {/* Mobile Navigation */}
@@ -164,19 +162,16 @@ export default function Home() {
             {/* Search Bar */}
             <div className="mx-auto flex w-full max-w-3xl px-4 md:px-0">
               <div className="flex w-full overflow-hidden rounded-full border border-white/10 bg-black/30 backdrop-blur-sm">
-                <Input
+                <input
                   type="text"
                   placeholder={
                     `${placeholderText}${showCursor ? '|' : ' '}` || 'Search for locations...'
                   }
                   className="h-12 rounded-none border-0 bg-transparent px-4 !text-base text-white placeholder:text-white/80 focus-visible:ring-0 focus-visible:ring-offset-0 md:h-16 md:px-8 md:!text-lg [&:not(:placeholder-shown)]:!text-base md:[&:not(:placeholder-shown)]:!text-lg"
                 />
-                <Button
-                  variant="ghost"
-                  className="h-12 rounded-none px-6 text-base text-white hover:bg-white/10 md:h-16 md:px-12 md:text-lg"
-                >
+                <button className="h-12 rounded-none px-6 text-base text-white hover:bg-white/10 md:h-16 md:px-12 md:text-lg">
                   Search
-                </Button>
+                </button>
               </div>
             </div>
           </div>
@@ -189,9 +184,9 @@ export default function Home() {
                 <h2 className="mb-2 text-3xl font-bold">Latest Additions</h2>
                 <p className="text-zinc-600">Recently discovered locations by our community</p>
               </div>
-              <Button variant="outline" asChild>
+              <button>
                 <Link href="/explore">View All</Link>
-              </Button>
+              </button>
             </div>
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">

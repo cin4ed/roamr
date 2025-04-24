@@ -2,12 +2,10 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Marker } from 'react-map-gl/maplibre';
-import { Badge } from '@/components/ui/badge';
 import { Star } from 'lucide-react';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import type { Location } from '@/types';
 import Image from 'next/image';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 interface LocationMarkerProps {
   location: Location;
@@ -64,9 +62,9 @@ const LocationDetails = ({ location, media, rating, className = '' }: LocationDe
     {location.tags && location.tags.length > 0 && (
       <div className="flex flex-wrap items-center gap-2">
         {location.tags.map((tag: string) => (
-          <Badge key={tag} variant="secondary" className="text-xs">
+          <div key={tag} className="text-xs">
             {tag}
-          </Badge>
+          </div>
         ))}
       </div>
     )}
@@ -162,15 +160,21 @@ export function LocationMarker({
           </div>
         )}
 
-        {isMobile && (
-          <Dialog open={isTapped} onOpenChange={setIsTapped}>
-            <DialogContent className="max-h-[calc(100vh-2rem)] w-[calc(100vw-2rem)] max-w-full overflow-y-auto p-4 sm:w-auto sm:max-w-lg sm:p-6 md:max-w-xl">
-              <DialogHeader className="mb-2">
-                <DialogTitle>{location.name}</DialogTitle>
-              </DialogHeader>
+        {isMobile && isTapped && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+            <div className="max-h-[calc(100vh-2rem)] w-[calc(100vw-2rem)] max-w-full overflow-y-auto rounded-lg border bg-background p-4 sm:w-auto sm:max-w-lg sm:p-6 md:max-w-xl">
+              <div className="mb-2">
+                <h2 className="text-lg font-semibold">{location.name}</h2>
+              </div>
               <LocationDetails location={location} media={media} rating={rating} className="mb-2" />
-            </DialogContent>
-          </Dialog>
+              <button
+                onClick={() => setIsTapped(false)}
+                className="absolute right-2 top-2 rounded-full p-1 hover:bg-gray-100"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
         )}
       </div>
     </Marker>
