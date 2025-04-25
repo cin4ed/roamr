@@ -93,8 +93,7 @@ export default function LoginForm() {
       </form>
       <div>
         <Link href="/signup">
-          Don&apos;t have an account?{' '}
-          <span className="text-primary-content underline">Sign up</span>
+          Don&apos;t have an account? <span className="underline">Sign up</span>
         </Link>
       </div>
     </div>

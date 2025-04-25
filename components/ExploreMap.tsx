@@ -117,15 +117,12 @@ export default function ExploreMap({ className, onLocationClick }: ExploreMapPro
             e.stopPropagation();
             setShowSettings(!showSettings);
           }}
-          className="bg-primary-content text-base-100 flex h-12 w-12 items-center justify-center rounded-full p-2 shadow-lg"
+          className="btn rounded-full"
           aria-label="Toggle map settings"
         >
           <Settings className="text-primary-foreground h-6 w-6" />
         </button>
-        <Link
-          href="/locations/create"
-          className="bg-primary-content text-base-100 flex h-12 w-12 items-center justify-center rounded-full p-2 shadow-lg"
-        >
+        <Link href="/locations/create" className="btn rounded-full">
           <MapPinPlusInsideIcon className="text-primary-foreground h-6 w-6" />
         </Link>
       </div>

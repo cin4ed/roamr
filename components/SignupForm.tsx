@@ -52,7 +52,7 @@ export default function SignupForm() {
               placeholder="email"
               {...register('email')}
             />
-            {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>}
+            {errors.email && <p className="text-error mt-1 text-sm">{errors.email.message}</p>}
           </div>
 
           <div>
@@ -67,7 +67,7 @@ export default function SignupForm() {
               {...register('password')}
             />
             {errors.password && (
-              <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+              <p className="text-error mt-1 text-sm">{errors.password.message}</p>
             )}
           </div>
 
@@ -83,7 +83,7 @@ export default function SignupForm() {
               {...register('confirmPassword')}
             />
             {errors.confirmPassword && (
-              <p className="mt-1 text-sm text-red-600">{errors.confirmPassword.message}</p>
+              <p className="text-error mt-1 text-sm">{errors.confirmPassword.message}</p>
             )}
           </div>
 
@@ -99,7 +99,7 @@ export default function SignupForm() {
       </form>
       <div>
         <Link href="/login">
-          Already have an account? <span className="text-primary-content underline">Login</span>
+          Already have an account? <span className="underline">Login</span>
         </Link>
       </div>
     </div>

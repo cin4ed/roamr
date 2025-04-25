@@ -13,31 +13,34 @@ interface ExploreDrawerProps {
 
 export default function ExploreDrawer({ location, onClose }: ExploreDrawerProps) {
   return (
-    <div className="fixed bottom-0 left-0 top-0 z-[102] w-[75%] max-w-sm overflow-y-auto bg-white shadow-lg md:hidden">
-      <div className="space-y-4 p-4">
+    <div className="drawer-side z-[102] md:hidden">
+      <label htmlFor="explore-drawer" className="drawer-overlay"></label>
+      <div className="menu bg-base-100 h-full w-[75%] max-w-sm p-4">
         {/* Close button */}
         <div className="flex justify-end">
-          <button className="rounded-full p-2 hover:bg-gray-100" onClick={onClose}>
+          <button className="btn btn-circle btn-ghost btn-sm" onClick={onClose}>
             <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* Image */}
-        <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-muted">
-          <Image
-            src={location.featured_image || '/placeholder-image.jpg'}
-            alt={location.name}
-            className="object-cover"
-            fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            priority
-          />
+        <div className="card image-full mb-4">
+          <figure className="aspect-video">
+            <Image
+              src={location.featured_image || '/placeholder-image.jpg'}
+              alt={location.name}
+              className="object-cover"
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              priority
+            />
+          </figure>
         </div>
 
         {/* Title and Location */}
-        <div>
-          <h2 className="mb-1 text-2xl font-bold">{location.name}</h2>
-          <p className="text-gray-600">
+        <div className="card-body p-0">
+          <h2 className="card-title text-2xl">{location.name}</h2>
+          <p className="text-base-content/70">
             {location.city && location.country
               ? `${location.city}, ${location.country}`
               : 'Location details unavailable'}
@@ -45,29 +48,25 @@ export default function ExploreDrawer({ location, onClose }: ExploreDrawerProps)
         </div>
 
         {/* Description */}
-        <p className="italic text-gray-700">{location.description || 'No description available'}</p>
+        <p className="text-base-content/80 italic">
+          {location.description || 'No description available'}
+        </p>
 
         {/* Tags */}
         <div className="flex flex-wrap gap-2">
           {location.tags?.map(tag => (
-            <span key={tag} className="rounded-md bg-primary px-3 py-1 text-sm italic text-white">
+            <span key={tag} className="badge badge-primary">
               #{tag}
             </span>
           ))}
         </div>
 
         {/* Links */}
-        <div className="flex items-center justify-between pt-2">
-          <Link
-            href={`/locations/${location.id}/edit`}
-            className="text-sm text-primary underline underline-offset-[.22rem] hover:no-underline"
-          >
+        <div className="card-actions mt-4 justify-between">
+          <Link href={`/locations/${location.id}/edit`} className="link link-primary text-sm">
             Edit
           </Link>
-          <Link
-            href={`/locations/${location.id}`}
-            className="rounded bg-primary px-6 py-2 text-white transition-colors hover:bg-primary/90"
-          >
+          <Link href={`/locations/${location.id}`} className="btn btn-primary">
             View Full Page
           </Link>
         </div>
