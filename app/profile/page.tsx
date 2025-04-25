@@ -1,78 +1,112 @@
-'use client';
-
-import { useAuth } from '@/hooks/useAuth';
+import { redirect } from 'next/navigation';
+import { createClient } from '@/lib/supabase/server';
 import Link from 'next/link';
-import { Pencil } from 'lucide-react';
 import { signOut } from '@/lib/auth';
+import { Pencil, MapPin, Calendar } from 'lucide-react';
+import Image from 'next/image';
 
-export default function ProfilePage() {
-  const { session, loading } = useAuth();
+// Function to get high resolution Google profile picture
+function getHighResProfilePicture(url: string, useOriginal: boolean = false): string {
+  if (url.includes('googleusercontent.com') && url.includes('=s96-c')) {
+    // Either use a specific size or remove the size parameter for original quality
+    return useOriginal ? url.replace('=s96-c', '') : url.replace('=s96-c', '=s128-c');
+  }
+  return url;
+}
+
+export default async function ProfilePage() {
+  const supabase = await createClient();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (!session) redirect('/login');
+  const user = session.user;
+  console.log(user);
+
+  // Using 512px version for better performance while maintaining good quality
+  const profilePicture = getHighResProfilePicture(user.user_metadata.picture);
+
+  // If you want the original quality, you can use:
+  // const profilePicture = getHighResProfilePicture(user.user_metadata.picture, true);
 
   return (
-    <div className="flex h-screen w-full justify-center">
-      <div>
-        <div className="mt-5 flex items-center justify-between gap-3">
-          <div>
-            <Link href="/" className="btn btn-link">
-              Home
-            </Link>
-            <Link href="/explore" className="btn btn-link">
-              Explore
+    <div className="bg-base-200 min-h-screen">
+      <div className="container mx-auto px-4 py-8">
+        {/* Navigation Bar */}
+        <div className="navbar bg-base-100 rounded-box mb-8 shadow">
+          <div className="flex-1">
+            <Link href="/explore" className="btn btn-ghost text-xl normal-case">
+              <MapPin className="mr-2 h-5 w-5" />
+              Map
             </Link>
           </div>
-          <button className="btn btn-outline" onClick={signOut}>
-            Sign Out
-          </button>
+          <div className="flex-none">
+            <button className="btn btn-ghost" onClick={signOut}>
+              Sign Out
+            </button>
+          </div>
         </div>
-        <div className="divider"></div>
-        {loading && <span>Loading...</span>}
-        {session && (
-          <div className="mt-5 space-y-5">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="avatar">
-                  <div className="w-20 rounded-full">
-                    <img src={session.user.user_metadata.picture} alt="User picture" />
-                  </div>
-                </div>
-                <div>
-                  <p className="text-xl font-semibold">Kenneth Quintero</p>
-                  <p className="text-base-content/60 text-sm">
-                    @{session.user.user_metadata.full_name}
-                  </p>
+
+        {/* Profile Card */}
+        <div className="card bg-base-100 shadow">
+          <div className="card-body">
+            <div className="flex flex-col items-center gap-6 md:flex-row">
+              {/* Profile Picture */}
+              <div className="avatar">
+                <div className="ring-primary ring-offset-base-100 w-32 overflow-hidden rounded-full ring ring-offset-2">
+                  <Image
+                    src={profilePicture}
+                    alt="User picture"
+                    width={512}
+                    height={512}
+                    className="rounded-full object-cover"
+                    priority
+                    quality={100}
+                  />
                 </div>
               </div>
-              <button className="btn btn-outline" disabled>
-                <Pencil className="scale-90" />
-                <span>Edit</span>
-              </button>
+
+              {/* Profile Info */}
+              <div className="flex-1 text-center md:text-left">
+                <h2 className="card-title mb-2 text-3xl">
+                  Kenneth Quintero
+                  <button className="btn btn-circle btn-sm btn-outline ml-2" disabled>
+                    <Pencil className="h-4 w-4" />
+                  </button>
+                </h2>
+                <p className="text-base-content/60 mb-4 text-lg">
+                  @{session.user.user_metadata.full_name}
+                </p>
+                <div className="flex flex-wrap justify-center gap-4 md:justify-start">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="text-base-content/60 h-5 w-5" />
+                    <span className="text-base-content/60">Joined 2024</span>
+                  </div>
+                </div>
+              </div>
             </div>
+
+            {/* Stats */}
             <div className="divider"></div>
-            <div>
-              <h2 className="text-base-content/60">📊 Statistics</h2>
-              <div className="mt-5 grid grid-cols-3 gap-4">
-                <div className="card bg-base-200">
-                  <div className="card-body">
-                    <h3 className="card-title text-base font-normal">📍 Locations Visited</h3>
-                    <p className="text-2xl font-bold">13</p>
-                  </div>
-                </div>
-                <div className="card bg-base-200">
-                  <div className="card-body">
-                    <h3 className="card-title text-base font-normal">🗺️ Locations Contributed</h3>
-                    <p className="text-2xl font-bold">7</p>
-                  </div>
-                </div>
-                <div className="card bg-base-200">
-                  <div className="card-body">
-                    <h3 className="card-title text-base font-normal">💬 Locations Reviewed</h3>
-                    <p className="text-2xl font-bold">4</p>
-                  </div>
-                </div>
+            <div className="stats shadow">
+              <div className="stat">
+                <div className="stat-title">Places Visited</div>
+                <div className="stat-value">0</div>
+                <div className="stat-desc">Start exploring!</div>
+              </div>
+              <div className="stat">
+                <div className="stat-title">Reviews</div>
+                <div className="stat-value">0</div>
+                <div className="stat-desc">Share your experiences</div>
+              </div>
+              <div className="stat">
+                <div className="stat-title">Lists</div>
+                <div className="stat-value">0</div>
+                <div className="stat-desc">Create your first list</div>
               </div>
             </div>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
