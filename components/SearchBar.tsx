@@ -1,83 +1,82 @@
-'use client';
-
-import * as React from 'react';
-
-import { cn } from '@/utils/cn';
-import { Search, X } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import { useDebounce } from 'use-debounce';
-import type { FeatureCollection, Feature } from 'geojson';
-import { autocomplete } from '@/utils/photon';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { useState, useCallback } from 'react';
+import { Search } from 'lucide-react';
+import type { Location } from '@/types';
+import Fuse from 'fuse.js';
+import { cn } from '@/lib/cn';
 
 interface SearchBarProps {
-  onResultSelect: (result: Feature) => void;
+  locations: Location[];
+  onSearchResultClick: (location: Location) => void;
+  className?: string;
 }
 
-export default function SearchBar({ onResultSelect }: SearchBarProps) {
-  const [input, setInput] = useState('');
-  const [debouncedInput] = useDebounce(input, 500);
-  const [predictions, setPredictions] = useState<FeatureCollection>();
+interface FuseResult {
+  item: Location;
+  score?: number;
+  refIndex: number;
+}
 
-  useEffect(() => {
-    async function fetchPredictions() {
-      const newPredictions = await autocomplete(debouncedInput);
-      setPredictions(newPredictions);
-    }
-    if (debouncedInput) {
-      fetchPredictions();
-    }
-  }, [debouncedInput]);
+export default function SearchBar({ locations, onSearchResultClick, className }: SearchBarProps) {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<Location[]>([]);
+  const [isOpen, setIsOpen] = useState(false);
 
-  function selectFeature(feature: Feature) {
-    onResultSelect(feature);
-  }
+  // Initialize Fuse.js for fuzzy search
+  const fuse = new Fuse(locations, {
+    keys: ['name', 'description', 'city', 'country'],
+    threshold: 0.3,
+    includeScore: true,
+  });
 
-  function clearSearchBar() {
-    setInput('');
-    setPredictions(undefined);
-  }
+  const handleSearch = useCallback(
+    (query: string) => {
+      setSearchQuery(query);
+      if (query.trim() === '') {
+        setSearchResults([]);
+        return;
+      }
 
-  function onInputChangeHandler(e: React.ChangeEvent<HTMLInputElement>) {
-    setInput(e.target.value);
-    if (e.target.value === '') clearSearchBar();
-  }
+      const results = fuse.search(query).map((result: FuseResult) => result.item);
+      setSearchResults(results);
+    },
+    [fuse]
+  );
 
   return (
-    <div className={cn('overflow-hidden')}>
-      <div
-        className={cn(
-          'flex h-9 w-full items-center rounded-tl-md rounded-tr-md border px-3 py-1 text-base'
-        )}
-      >
-        <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
+    <div className={className}>
+      <label className="input w-full rounded-md">
+        <Search className="h-4 w-4" />
         <input
-          placeholder="Search"
-          className="flex-1 bg-transparent placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
-          value={input}
-          onChange={onInputChangeHandler}
+          type="search"
+          placeholder="Search locations..."
+          value={searchQuery}
+          onChange={e => handleSearch(e.target.value)}
+          onFocus={() => setIsOpen(true)}
+          onBlur={() => setTimeout(() => setIsOpen(false), 200)}
         />
-        {input.length > 0 && (
-          <X
-            className="ml-2 h-4 w-4 shrink-0 cursor-pointer opacity-50 transition-opacity hover:opacity-100"
-            onClick={clearSearchBar}
-          />
-        )}
-      </div>
-      {predictions && (
-        <ScrollArea className="h-56 rounded-bl-md rounded-br-md border-x border-b">
-          <div className="divide-y">
-            {predictions?.features.map(feature => (
-              <div
-                className="cursor-pointer px-2 py-1.5 text-sm hover:bg-zinc-800"
-                key={crypto.randomUUID()}
-                onClick={() => selectFeature(feature)}
-              >
-                {`${feature.properties?.name}, ${feature.properties?.country}`}
+      </label>
+      {isOpen && searchResults.length > 0 && (
+        <div className="dropdown-content rounded-box bg-base-100 mt-2 w-full p-2 shadow-lg">
+          {searchResults.map(location => (
+            <button
+              key={location.id}
+              className="btn btn-ghost btn-block justify-start"
+              onClick={() => {
+                onSearchResultClick(location);
+                setIsOpen(false);
+              }}
+            >
+              <div className="flex flex-col items-start">
+                <span className="font-medium">{location.name}</span>
+                {location.city && location.country && (
+                  <span className="text-base-content/70 text-sm">
+                    {location.city}, {location.country}
+                  </span>
+                )}
               </div>
-            ))}
-          </div>
-        </ScrollArea>
+            </button>
+          ))}
+        </div>
       )}
     </div>
   );

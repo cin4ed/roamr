@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useCallback, useState } from 'react';
+import { useRef, useCallback, useState, memo } from 'react';
 import { useLocations } from '@/hooks/useLocations';
 import { useClickOutside } from '@/hooks/useClickOutside';
 import Map, { MapRef } from 'react-map-gl/maplibre';
@@ -15,12 +15,18 @@ import { Settings, MapPinPlusInsideIcon } from 'lucide-react';
 import Link from 'next/link';
 import { AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
+import SearchBar from '@/components/SearchBar';
 
 interface ExploreMapProps extends React.HTMLAttributes<HTMLDivElement> {
   onLocationClick: (location: Location) => void;
+  selectedLocation?: Location | null;
 }
 
-export default function ExploreMap({ className, onLocationClick }: ExploreMapProps) {
+const ExploreMap = memo(function ExploreMap({
+  className,
+  onLocationClick,
+  selectedLocation,
+}: ExploreMapProps) {
   const [mapSettings, setMapSettings] = useState<MapSettings>({
     projection: 'mercator',
     style: 'vector',
@@ -82,12 +88,17 @@ export default function ExploreMap({ className, onLocationClick }: ExploreMapPro
 
   return (
     <div
-      className={cn(className)}
+      className={cn('relative', className)}
       style={{
         backgroundImage:
           'radial-gradient(circle, rgba(0,53,201,1) 8%, rgba(0,32,103,1) 17%, rgba(8,15,56,1) 30%, rgba(0,7,28,1) 80%)',
       }}
     >
+      {/* Search Bar */}
+      <div className="absolute top-4 left-4 z-20">
+        <SearchBar locations={locations} onSearchResultClick={handleOnLocationClick} />
+      </div>
+
       {/* Map */}
       <Map {...mapProps} ref={mapRef}>
         {locations.map(location => (
@@ -99,6 +110,7 @@ export default function ExploreMap({ className, onLocationClick }: ExploreMapPro
           />
         ))}
       </Map>
+
       {/* Map Overlay */}
       <div className="fixed top-4 right-4 z-20 flex flex-col gap-2">
         {session && (
@@ -139,4 +151,6 @@ export default function ExploreMap({ className, onLocationClick }: ExploreMapPro
       </AnimatePresence>
     </div>
   );
-}
+});
+
+export default ExploreMap;
