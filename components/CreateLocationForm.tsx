@@ -5,13 +5,8 @@ import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { ChooseLocationMap } from '@/components/ChooseLocationMap';
-import * as Form from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import ImageDropzone from '@/components/ImageDropzone';
-import { cn } from '@/utils/cn';
+import { cn } from '@/lib/cn';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 
@@ -135,160 +130,151 @@ export const CreateLocationForm = ({ className }: { className: string }) => {
   };
 
   return (
-    <Form.Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className={cn(className)}>
-        <div>
-          <Form.FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <Form.FormItem>
-                <Form.FormLabel>Name</Form.FormLabel>
-                <Form.FormControl>
-                  <div className="relative">
-                    <Input
-                      className="w-full bg-background pr-16"
-                      maxLength={MAX_NAME_LENGTH}
-                      {...field}
-                    />
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
-                      {field.value.length}/{MAX_NAME_LENGTH}
-                    </div>
-                  </div>
-                </Form.FormControl>
-                <Form.FormDescription>
-                  Give the location an original name, be creative!
-                </Form.FormDescription>
-                <Form.FormMessage />
-              </Form.FormItem>
-            )}
-          />
-        </div>
-        <div>
-          <Form.FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <Form.FormItem>
-                <Form.FormLabel>Description</Form.FormLabel>
-                <Form.FormControl>
-                  <div className="relative">
-                    <Textarea
-                      className="w-full bg-background pr-16"
-                      {...field}
-                      maxLength={MAX_DESCRIPTION_LENGTH}
-                    />
-                    <div className="absolute bottom-3 right-3 text-xs text-muted-foreground">
-                      {field.value.length}/{MAX_DESCRIPTION_LENGTH}
-                    </div>
-                  </div>
-                </Form.FormControl>
-                <Form.FormMessage />
-                <Form.FormDescription>
-                  Describe this location in detail. What makes it special?
-                </Form.FormDescription>
-              </Form.FormItem>
-            )}
-          />
-        </div>
-        <div>
-          <Form.FormField
-            control={form.control}
-            name="tags"
-            render={({ field }) => (
-              <Form.FormItem>
-                <Form.FormLabel>Tags</Form.FormLabel>
-                <Form.FormControl>
-                  <div className="relative">
-                    <Input
-                      className="w-full bg-background pr-16"
-                      value={tagInput}
-                      onChange={e => {
-                        const value = e.target.value;
-                        setTagInput(value);
-
-                        const tagsArray = value
-                          .split(',')
-                          .map(tag => tag.trim())
-                          .filter(Boolean);
-
-                        // Always allow edits by updating the field value
-                        // This enables removing tags even at max limit
-                        field.onChange(tagsArray.slice(0, MAX_TAGS_LENGTH));
-
-                        // If more than max, only show max in the input
-                        if (tagsArray.length > MAX_TAGS_LENGTH) {
-                          // Update input to reflect only the allowed tags
-                          setTagInput(tagsArray.slice(0, MAX_TAGS_LENGTH).join(', '));
-                        }
-                      }}
-                    />
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
-                      {field.value?.length ?? 0}/{MAX_TAGS_LENGTH}
-                    </div>
-                  </div>
-                </Form.FormControl>
-                {field.value && field.value.length > 0 && (
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {field.value.map((tag: string, index: number) => (
-                      <Badge key={index} variant="secondary" className="px-3 py-1">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                )}
-                <Form.FormMessage />
-                <Form.FormDescription>
-                  Enter tags separated by commas. e.g. hiking, nature, beach. Tags let other users
-                  find your location more easily.
-                </Form.FormDescription>
-              </Form.FormItem>
-            )}
-          />
-        </div>
-        <div className="space-y-2">
-          <Form.FormLabel>Location</Form.FormLabel>
-          <div className="relative h-52 w-full overflow-hidden rounded-md border-4 border-background">
-            <ChooseLocationMap
-              onLocationChange={handleLocationChange}
-              initialLatitude={0}
-              initialLongitude={0}
-              initialZoom={3.5}
+    <form onSubmit={form.handleSubmit(onSubmit)} className={cn(className)}>
+      <div>
+        <div className="mb-4">
+          <label htmlFor="name" className="mb-1 block text-sm font-medium">
+            Name
+          </label>
+          <div className="relative">
+            <input
+              id="name"
+              type="text"
+              className="bg-background border-input w-full rounded-md border px-3 py-2 pr-16"
+              maxLength={MAX_NAME_LENGTH}
+              {...form.register('name')}
             />
-          </div>
-          <div className="grid grid-cols-2 gap-2 text-sm">
-            <div className="grid grid-cols-4 divide-x divide-muted rounded bg-background">
-              <div className="flex-shrink-0 px-2 py-1 text-muted-foreground">lat</div>
-              <div className="col-span-3 truncate px-2 py-1 text-muted-foreground">{latitude}</div>
-            </div>
-            <div className="grid grid-cols-4 divide-x divide-muted rounded bg-background">
-              <div className="flex-shrink-0 px-2 py-1 text-muted-foreground">lng</div>
-              <div className="col-span-3 truncate px-2 py-1 text-muted-foreground">{longitude}</div>
+            <div className="text-muted-foreground absolute top-1/2 right-3 -translate-y-1/2 text-xs">
+              {form.watch('name')?.length || 0}/{MAX_NAME_LENGTH}
             </div>
           </div>
-          <Form.FormDescription>
-            Drag the marker and place it on top of the location you want to submit. Press the
-            geolocate control in the top right corner if you want to use your current location.
-          </Form.FormDescription>
+          <p className="text-muted-foreground mt-1 text-sm">
+            Give the location an original name, be creative!
+          </p>
+          {form.formState.errors.name && (
+            <p className="text-destructive mt-1 text-sm">{form.formState.errors.name.message}</p>
+          )}
         </div>
-        <div className="space-y-2">
-          <Form.FormLabel>Images</Form.FormLabel>
-          <ImageDropzone
-            onChange={handleImagesChange}
-            className="mt-2"
-            maxFiles={MAX_IMAGES_LENGTH}
-          >
-            <Form.FormDescription>
-              Upload photos of this location to help others find it
-            </Form.FormDescription>
-          </ImageDropzone>
+      </div>
+
+      <div>
+        <div className="mb-4">
+          <label htmlFor="description" className="mb-1 block text-sm font-medium">
+            Description
+          </label>
+          <div className="relative">
+            <textarea
+              id="description"
+              className="bg-background border-input w-full rounded-md border px-3 py-2 pr-16"
+              maxLength={MAX_DESCRIPTION_LENGTH}
+              {...form.register('description')}
+            />
+            <div className="text-muted-foreground absolute right-3 bottom-3 text-xs">
+              {form.watch('description')?.length || 0}/{MAX_DESCRIPTION_LENGTH}
+            </div>
+          </div>
+          {form.formState.errors.description && (
+            <p className="text-destructive mt-1 text-sm">
+              {form.formState.errors.description.message}
+            </p>
+          )}
+          <p className="text-muted-foreground mt-1 text-sm">
+            Describe this location in detail. What makes it special?
+          </p>
         </div>
-        <div>
-          <Button type="submit" className="mt-4 w-full">
-            Create Location
-          </Button>
+      </div>
+
+      <div>
+        <div className="mb-4">
+          <label htmlFor="tags" className="mb-1 block text-sm font-medium">
+            Tags
+          </label>
+          <div className="relative">
+            <input
+              id="tags"
+              type="text"
+              className="bg-background border-input w-full rounded-md border px-3 py-2 pr-16"
+              value={tagInput}
+              onChange={e => {
+                const value = e.target.value;
+                setTagInput(value);
+
+                const tagsArray = value
+                  .split(',')
+                  .map(tag => tag.trim())
+                  .filter(Boolean);
+
+                form.setValue('tags', tagsArray.slice(0, MAX_TAGS_LENGTH));
+
+                if (tagsArray.length > MAX_TAGS_LENGTH) {
+                  setTagInput(tagsArray.slice(0, MAX_TAGS_LENGTH).join(', '));
+                }
+              }}
+            />
+            <div className="text-muted-foreground absolute top-1/2 right-3 -translate-y-1/2 text-xs">
+              {form.watch('tags')?.length || 0}/{MAX_TAGS_LENGTH}
+            </div>
+          </div>
+          {form.watch('tags') && form.watch('tags')!.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-2">
+              {form.watch('tags')!.map((tag: string, index: number) => (
+                <span
+                  key={index}
+                  className="bg-secondary text-secondary-foreground rounded-full px-3 py-1 text-xs font-medium"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+          {form.formState.errors.tags && (
+            <p className="text-destructive mt-1 text-sm">{form.formState.errors.tags.message}</p>
+          )}
+          <p className="text-muted-foreground mt-1 text-sm">
+            Enter tags separated by commas. e.g. hiking, nature, beach. Tags let other users find
+            your location more easily.
+          </p>
         </div>
-      </form>
-    </Form.Form>
+      </div>
+
+      <div className="mb-4 space-y-2">
+        <label className="block text-sm font-medium">Location</label>
+        <div className="border-background relative h-52 w-full overflow-hidden rounded-md border-4">
+          <ChooseLocationMap initialLatitude={0} initialLongitude={0} initialZoom={3.5} />
+        </div>
+        <div className="grid grid-cols-2 gap-2 text-sm">
+          <div className="divide-muted bg-background grid grid-cols-4 divide-x rounded">
+            <div className="text-muted-foreground flex-shrink-0 px-2 py-1">lat</div>
+            <div className="text-muted-foreground col-span-3 truncate px-2 py-1">{latitude}</div>
+          </div>
+          <div className="divide-muted bg-background grid grid-cols-4 divide-x rounded">
+            <div className="text-muted-foreground flex-shrink-0 px-2 py-1">lng</div>
+            <div className="text-muted-foreground col-span-3 truncate px-2 py-1">{longitude}</div>
+          </div>
+        </div>
+        <p className="text-muted-foreground text-sm">
+          Drag the marker and place it on top of the location you want to submit. Press the
+          geolocate control in the top right corner if you want to use your current location.
+        </p>
+      </div>
+
+      <div className="mb-4 space-y-2">
+        <label className="block text-sm font-medium">Images</label>
+        <ImageDropzone onChange={handleImagesChange} className="mt-2" maxFiles={MAX_IMAGES_LENGTH}>
+          <p className="text-muted-foreground text-sm">
+            Upload photos of this location to help others find it
+          </p>
+        </ImageDropzone>
+      </div>
+
+      <div>
+        <button
+          type="submit"
+          className="bg-primary text-primary-foreground hover:bg-primary/90 w-full rounded-md px-4 py-2 font-medium"
+        >
+          Create
+        </button>
+      </div>
+    </form>
   );
 };

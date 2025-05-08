@@ -32,9 +32,9 @@ export async function updateSession(request: NextRequest) {
 
   // Redirect to login if user tries to access protected routes and is not authenticated
   if (
-    (request.nextUrl.pathname.startsWith('/profile') ||
-      request.nextUrl.pathname.startsWith('/locations/create')) &&
+    request.nextUrl.pathname.startsWith('/profile') &&
     user.error
+    // ||request.nextUrl.pathname.startsWith('/locations/create')) &&
   ) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
