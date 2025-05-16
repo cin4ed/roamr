@@ -23,6 +23,16 @@ export default async function ProfilePage() {
   const user = session.user;
   console.log(user);
 
+  // Fetch profile data for the current user
+  const { data: profile, error: profileError } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', user.id)
+    .single();
+  if (profileError) {
+    console.error('Error fetching profile:', profileError);
+  }
+
   // Using 512px version for better performance while maintaining good quality
   const profilePicture = getHighResProfilePicture(user.user_metadata.picture);
 
@@ -69,13 +79,13 @@ export default async function ProfilePage() {
               {/* Profile Info */}
               <div className="flex-1 text-center md:text-left">
                 <h2 className="card-title mb-2 text-3xl">
-                  Kenneth Quintero
+                  {profile?.username || session.user.user_metadata.full_name}
                   <button className="btn btn-circle btn-sm btn-outline ml-2" disabled>
                     <Pencil className="h-4 w-4" />
                   </button>
                 </h2>
                 <p className="text-base-content/60 mb-4 text-lg">
-                  @{session.user.user_metadata.full_name}
+                  @{profile?.username || session.user.user_metadata.full_name}
                 </p>
                 <div className="flex flex-wrap justify-center gap-4 md:justify-start">
                   <div className="flex items-center gap-2">

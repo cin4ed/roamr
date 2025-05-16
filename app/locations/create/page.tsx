@@ -1,14 +1,13 @@
 import { redirect } from 'next/navigation';
 import { getUser } from '@/lib/auth/server';
-// import { CreateLocationForm } from '@/components/CreateLocationForm';
 import LocationForm from '@/components/LocationForm';
 
 export default async function CreateLocationPage() {
-  // const user = await getUser();
+  const user = await getUser();
 
-  // if (!user) {
-  //   redirect('/login');
-  // }
+  if (!user) {
+    redirect('/login');
+  }
 
   return (
     <div className="mx-auto max-w-2xl p-4">

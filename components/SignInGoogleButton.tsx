@@ -3,7 +3,7 @@ export default function SignInGoogleButton() {
   return (
     <button
       type="button"
-      className="btn border-[#e5e5e5] bg-white text-black"
+      className="flex h-[61px] items-center justify-center gap-2 rounded-md border-[#e5e5e5] bg-white px-4 text-black shadow-sm"
       onClick={() => signInWithGoogle()}
     >
       <svg
@@ -21,7 +21,7 @@ export default function SignInGoogleButton() {
           <path fill="#ea4335" d="m153 219c22-69 116-109 179-50l55-54c-78-75-230-72-297 55"></path>
         </g>
       </svg>
-      Login with Google
+      <span className="ml-2">Login with Google</span>
     </button>
   );
 }

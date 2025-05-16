@@ -9,5 +9,9 @@ export default async function Page() {
     redirect('/explore');
   }
 
-  return <SignupForm />;
+  return (
+    <div className="flex min-h-screen w-full items-center justify-center">
+      <SignupForm />
+    </div>
+  );
 }

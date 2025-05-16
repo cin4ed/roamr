@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useRef } from 'react';
 import { z } from 'zod';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -8,24 +7,31 @@ import { cn } from '@/lib/cn';
 import TagPicker from './TagPicker';
 import LocationPicker from './LocationPicker';
 import ImageDropzone from '@/components/ImageDropzone';
+import { createClient } from '@/lib/supabase/client';
+import { useRouter } from 'next/navigation';
 
+const MIN_NAME_LENGTH = 3;
 const MAX_NAME_LENGTH = 50;
+const MIN_DESCRIPTION_LENGTH = 10;
 const MAX_DESCRIPTION_LENGTH = 250;
-const MAX_TAGS_LENGTH = 10;
 const MAX_IMAGES_LENGTH = 10;
 
 const formSchema = z.object({
   name: z
     .string()
-    .min(1, { message: 'Location name is required' })
+    .min(MIN_NAME_LENGTH, {
+      message: `Location name must be at least ${MIN_NAME_LENGTH} characters long`,
+    })
     .max(MAX_NAME_LENGTH, {
-      message: `Location name must be less than ${MAX_NAME_LENGTH} characters`,
+      message: `Location name must be less than ${MAX_NAME_LENGTH} characters long`,
     }),
   description: z
     .string()
-    .min(1, { message: 'Description is required' })
+    .min(MIN_DESCRIPTION_LENGTH, {
+      message: `Description must be at least ${MIN_DESCRIPTION_LENGTH} characters long`,
+    })
     .max(MAX_DESCRIPTION_LENGTH, {
-      message: `Description must be less than ${MAX_DESCRIPTION_LENGTH} characters`,
+      message: `Description must be less than ${MAX_DESCRIPTION_LENGTH} characters long`,
     }),
   latitude: z
     .number({ invalid_type_error: 'Latitude must be a number' })
@@ -35,56 +41,127 @@ const formSchema = z.object({
     .number({ invalid_type_error: 'Longitude must be a number' })
     .min(-180, { message: 'Longitude must be between -180 and 180' })
     .max(180, { message: 'Longitude must be between -180 and 180' }),
-  tags: z
-    .array(z.string())
-    .optional()
-    .refine(tags => !tags || tags.length <= MAX_TAGS_LENGTH, {
-      message: `Tags must be less than ${MAX_TAGS_LENGTH} characters`,
-    }),
+  tags: z.array(z.string()).min(1, { message: 'At least one tag is required' }),
   images: z.array(z.instanceof(File)).optional(),
 });
 
 type FormFields = z.infer<typeof formSchema>;
 
 export default function LocationForm({ className }: { className?: string }) {
+  const router = useRouter();
   const form = useForm<FormFields>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: '',
-      description: '',
-      latitude: 0,
-      longitude: 0,
-      tags: ['hiking', 'nature', 'beach'],
+      tags: [],
       images: [],
     },
   });
 
   const onSubmit: SubmitHandler<FormFields> = async values => {
-    console.log('hello?');
     try {
-      const formData = new FormData();
+      const supabase = await createClient();
 
-      formData.append(
-        'locationData',
-        JSON.stringify({
-          name: values.name,
-          description: values.description,
-          latitude: values.latitude,
-          longitude: values.longitude,
-          tags: values.tags,
-        })
-      );
-
-      if (values.images && values.images.length > 0) {
-        values.images.forEach(image => {
-          formData.append('images', image);
-        });
+      // Check if user is authenticated
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error('User is not authenticated');
       }
 
-      console.log(formData);
+      // Prepare the location data without tags
+      const locationData = {
+        name: values.name,
+        description: values.description,
+        latitude: values.latitude,
+        longitude: values.longitude,
+      };
+
+      // Create the location first
+      const { data: location, error: locationError } = await supabase
+        .from('locations')
+        .insert(locationData)
+        .select()
+        .single();
+
+      if (locationError) throw locationError;
+
+      // Handle tags: create any that don't exist, then link all to the location
+      for (const tagName of values.tags) {
+        // Check if tag exists
+        const { data: tag, error: tagFetchError } = await supabase
+          .from('tags')
+          .select('id')
+          .eq('name', tagName)
+          .single();
+
+        let tagId;
+        if (tagFetchError || !tag) {
+          // Tag does not exist, create it
+          const { data: newTag, error: tagInsertError } = await supabase
+            .from('tags')
+            .insert({ name: tagName })
+            .select('id')
+            .single();
+          if (tagInsertError) throw tagInsertError;
+          tagId = newTag.id;
+        } else {
+          tagId = tag.id;
+        }
+
+        // Link tag to location
+        const { error: linkError } = await supabase
+          .from('location_tags')
+          .insert({ location_id: location.id, tag_id: tagId });
+        if (linkError) throw linkError;
+      }
+
+      // If there are images and the location was created successfully, upload them
+      if (values.images && values.images.length > 0) {
+        const imageUploadPromises = values.images.map(async image => {
+          const fileExt = image.name.split('.').pop();
+          const fileName = `${location.id}-${Math.random()}.${fileExt}`;
+          const filePath = `locations/${fileName}`;
+
+          const { error: uploadError } = await supabase.storage
+            .from('media')
+            .upload(filePath, image);
+
+          if (uploadError) throw uploadError;
+
+          // Create image record in the database
+          return supabase.from('media').insert({
+            location_id: location.id,
+            url: filePath,
+          });
+        });
+
+        // Wait for all image uploads to complete
+        await Promise.all(imageUploadPromises);
+      }
+
+      router.push(`/explore`);
     } catch (error) {
-      console.error('Error submitting location:', error);
+      console.error('Error creating location:', error);
     }
+  };
+
+  const CoordinateErrorMessage = () => {
+    const latitudeError = form.formState.errors.latitude;
+    const longitudeError = form.formState.errors.longitude;
+
+    if (!latitudeError && !longitudeError) return;
+
+    if (latitudeError?.message == 'Required' && longitudeError?.message == 'Required') {
+      return <p className="text-destructive mt-1 text-sm">Coordinates are required</p>;
+    }
+
+    return (
+      <>
+        <p className="text-destructive mt-1 text-sm">latitudeError.message</p>
+        <p className="text-destructive mt-1 text-sm">longitudeError.message</p>
+      </>
+    );
   };
 
   return (
@@ -108,7 +185,9 @@ export default function LocationForm({ className }: { className?: string }) {
         </div>
         <span className="text-muted text-sm">Give the location an original name, be creative!</span>
         {form.formState.errors.name && (
-          <p className="text-destructive mt-1 text-sm">{form.formState.errors.name.message}</p>
+          <p className="text- text-destructive mt-1 text-sm">
+            {form.formState.errors.name.message}
+          </p>
         )}
       </div>
       <div className="flex flex-col gap-2">
@@ -128,14 +207,18 @@ export default function LocationForm({ className }: { className?: string }) {
           Describe this location in a paragraph, let other roamers know what to expect here!
         </span>
         {form.formState.errors.description && (
-          <p className="mt-1 text-sm text-red-300">{form.formState.errors.description.message}</p>
+          <p className="text-destructive mt-1 text-sm">
+            {form.formState.errors.description.message}
+          </p>
         )}
       </div>
       <div className="flex flex-col gap-2">
         <label>Tags</label>
         <TagPicker
           currentTags={form.watch('tags') ?? []}
-          onTagSelect={tag => form.setValue('tags', [...(form.watch('tags') ?? []), tag])}
+          onTagSelect={tag =>
+            form.setValue('tags', [...(form.watch('tags') ?? []), tag], { shouldValidate: true })
+          }
         />
         <span className="text-muted text-sm">
           Add tags to help other roamers find this location, e.g. &quot;hiking&quot;,
@@ -168,22 +251,26 @@ export default function LocationForm({ className }: { className?: string }) {
             ))}
           </div>
         )}
+        {form.formState.errors.tags && (
+          <p className="text-destructive mt-1 text-sm">{form.formState.errors.tags.message}</p>
+        )}
       </div>
       <div className="flex flex-col gap-2">
         <label className="font-medium">Location</label>
         <div className="w-full">
           <LocationPicker
             onLocationSelect={(lat, lng) => {
-              form.setValue('latitude', lat);
-              form.setValue('longitude', lng);
+              form.setValue('latitude', lat, { shouldValidate: true });
+              form.setValue('longitude', lng, { shouldValidate: true });
             }}
             initialLatitude={0}
             initialLongitude={0}
             initialZoom={3.5}
           />
         </div>
+        <CoordinateErrorMessage />
         <p className="text-muted text-sm">Tap on the map to set the location</p>
-        {form.watch('latitude') !== 0 && form.watch('longitude') !== 0 && (
+        {form.watch('latitude') && form.watch('longitude') !== 0 && (
           <>
             <p className="text-muted text-sm">
               <span>Coordinates:</span>
@@ -204,7 +291,10 @@ export default function LocationForm({ className }: { className?: string }) {
       <div className="flex flex-col gap-2">
         <label>Images</label>
         <div className="flex flex-col gap-2">
-          <ImageDropzone />
+          <ImageDropzone
+            onChange={files => form.setValue('images', files, { shouldValidate: true })}
+            maxFiles={MAX_IMAGES_LENGTH}
+          />
         </div>
       </div>
       <div className="flex flex-col gap-2">

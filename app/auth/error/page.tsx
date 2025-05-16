@@ -1,15 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import roamrLogo from '@/public/roamr-logo.png';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
@@ -50,26 +41,28 @@ function AuthErrorContent() {
       <div className="relative z-10 w-full max-w-sm">
         <div className="flex flex-col items-center gap-7">
           <Image src={roamrLogo} alt="Roamr Logo" width={175} />
-          <Card className="w-full max-w-md">
-            <CardHeader className="text-center">
-              <CardTitle className="text-2xl">Authentication Error</CardTitle>
-              <CardDescription>There was a problem signing you in</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-sm text-muted-foreground">{error.error_description}</p>
+          <div className="w-full max-w-md rounded-lg bg-white p-6 shadow">
+            <div className="mb-4 text-center">
+              <h2 className="text-2xl font-semibold">Authentication Error</h2>
+              <p className="text-gray-500">There was a problem signing you in</p>
+            </div>
+            <div className="space-y-4">
+              <p className="text-muted-foreground text-sm">{error.error_description}</p>
               {error.error_code && (
-                <p className="text-sm text-muted-foreground">Error code: {error.error_code}</p>
+                <p className="text-muted-foreground text-sm">Error code: {error.error_code}</p>
               )}
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 Please try again or contact support if the problem persists.
               </p>
-            </CardContent>
-            <CardFooter className="flex justify-center">
-              <Link href="/login" passHref>
-                <Button>Try Again</Button>
+            </div>
+            <div className="mt-6 flex justify-center">
+              <Link href="/login" passHref legacyBehavior>
+                <a className="inline-block rounded bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700">
+                  Try Again
+                </a>
               </Link>
-            </CardFooter>
-          </Card>
+            </div>
+          </div>
         </div>
       </div>
     </div>

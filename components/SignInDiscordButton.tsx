@@ -4,7 +4,7 @@ export default function SignInDiscordButton() {
   return (
     <button
       type="button"
-      className="btn border-[#e5e5e5] bg-[#5865F2] text-white"
+      className="border-secondary flex h-[61px] items-center justify-center gap-2 rounded-md border bg-[#5865F2] px-4 text-white"
       onClick={() => signInWithDiscord()}
     >
       <svg

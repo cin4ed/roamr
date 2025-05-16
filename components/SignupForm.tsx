@@ -34,74 +34,68 @@ export default function SignupForm() {
   };
 
   return (
-    <div className="relative flex min-h-svh w-full flex-col items-center justify-center gap-5 overflow-hidden p-6 md:p-10">
-      <div className="flex flex-col items-center gap-2">
-        <h1 className="text-4xl font-bold">Roamr</h1>
-        <p className="text-sm text-gray-500">Create your account</p>
-      </div>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
-          <div>
-            <label className="label" htmlFor="email">
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              className="input"
-              placeholder="email"
-              {...register('email')}
-            />
-            {errors.email && <p className="text-error mt-1 text-sm">{errors.email.message}</p>}
-          </div>
-
-          <div>
-            <label className="label" htmlFor="password">
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              className="input"
-              placeholder="password"
-              {...register('password')}
-            />
-            {errors.password && (
-              <p className="text-error mt-1 text-sm">{errors.password.message}</p>
-            )}
-          </div>
-
-          <div>
-            <label className="label" htmlFor="confirmPassword">
-              Confirm Password
-            </label>
-            <input
-              type="password"
-              id="confirmPassword"
-              className="input"
-              placeholder="confirm password"
-              {...register('confirmPassword')}
-            />
-            {errors.confirmPassword && (
-              <p className="text-error mt-1 text-sm">{errors.confirmPassword.message}</p>
-            )}
-          </div>
-
-          <button type="submit" className="btn btn-neutral mt-4">
-            Sign Up
-          </button>
-          <div className="divider">Or</div>
-          <div className="flex flex-col gap-2">
-            <SignInGoogleButton />
-            <SignInDiscordButton />
-          </div>
-        </fieldset>
+    <div className="text-primary flex w-full flex-col items-center justify-center gap-5 p-6 md:p-10">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex w-full max-w-md flex-col gap-5">
+        <h1 className="font-title mb-2 text-4xl">Create your account</h1>
+        <div className="flex flex-col gap-2">
+          <label htmlFor="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            className="focus:ring-accent-4 border-secondary h-[61px] w-full rounded-md border px-3 py-2 text-base focus:ring-2 focus:outline-none"
+            placeholder="Enter your email"
+            {...register('email')}
+          />
+          {errors.email && <p className="text-destructive mt-1 text-sm">{errors.email.message}</p>}
+        </div>
+        <div className="flex flex-col gap-2">
+          <label htmlFor="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            className="focus:ring-accent-4 border-secondary h-[61px] w-full rounded-md border px-3 py-2 text-base focus:ring-2 focus:outline-none"
+            placeholder="Enter your password"
+            {...register('password')}
+          />
+          {errors.password && (
+            <p className="text-destructive mt-1 text-sm">{errors.password.message}</p>
+          )}
+        </div>
+        <div className="flex flex-col gap-2">
+          <label htmlFor="confirmPassword">Confirm Password</label>
+          <input
+            type="password"
+            id="confirmPassword"
+            className="focus:ring-accent-4 border-secondary h-[61px] w-full rounded-md border px-3 py-2 text-base focus:ring-2 focus:outline-none"
+            placeholder="Confirm your password"
+            {...register('confirmPassword')}
+          />
+          {errors.confirmPassword && (
+            <p className="text-destructive mt-1 text-sm">{errors.confirmPassword.message}</p>
+          )}
+        </div>
+        <button
+          type="submit"
+          className="bg-primary hover:bg-primary/90 mt-2 rounded-md py-4 text-white"
+        >
+          Sign Up
+        </button>
+        <div className="my-2 flex items-center gap-2">
+          <div className="bg-secondary h-px flex-1" />
+          <span className="text-muted text-sm">Or</span>
+          <div className="bg-secondary h-px flex-1" />
+        </div>
+        <div className="flex flex-col gap-2">
+          <SignInGoogleButton />
+          <SignInDiscordButton />
+        </div>
+        <div className="text-muted mt-4 text-center text-sm">
+          Already have an account?{' '}
+          <Link href="/login" className="text-primary underline">
+            Login
+          </Link>
+        </div>
       </form>
-      <div>
-        <Link href="/login">
-          Already have an account? <span className="underline">Login</span>
-        </Link>
-      </div>
     </div>
   );
 }
